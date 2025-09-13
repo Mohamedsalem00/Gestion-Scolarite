@@ -44,22 +44,22 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="hDebut" class="form-label">Heure de début:</label>
-                                <select id="hDebut" name="hDebut" class="form-select" required
-                                    onchange="updateHFineOptions()">
-                                    <option value="08:00:00" {{ $Cours->hDebut == '08:00:00' ? 'selected' : '' }}>08:00
+                                <label for="date_debut" class="form-label">Heure de début:</label>
+                                <select id="date_debut" name="date_debut" class="form-select" required
+                                    onchange="updatedate_finOptions()">
+                                    <option value="08:00:00" {{ $Cours->date_debut == '08:00:00' ? 'selected' : '' }}>08:00
                                     </option>
-                                    <option value="10:00:00" {{ $Cours->hDebut == '10:00:00' ? 'selected' : '' }}>10:00
+                                    <option value="10:00:00" {{ $Cours->date_debut == '10:00:00' ? 'selected' : '' }}>10:00
                                     </option>
-                                    <option value="11:15:00" {{ $Cours->hDebut == '11:15:00' ? 'selected' : '' }}>11:15
+                                    <option value="11:15:00" {{ $Cours->date_debut == '11:15:00' ? 'selected' : '' }}>11:15
                                     </option>
-                                    <option value="12:00:00" {{ $Cours->hDebut == '12:00:00' ? 'selected' : '' }}>12:00
+                                    <option value="12:00:00" {{ $Cours->date_debut == '12:00:00' ? 'selected' : '' }}>12:00
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="hFine" class="form-label">Heure de fin:</label>
-                                <select id="hFine" name="hFine" class="form-control" required>
+                                <label for="date_fin" class="form-label">Heure de fin:</label>
+                                <select id="date_fin" name="date_fin" class="form-control" required>
 
                                 </select>
                             </div>
@@ -179,14 +179,14 @@
                     }
                 });
 
-                var hDebutSelect = document.getElementById("hDebut");
-                var option10 = hDebutSelect.querySelector('option[value="10:00:00"]');
-                var option11 = hDebutSelect.querySelector('option[value="11:15:00"]');
-                var option12 = hDebutSelect.querySelector('option[value="12:00:00"]');
+                var date_debutSelect = document.getElementById("date_debut");
+                var option10 = date_debutSelect.querySelector('option[value="10:00:00"]');
+                var option11 = date_debutSelect.querySelector('option[value="11:15:00"]');
+                var option12 = date_debutSelect.querySelector('option[value="12:00:00"]');
 
 
                 var selectedValue = '{{ $Cours->id_classe }}';
-                hDebutSelect.disabled = false;
+                date_debutSelect.disabled = false;
                 // Remove options with values "10:00:00" and "12:00:00" when 1AF is selected
                 if (selectedValue === "7" || selectedValue === "8" || selectedValue === "9" || selectedValue === "10" ||
                     selectedValue === "11" || selectedValue === "12" || selectedValue === "13" || selectedValue ===
@@ -212,46 +212,46 @@
 
 
 
-                function updateHFineOptions() {
-                    const hDebutSelect = document.getElementById("hDebut");
-                    const hFineSelect = document.getElementById("hFine");
-                    const selectedValue = hDebutSelect.value;
+                function updatedate_finOptions() {
+                    const date_debutSelect = document.getElementById("date_debut");
+                    const date_finSelect = document.getElementById("date_fin");
+                    const selectedValue = date_debutSelect.value;
                     const classeSelected = '{{ $Cours->id_classe }}';
-                    const hFineSelected = '{{ $Cours->hFine }}';
+                    const date_finSelected = '{{ $Cours->date_fin }}';
 
                     // Clear existing options
-                    hFineSelect.innerHTML = "";
+                    date_finSelect.innerHTML = "";
 
                     // Add new options based on selected value and grade level
                     if (selectedValue === "08:00:00") {
                         if (classeSelected === "7" || classeSelected === "8" || classeSelected === "9" || classeSelected === "10" ||
                             classeSelected === "11" || classeSelected === "12" || classeSelected === "13" || classeSelected === "14"
                         ) {
-                            addOption(hFineSelect, "10:00:00", "10:00");
+                            addOption(date_finSelect, "10:00:00", "10:00");
 
                         } else {
                             if (classeSelected === "1") {
 
-                                addOption(hFineSelect, "11:00:00", "11:00", true)
+                                addOption(date_finSelect, "11:00:00", "11:00", true)
 
                             } else {
-                                addOption(hFineSelect, "11:00:00", "11:00", true)
+                                addOption(date_finSelect, "11:00:00", "11:00", true)
                             }
 
                         }
                     } else if (selectedValue === "10:00:00") {
-                        addOption(hFineSelect, "12:00:00", "12:00");
+                        addOption(date_finSelect, "12:00:00", "12:00");
                     } else if (selectedValue === "11:15:00") {
 
                         if (classeSelected === "1") {
 
-                            addOption(hFineSelect, "12:00:00", "12:00", true)
+                            addOption(date_finSelect, "12:00:00", "12:00", true)
 
                         } else {
-                            addOption(hFineSelect, "14:00:00", "14:00");
+                            addOption(date_finSelect, "14:00:00", "14:00");
                         }
                     } else if (selectedValue === "12:00:00") {
-                        addOption(hFineSelect, "14:00:00", "14:00");
+                        addOption(date_finSelect, "14:00:00", "14:00");
                     }
                 }
 
@@ -266,7 +266,7 @@
 
                 // Call the function when the page loads
                 window.onload = function() {
-                    updateHFineOptions();
+                    updatedate_finOptions();
                 };
             </script>
         @endsection

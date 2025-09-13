@@ -17,7 +17,7 @@
                             @csrf
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="hDebut" class="form-label">Type:</label>
+                                    <label for="date_debut" class="form-label">Type:</label>
                                     <select class="form-select" name="type" id="type"
                                         onchange="updateDateOptions()" required>
                                         <option value="" disabled selected>Choisir le type</option>
@@ -53,9 +53,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="hDebut" class="form-label">Heure de début:</label>
-                                    <select id="hDebut" name="hDebut" class="form-select" required
-                                        onchange="updateHFineOptions()">
+                                    <label for="date_debut" class="form-label">Heure de début:</label>
+                                    <select id="date_debut" name="date_debut" class="form-select" required
+                                        onchange="updatedate_finOptions()">
                                         <option value="" selected disabled>Sélectionner l'heure</option>
                                         <option value="08:00:00">08:00</option>
                                         <option value="10:00:00">10:00</option>
@@ -63,8 +63,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="hFine" class="form-label">Heure de fin:</label>
-                                    <select id="hFine" name="hFine" class="form-control" required>
+                                    <label for="date_fin" class="form-label">Heure de fin:</label>
+                                    <select id="date_fin" name="date_fin" class="form-control" required>
                                         <option value="" selected disabled>Sélectionner l'heure</option>
                                     </select>
                                 </div>
@@ -261,22 +261,22 @@
             }
         }
 
-        function updateHFineOptions() {
-            const hDebutSelect = document.getElementById("hDebut");
-            const hFineSelect = document.getElementById("hFine");
+        function updatedate_finOptions() {
+            const date_debutSelect = document.getElementById("date_debut");
+            const date_finSelect = document.getElementById("date_fin");
 
-            const selectedValue = hDebutSelect.value;
+            const selectedValue = date_debutSelect.value;
 
             // Clear existing options
-            hFineSelect.innerHTML = "";
+            date_finSelect.innerHTML = "";
 
             // Add new options based on selected value and grade level
             if (selectedValue === "08:00:00") {
-                addOption(hFineSelect, "10:00:00", "10:00");
+                addOption(date_finSelect, "10:00:00", "10:00");
             } else if (selectedValue === "10:00:00") {
-                addOption(hFineSelect, "12:00:00", "12:00");
+                addOption(date_finSelect, "12:00:00", "12:00");
             } else if (selectedValue === "12:00:00") {
-                addOption(hFineSelect, "14:00:00", "14:00");
+                addOption(date_finSelect, "14:00:00", "14:00");
             }
         }
 
@@ -292,7 +292,7 @@
         // Call the function when the page loads
         window.onload = function() {
             updateDateOptions();
-            updateHFineOptions();
+            updatedate_finOptions();
         };
     </script>
 @endsection

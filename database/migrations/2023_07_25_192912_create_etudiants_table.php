@@ -16,11 +16,16 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->date('date_naissance');
+            $table->enum('genre', ['masculin', 'feminin']);
             $table->string('telephone');
-            $table->string('adresse');
+            $table->text('adresse');
+            $table->string('email')->nullable();
             $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe
             $table->timestamps();
+            
             $table->foreign('id_classe')->references('id_classe')->on('classes');
+            $table->index('id_classe');
+            $table->index('nom');
         });
     }
 

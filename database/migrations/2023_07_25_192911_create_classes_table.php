@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id('id_classe');
+            $table->string('nom_classe');
             $table->string('niveau');
+            $table->json('nom_classe_translations')->nullable(); // For AR/FR translations
+            $table->json('niveau_translations')->nullable(); // For AR/FR translations
             $table->timestamps();
+            
+            $table->index('niveau');
         });
     }
 

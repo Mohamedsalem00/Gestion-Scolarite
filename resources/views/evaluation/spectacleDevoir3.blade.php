@@ -2,17 +2,17 @@
 use Carbon\Carbon;
 ?>
 @extends('layouts.layout')
-@section('title', 'Examen 2')
+@section('title','Devoir 3')
 @section('content2')
 <div class="container mt-5">
     <header class="bg-light py-4">
         <div class="container">
             <div class="row align-items-center" id="allAction">
                 <div style="width: 5%; font-size: 1.5rem">
-                    <a href="{{ url('/evoluation') }}" title="retourne"><i class="bi bi-arrow-left"></i></a>
+                    <a href="javascript:history.back()" title="retourne"><i class="bi bi-arrow-left"></i></a>
                 </div>
                 <div class="col-md-5 text-md-start text-center">
-                    <p class="mb-0"> Debut: <strong> 2024-01-08 </strong>  |  Fine: <strong> 2024-01-12 </strong></p>
+                    <p class="mb-0"> Debut: <strong> 2024-02-26 </strong>  |  Fine: <strong> 2024-03-01 </strong></p>
                 </div>
                 <div class="col-md-6 text-md-end text-center">
                     <a href="{{ url('/evoluation/create') }}" class="btn btn-success btn-sm">Ajouter</a>
@@ -20,7 +20,7 @@ use Carbon\Carbon;
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center mt-4">Emploi du temps de l'examen (2)</h1>
+                    <h1 class="text-center mt-4">Emploi du temps de la semaine des devoirs (3)</h1>
                 </div>
             </div>
         </div>
@@ -51,8 +51,8 @@ use Carbon\Carbon;
                             <th class="text-center">Vendredi<br><span id="dateVendredi"></span></th>
                         </tr>
                         <script>
-                            var DebutDevoir1 = new Date('2024-01-08');
-                            var FineDevoir1 = new Date('2024-01-12');
+                            var DebutDevoir1 = new Date('2024-02-26');
+                            var FineDevoir1 = new Date('2024-03-01');
                             var daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
                         
                             for (var i = 0; i < daysOfWeek.length; i++) {
@@ -79,7 +79,7 @@ use Carbon\Carbon;
         const timetableData = {
             classe1: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -99,7 +99,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -119,7 +119,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -140,7 +140,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe2: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -160,7 +160,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -180,7 +180,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -201,7 +201,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe3: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -221,7 +221,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -241,7 +241,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -262,7 +262,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe4: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -282,7 +282,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -302,7 +302,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -323,7 +323,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe5: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -343,7 +343,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -363,7 +363,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -384,7 +384,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe6: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -404,7 +404,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -424,7 +424,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -446,7 +446,7 @@ use Carbon\Carbon;
 
             classe7: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -466,7 +466,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -486,7 +486,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -508,7 +508,7 @@ use Carbon\Carbon;
 
             classe8: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -528,7 +528,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -548,7 +548,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -570,7 +570,7 @@ use Carbon\Carbon;
 
             classe9: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -590,7 +590,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -610,7 +610,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -632,7 +632,7 @@ use Carbon\Carbon;
 
             classe10: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -652,7 +652,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -672,7 +672,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -694,7 +694,7 @@ use Carbon\Carbon;
 
             classe11: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -714,7 +714,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -734,7 +734,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -756,7 +756,7 @@ use Carbon\Carbon;
 
             classe12: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -776,7 +776,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -796,7 +796,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -817,7 +817,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe13: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -837,7 +837,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -857,7 +857,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -878,7 +878,7 @@ use Carbon\Carbon;
                 </tr>`,
             classe14: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -898,7 +898,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -918,7 +918,7 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;

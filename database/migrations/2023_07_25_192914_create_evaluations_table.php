@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evoluations', function (Blueprint $table) {
-            $table->id('id_evoluation');
+        Schema::create('evaluations', function (Blueprint $table) {
+            $table->id('id_evaluation');
             $table->string('matiere');
+            $table->date('date')->nullable();
             $table->date('date_debut');
             $table->date('date_fin');
             $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe
-            $table->string('type');
+            $table->enum('type', ['devoir', 'examen', 'controle']);
             $table->timestamps();
     
             $table->foreign('id_classe')->references('id_classe')->on('classes');
+            $table->index('id_classe');
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evoluations');
+        Schema::dropIfExists('evaluations');
     }
 };

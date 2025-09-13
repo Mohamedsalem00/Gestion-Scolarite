@@ -2,17 +2,17 @@
 use Carbon\Carbon;
 ?>
 @extends('layouts.layout')
-@section('title', 'Devoir 2')
+@section('title', 'Examen 3')
 @section('content2')
     <div class="container mt-5">
         <header class="bg-light py-4">
             <div class="container">
                 <div class="row align-items-center" id="allAction">
                     <div style="width: 5%; font-size: 1.5rem">
-                        <a href="javascript:history.back()" title="retourne"><i class="bi bi-arrow-left"></i></a>
+                        <a href="{{ url('/evoluation') }}" title="retourne"><i class="bi bi-arrow-left"></i></a>
                     </div>
                     <div class="col-md-5 text-md-start text-center">
-                        <p class="mb-0"> Debut: <strong> 2023-12-25 </strong> | Fine: <strong> 2023-12-29 </strong></p>
+                        <p class="mb-0"> Debut: <strong> 2024-03-18 </strong> | Fine: <strong> 2024-03-22 </strong></p>
                     </div>
                     <div class="col-md-6 text-md-end text-center">
                         <a href="{{ url('/evoluation/create') }}" class="btn btn-success btn-sm">Ajouter</a>
@@ -20,7 +20,7 @@ use Carbon\Carbon;
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="text-center mt-4">Emploi du temps de la semaine des devoirs (2)</h1>
+                        <h1 class="text-center mt-4">Emploi du temps de l'examen (3)</h1>
                     </div>
                 </div>
             </div>
@@ -51,15 +51,14 @@ use Carbon\Carbon;
                                 <th class="text-center">Vendredi<br><span id="dateVendredi"></span></th>
                             </tr>
                             <script>
-                                var DebutDevoir1 = new Date('2023-12-25');
-                                var FineDevoir1 = new Date('2023-12-29');
+                                var DebutDevoir1 = new Date('2024-03-18');
+                                var FineDevoir1 = new Date('2024-03-22');
                                 var daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-                            
+
                                 for (var i = 0; i < daysOfWeek.length; i++) {
                                     var dayOfWeek = daysOfWeek[i];
                                     var formattedDate = DebutDevoir1.toISOString().split('T')[0];
                                     var dateSpan = document.getElementById('date' + dayOfWeek);
-                            
                                     dateSpan.innerHTML = formattedDate;
                                     DebutDevoir1.setDate(DebutDevoir1.getDate() + 1);
                                 }
@@ -79,14 +78,14 @@ use Carbon\Carbon;
         const timetableData = {
             classe1: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo1AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -99,14 +98,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo1AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -119,14 +118,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo1AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -140,14 +139,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe2: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo2AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -160,14 +159,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo2AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -180,14 +179,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo2AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -201,14 +200,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe3: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo3AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -221,14 +220,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo3AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -241,14 +240,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo3AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -262,14 +261,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe4: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo4AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -282,14 +281,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo4AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -302,14 +301,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo4AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -323,14 +322,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe5: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo5AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -343,14 +342,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo5AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -363,14 +362,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo5AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -384,14 +383,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe6: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo6AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -404,14 +403,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo6AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -424,14 +423,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo6AF as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -446,14 +445,14 @@ use Carbon\Carbon;
 
             classe7: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo1AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -466,14 +465,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo1AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -486,14 +485,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo1AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -508,14 +507,14 @@ use Carbon\Carbon;
 
             classe8: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo2AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -528,14 +527,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo2AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -548,14 +547,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo2AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -570,14 +569,14 @@ use Carbon\Carbon;
 
             classe9: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo1AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -590,14 +589,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo3AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -610,14 +609,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo3AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -632,14 +631,14 @@ use Carbon\Carbon;
 
             classe10: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo4AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -652,14 +651,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo4AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -672,14 +671,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo4AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -694,14 +693,14 @@ use Carbon\Carbon;
 
             classe11: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo5AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -714,14 +713,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo5AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -734,14 +733,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo5AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -756,14 +755,14 @@ use Carbon\Carbon;
 
             classe12: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo6AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -776,14 +775,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo6AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -796,14 +795,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo6AS as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -817,14 +816,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe13: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo7ASD as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -837,14 +836,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo7ASD as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -857,14 +856,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo7ASD as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -878,14 +877,14 @@ use Carbon\Carbon;
                 </tr>`,
             classe14: `
             <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($debutinfo7ASC as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -898,14 +897,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($milieuinfo7ASC as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;
@@ -918,14 +917,14 @@ use Carbon\Carbon;
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
                         @endphp
                         @foreach ($fineinfo7ASC as $item)
                             @if (Carbon::parse($item->date)->locale('fr_FR')->isoFormat('dddd') === $jour)
-                                <td><a href="{{ url('/cour/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
+                                <td><a href="{{ url('/evoluation/' . $item->id_evoluation . '/edit') }}">{{ $item->matiere }}</a></td>
                                 @php
                                     $matiereFound = true;
                                     break;

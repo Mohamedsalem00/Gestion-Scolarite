@@ -98,8 +98,8 @@
                                         @elseif ($category === 'course')
                                         <span class="fw-bold">
                                             {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->jour) !!} | 
-                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->hDebut ) !!} -
-                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->hFine) !!} 
+                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->date_debut ) !!} -
+                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->date_fin) !!} 
                                             
                                         </span>
                                         <p class="text-muted">
@@ -109,8 +109,8 @@
                                         @elseif ($category === 'evaluation')
                                         <span class="fw-bold">
                                             {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->date) !!} | 
-                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->hDebut ) !!} -
-                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->hFine) !!} 
+                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->date_debut ) !!} -
+                                            {!! str_ireplace($query, '<strong>'.$query.'</strong>', $result->date_fin) !!} 
                                             
                                         </span>
                                         <p class="text-muted">

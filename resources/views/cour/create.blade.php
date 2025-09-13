@@ -41,9 +41,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="hDebut" class="form-label">Heure de début:</label>
-                                    <select id="hDebut" name="hDebut" class="form-select" required
-                                        onchange="updateHFineOptions()" disabled>
+                                    <label for="date_debut" class="form-label">Heure de début:</label>
+                                    <select id="date_debut" name="date_debut" class="form-select" required
+                                        onchange="updatedate_finOptions()" disabled>
                                         <option value="" selected disabled>Sélectionner l'heure</option>
                                         <option value="08:00:00">08:00</option>
                                         <option value="10:00:00">10:00</option>
@@ -52,8 +52,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="hFine" class="form-label">Heure de fin:</label>
-                                    <select id="hFine" name="hFine" class="form-control" required disabled required>
+                                    <label for="date_fin" class="form-label">Heure de fin:</label>
+                                    <select id="date_fin" name="date_fin" class="form-control" required disabled required>
                                         <option value="" selected disabled>Sélectionner l'heure</option>
                                     </select>
                                 </div>
@@ -72,14 +72,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        var hDebutSelect = document.getElementById("hDebut");
-        var option10 = hDebutSelect.querySelector('option[value="10:00:00"]');
-        var option11 = hDebutSelect.querySelector('option[value="11:15:00"]');
-        var option12 = hDebutSelect.querySelector('option[value="12:00:00"]');
+        var date_debutSelect = document.getElementById("date_debut");
+        var option10 = date_debutSelect.querySelector('option[value="10:00:00"]');
+        var option11 = date_debutSelect.querySelector('option[value="11:15:00"]');
+        var option12 = date_debutSelect.querySelector('option[value="12:00:00"]');
 
         document.getElementById("id_classe").addEventListener("change", function() {
             var selectedValue = this.value;
-            hDebutSelect.disabled = false;
+            date_debutSelect.disabled = false;
             // Remove options with values "10:00:00" and "12:00:00" when 1AF is selected
             if (selectedValue === "7" || selectedValue === "8" || selectedValue === "9" || selectedValue === "10" ||
                 selectedValue === "11" || selectedValue === "12" || selectedValue === "13" || selectedValue === "13" || selectedValue === "14"
@@ -111,19 +111,19 @@
         const classeSelect = document.getElementById("id_classe");
         const matiereSelect = document.getElementById("matiere");
 
-        function updateHFineOptions() {
-            const hDebutSelect = document.getElementById('hDebut');
-            const hFineSelect = document.getElementById('hFine');
-            const selectedValue = hDebutSelect.value;
+        function updatedate_finOptions() {
+            const date_debutSelect = document.getElementById('date_debut');
+            const date_finSelect = document.getElementById('date_fin');
+            const selectedValue = date_debutSelect.value;
             const classeSelect = document.getElementById("id_classe");
             const classeSelected = classeSelect.value;
 
 
-            // Clear existing options in "hFine" select
-            hFineSelect.innerHTML = '';
+            // Clear existing options in "date_fin" select
+            date_finSelect.innerHTML = '';
 
-            // Get the index of the selected value in the "hDebut" select
-            const selectedIndex = hDebutSelect.selectedIndex;
+            // Get the index of the selected value in the "date_debut" select
+            const selectedIndex = date_debutSelect.selectedIndex;
 
             // Loop through options starting from the next index after the selected index
             if (selectedValue == '08:00:00') {
@@ -138,23 +138,23 @@
                 option10.text = '10:00';
                 option11.value = '11:00:00';
                 option11.text = '11:00';
-                hFineSelect.disabled = false;
-                hFineSelect.appendChild(optionSelected);
-                hFineSelect.appendChild(option10);
+                date_finSelect.disabled = false;
+                date_finSelect.appendChild(optionSelected);
+                date_finSelect.appendChild(option10);
                 if (classeSelected === "7" || classeSelected === "8" || classeSelected === "9" || classeSelected === "10" ||
                     classeSelected === "11" || classeSelected === "12" || classeSelected === "13" || classeSelected === "14") {
                     option10.selected = true;
                     optionSelected.style.display='none';
 
                 } else {
-                    hFineSelect.appendChild(option11);
+                    date_finSelect.appendChild(option11);
                 }
                 if (classeSelected === "1" || classeSelected === "2" || classeSelected === "3" || classeSelected === "4" ||
                     classeSelected === "5" || classeSelected === "6") {
                     option11.selected = true;
                     option10.style.display='none';
                 } else {
-                    hFineSelect.appendChild(option10);
+                    date_finSelect.appendChild(option10);
                 }
             } else if (selectedValue == '11:15:00') {
                 const option12 = document.createElement('option');
@@ -167,33 +167,33 @@
                 option12.text = '12:00';
                 option14.value = '14:00:00';
                 option14.text = '14:00';
-                hFineSelect.disabled = false;
-                hFineSelect.appendChild(optionSelected);
-                hFineSelect.appendChild(option12);
+                date_finSelect.disabled = false;
+                date_finSelect.appendChild(optionSelected);
+                date_finSelect.appendChild(option12);
                 if(classeSelected === "1"){
                     option12.selected = true;
                 }else{
-                hFineSelect.appendChild(option14);
+                date_finSelect.appendChild(option14);
                 }
                 if (classeSelected === "1" || classeSelected === "2" || classeSelected === "3" || classeSelected === "4" ||
                     classeSelected === "5" || classeSelected === "6") {
                     option14.selected = true;
                     option12.style.display='none';
                 } else {
-                    hFineSelect.appendChild(option10);
+                    date_finSelect.appendChild(option10);
                 }
             } else if (selectedValue == '10:00:00') {
                 const option12 = document.createElement('option');
                 option12.value = '12:00:00';
                 option12.text = '12:00';
-                hFineSelect.disabled = false;
-                hFineSelect.appendChild(option12);
+                date_finSelect.disabled = false;
+                date_finSelect.appendChild(option12);
             } else if (selectedValue == '12:00:00') {
                 const option14 = document.createElement('option');
                 option14.value = '14:00:00';
                 option14.text = '14:00';
-                hFineSelect.disabled = false;
-                hFineSelect.appendChild(option14);
+                date_finSelect.disabled = false;
+                date_finSelect.appendChild(option14);
 
             }
 

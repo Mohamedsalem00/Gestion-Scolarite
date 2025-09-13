@@ -35,20 +35,20 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="hDebut" class="form-label">Heure de début:</label>
-                                <select id="hDebut" name="hDebut" class="form-select" required
-                                    onchange="updateHFineOptions()">
-                                    <option value="08:00:00" {{ $evoluation->hDebut == '08:00:00' ? 'selected' : '' }}>08:00
+                                <label for="date_debut" class="form-label">Heure de début:</label>
+                                <select id="date_debut" name="date_debut" class="form-select" required
+                                    onchange="updatedate_finOptions()">
+                                    <option value="08:00:00" {{ $evoluation->date_debut == '08:00:00' ? 'selected' : '' }}>08:00
                                     </option>
-                                    <option value="10:00:00" {{ $evoluation->hDebut == '10:00:00' ? 'selected' : '' }}>10:00
+                                    <option value="10:00:00" {{ $evoluation->date_debut == '10:00:00' ? 'selected' : '' }}>10:00
                                     </option>
-                                    <option value="12:00:00" {{ $evoluation->hDebut == '12:00:00' ? 'selected' : '' }}>12:00
+                                    <option value="12:00:00" {{ $evoluation->date_debut == '12:00:00' ? 'selected' : '' }}>12:00
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="hFine" class="form-label">Heure de fin:</label>
-                                <select id="hFine" name="hFine" class="form-control" required>
+                                <label for="date_fin" class="form-label">Heure de fin:</label>
+                                <select id="date_fin" name="date_fin" class="form-control" required>
 
                                 </select>
                             </div>
@@ -161,27 +161,27 @@
                     }
                 });
 
-                var hDebutSelect = document.getElementById("hDebut");
+                var date_debutSelect = document.getElementById("date_debut");
 
 
                 var selectedValue = '{{ $evoluation->id_classe }}';
-                hDebutSelect.disabled = false;
+                date_debutSelect.disabled = false;
              
-                function updateHFineOptions() {
-                    const hDebutSelect = document.getElementById("hDebut");
-                    const hFineSelect = document.getElementById("hFine");
-                    const selectedValue = hDebutSelect.value;
+                function updatedate_finOptions() {
+                    const date_debutSelect = document.getElementById("date_debut");
+                    const date_finSelect = document.getElementById("date_fin");
+                    const selectedValue = date_debutSelect.value;
                     const classeSelected = '{{ $evoluation->id_classe }}';
-                    const hFineSelected = '{{ $evoluation->hFine }}';
+                    const date_finSelected = '{{ $evoluation->date_fin }}';
 
-                    hFineSelect.innerHTML = "";
+                    date_finSelect.innerHTML = "";
 
                     if (selectedValue === "08:00:00") {
-                        addOption(hFineSelect, "10:00:00", "10:00");
+                        addOption(date_finSelect, "10:00:00", "10:00");
                     } else if (selectedValue === "10:00:00") {
-                        addOption(hFineSelect, "12:00:00", "12:00");
+                        addOption(date_finSelect, "12:00:00", "12:00");
                     } else if (selectedValue === "12:00:00") {
-                        addOption(hFineSelect, "14:00:00", "14:00");
+                        addOption(date_finSelect, "14:00:00", "14:00");
                     }
                 }
 
@@ -196,7 +196,7 @@
 
                 // Call the function when the page loads
                 window.onload = function() {
-                    updateHFineOptions();
+                    updatedate_finOptions();
                 };
             </script>
         @endsection

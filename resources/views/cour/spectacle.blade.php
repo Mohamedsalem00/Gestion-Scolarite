@@ -45,7 +45,7 @@
         const timetableData = {
             classe1: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -66,7 +66,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -87,7 +87,7 @@
                 </tr>`,
             classe2: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -108,7 +108,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -129,7 +129,7 @@
                 </tr>`,
             classe3: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -150,7 +150,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -171,7 +171,7 @@
                 </tr>`,
             classe4: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -192,7 +192,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -213,7 +213,7 @@
                 </tr>`,
             classe5: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -234,7 +234,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -255,7 +255,7 @@
                 </tr>`,
             classe6: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine11->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine11->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -276,7 +276,7 @@
                 </tr>
 
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut1115->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut1115->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -298,7 +298,7 @@
 
             classe7: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -318,7 +318,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -338,7 +338,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -360,7 +360,7 @@
 
             classe8: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -380,7 +380,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -400,7 +400,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -422,7 +422,7 @@
 
             classe9: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -442,7 +442,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -462,7 +462,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -484,7 +484,7 @@
 
             classe10: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -504,7 +504,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -524,7 +524,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -546,7 +546,7 @@
 
             classe11: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -566,7 +566,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -586,7 +586,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -608,7 +608,7 @@
 
             classe12: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -628,7 +628,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -648,7 +648,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -669,7 +669,7 @@
                 </tr>`,
             classe13: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -689,7 +689,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -709,7 +709,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -730,7 +730,7 @@
                 </tr>`,
             classe14: `
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut08->hDebut)) }} - {{ date('H:i', strtotime($fine10->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut08->date_debut)) }} - {{ date('H:i', strtotime($fine10->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -750,7 +750,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut10->hDebut)) }} - {{ date('H:i', strtotime($fine12->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut10->date_debut)) }} - {{ date('H:i', strtotime($fine12->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
@@ -770,7 +770,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    <td>{{ date('H:i', strtotime($debut12->hDebut)) }} - {{ date('H:i', strtotime($fine14->hFine)) }}</td>
+                    <td>{{ date('H:i', strtotime($debut12->date_debut)) }} - {{ date('H:i', strtotime($fine14->date_fin)) }}</td>
                     @foreach ($joursSemaine as $jour)
                         @php
                             $matiereFound = false;
