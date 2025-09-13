@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('cours', function (Blueprint $table) {
             $table->id('id_cours');
             $table->string('jour');
-            $table->string('hDebut');
-            $table->string('hFine');
+            $table->string('date_debut');
+            $table->string('date_fin');
             $table->unsignedBigInteger('id_enseignant'); // Clé étrangère pour la table Enseignant
             $table->string('matiere');
             $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('evoluations', function (Blueprint $table) {
             $table->id('id_evoluation');
             $table->string('matiere');
-            $table->date('date');
+            $table->date('date_debut');
+            $table->date('date_fin');
             $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe
             $table->string('type');
             $table->timestamps();
