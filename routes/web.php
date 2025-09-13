@@ -7,7 +7,7 @@ use App\Http\Controllers\EnseignantController;
 use App\Http\Controllers\EnseignPaiementController;
 use App\Http\Controllers\EtudePaiementController;
 use App\Http\Controllers\EtudiantController;
-use App\Http\Controllers\EvoluationController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Auth\LoginController;
@@ -50,19 +50,20 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth'])->group(function () {
     // Place all the routes that require authentication here
 
-    Route::get('/evoluation/spectacleDevoir1', [EvoluationController::class, 'show'])->name('spectacleDevoir1');
-    Route::get('/evoluation/spectacleDevoir2', [EvoluationController::class, 'show2'])->name('spectacleDevoir2');
-    Route::get('/evoluation/spectacleDevoir3', [EvoluationController::class, 'show3'])->name('spectacleDevoir3');
-    Route::get('/evoluation/spectacleExamen1', [EvoluationController::class, 'show4'])->name('spectacleExamen1');
-    Route::get('/evoluation/spectacleExamen2', [EvoluationController::class, 'show5'])->name('spectacleExamen2');
-    Route::get('/evoluation/spectacleExamen3', [EvoluationController::class, 'show6'])->name('spectacleExamen3');
+    // Evaluation legacy routes (keeping for compatibility)
+    Route::get('/evaluation/spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
+    Route::get('/evaluation/spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
+    Route::get('/evaluation/spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
+    Route::get('/evaluation/spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
+    Route::get('/evaluation/spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
+    Route::get('/evaluation/spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
 
     // Resource routes
     Route::resource('/etudiant', EtudiantController::class);
     Route::resource('/enseignant', EnseignantController::class);
     Route::resource('/classe', ClasseController::class);
-    Route::resource('/cour', CoursController::class);
-    Route::resource('/evoluation', EvoluationController::class);
+    Route::resource('/cours', CoursController::class);
+    Route::resource('/evaluation', EvaluationController::class);
 
     // Note routes
     Route::get('/note/noteDevoir1', [NoteController::class, 'showNoteDevoir1'])->name('noteDevoir1');
