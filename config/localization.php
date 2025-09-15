@@ -21,6 +21,11 @@ return [
             'flag' => 'sa',
             'rtl' => true,
         ],
+        'en' => [
+            'name' => 'English',
+            'native' => 'English',
+            'flag' => 'us',
+        ],
     ],
 
     /*

@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CoursController;
 use App\Http\Controllers\EnseignantController;
@@ -10,94 +9,312 @@ use App\Http\Controllers\EtudiantController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\EnseignantDashboardController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
+| Clean, organized route structure for School Management System
+| Grouped by functionality with proper naming conventions
+|--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| Language Switching Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['fr', 'ar', 'en'])) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
 
-
-
-
-
-// // Show the login form
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-
-// Handle the login form submission
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
-
-// Logout the user
-Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Authenticated routes
-Route::middleware(['auth'])->group(function () {
-    // Place all the routes that require authentication here
-
-    // Evaluation legacy routes (keeping for compatibility)
-    Route::get('/evaluation/spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
-    Route::get('/evaluation/spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
-    Route::get('/evaluation/spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
-    Route::get('/evaluation/spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
-    Route::get('/evaluation/spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
-    Route::get('/evaluation/spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
-
-    // Resource routes
-    Route::resource('/etudiant', EtudiantController::class);
-    Route::resource('/enseignant', EnseignantController::class);
-    Route::resource('/classe', ClasseController::class);
-    Route::resource('/cours', CoursController::class);
-    Route::resource('/evaluation', EvaluationController::class);
-
-    // Note routes
-    Route::get('/note/noteDevoir1', [NoteController::class, 'showNoteDevoir1'])->name('noteDevoir1');
-    Route::get('/note/noteDevoir2', [NoteController::class, 'showNoteDevoir2'])->name('noteDevoir2');
-    Route::get('/note/noteDevoir3', [NoteController::class, 'showNoteDevoir3'])->name('noteDevoir3');
-    Route::get('/note/noteExamen1', [NoteController::class, 'showNoteExamen1'])->name('noteExamen1');
-    Route::get('/note/noteExamen2', [NoteController::class, 'showNoteExamen2'])->name('noteExamen2');
-    Route::get('/note/noteExamen3', [NoteController::class, 'showNoteExamen3'])->name('noteExamen3');
-    Route::get('/note/noteExamen3', [NoteController::class, 'showNoteExamen3'])->name('noteExamen3');
-    Route::get('/note/releveNotes1', [NoteController::class, 'showreleveNotes1'])->name('releveNotes1');
-    Route::get('/note/releveNotes2', [NoteController::class, 'showreleveNotes2'])->name('releveNotes2');
-    Route::get('/note/releveNotes3', [NoteController::class, 'showreleveNotes3'])->name('releveNotes3');
-    Route::get('/note/releveNotes1/spectacleT1/{id}/{trimestre}', [NoteController::class, 'spectacleT1'])->name('spectacleT1');
-    Route::get('/note/releveNotes2/spectacleT2/{id}/{trimestre}', [NoteController::class, 'spectacleT2'])->name('spectacleT2');
-    Route::get('/note/releveNotes3/spectacleT3{id}/{trimestre}', [NoteController::class, 'spectacleT3'])->name('spectacleT3');
-
-    // Paiement routes
-    Route::get('/paiement', function () {
-        return view('paiement');
-    });
-    Route::resource('/paiement/enseignpaiement', EnseignPaiementController::class);
-    Route::get('/paiement/enseignpaiement/create/{id}/{salaire}', [\App\Http\Controllers\EnseignPaiementController::class, 'create'])->name('enseignpaiement.create');
-    Route::get('/paiement/enseignpaiement/edit/{id}/{salaire}', [\App\Http\Controllers\EnseignPaiementController::class, 'edit'])->name('enseignpaiement.edit');
-    Route::resource('/paiement/etudepaiement', EtudePaiementController::class);
-    Route::get('/paiement/etudepaiement/create/{id}/{frais}', [\App\Http\Controllers\EtudePaiementController::class, 'create'])->name('etudepaiement.create');
-    Route::get('/paiement/etudepaiement/edit/{id}/{frais}', [\App\Http\Controllers\EtudePaiementController::class, 'edit'])->name('etudepaiement.edit');
-    Route::resource('/note', \App\Http\Controllers\NoteController::class);
-    Route::get('/note/create/{id}/{matiere}/{type}', [\App\Http\Controllers\NoteController::class, 'create'])->name('note.create');
-    Route::get('/search', [SearchController::class, 'showResults'])->name('search');
-    Route::get('/publication', function () {
-        return view('publication');
-    });
-});
-
+/*
+|--------------------------------------------------------------------------
+| Routes Publiques
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
-    return view('Accueil.Accueil');
+    return view('welcome');
+})->name('accueil');
+
+/*
+|--------------------------------------------------------------------------
+| Routes d'Authentification
+|--------------------------------------------------------------------------
+*/
+
+// Routes d'authentification en français
+Route::get('/connexion', [LoginController::class, 'showLoginForm'])->name('connexion');
+Route::post('/connexion', [LoginController::class, 'login'])->name('connexion.submit');
+Route::post('/deconnexion', [LogoutController::class, 'logout'])->name('deconnexion');
+
+// Routes d'inscription
+Route::get('/inscription', [RegisterController::class, 'showRegistrationForm'])->name('inscription');
+Route::post('/inscription', [RegisterController::class, 'register'])->name('inscription.submit');
+
+// Routes de réinitialisation de mot de passe en français
+Route::get('/mot-de-passe/reinitialiser', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('mot-de-passe.demande');
+Route::post('/mot-de-passe/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('mot-de-passe.email');
+Route::get('/mot-de-passe/reinitialiser/{token}', [ResetPasswordController::class, 'showResetForm'])->name('mot-de-passe.reinitialiser');
+Route::post('/mot-de-passe/reinitialiser', [ResetPasswordController::class, 'reset'])->name('mot-de-passe.mise-a-jour');
+Route::get('/mot-de-passe/confirmer', [ConfirmPasswordController::class, 'showConfirmForm'])->name('mot-de-passe.confirmer');
+Route::post('/mot-de-passe/confirmer', [ConfirmPasswordController::class, 'confirm'])->name('mot-de-passe.confirmation');
+
+// Routes de vérification d'email en français
+Route::get('/email/verifier', [VerificationController::class, 'show'])->name('verification.notice');
+Route::get('/email/verifier/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify')->middleware(['signed']);
+Route::post('/email/renvoyer-verification', [VerificationController::class, 'resend'])->name('verification.resend');
+
+/*
+|--------------------------------------------------------------------------
+| Routes du Tableau de Bord
+|--------------------------------------------------------------------------
+*/
+Route::get('/tableau-bord', [HomeController::class, 'index'])->name('tableau-bord')->middleware(['auth', 'role:admin']);
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+| All routes requiring authentication grouped by functionality
+*/
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Academic Management Routes
+    |--------------------------------------------------------------------------
+    | Full CRUD access for admins only
+    */
+    
+    // Gestion des Classes - Routes ressource complètes
+    Route::resource('classes', ClasseController::class)->parameters([
+        'classes' => 'classe'
+    ])->names([
+        'index' => 'classes.index',
+        'create' => 'classes.create',
+        'store' => 'classes.store',
+        'show' => 'classes.show',
+        'edit' => 'classes.edit',
+        'update' => 'classes.update',
+        'destroy' => 'classes.destroy'
+    ]);
+    
+    // Gestion des Étudiants - Routes ressource complètes
+    Route::resource('etudiants', EtudiantController::class)->parameters([
+        'etudiants' => 'etudiant'
+    ])->names([
+        'index' => 'etudiants.index',
+        'create' => 'etudiants.create',
+        'store' => 'etudiants.store',
+        'show' => 'etudiants.show',
+        'edit' => 'etudiants.edit',
+        'update' => 'etudiants.update',
+        'destroy' => 'etudiants.destroy'
+    ]);
+    
+    // Gestion des Enseignants - Routes ressource complètes
+    Route::resource('enseignants', EnseignantController::class)->parameters([
+        'enseignants' => 'enseignant'
+    ])->names([
+        'index' => 'enseignants.index',
+        'create' => 'enseignants.create',
+        'store' => 'enseignants.store',
+        'show' => 'enseignants.show',
+        'edit' => 'enseignants.edit',
+        'update' => 'enseignants.update',
+        'destroy' => 'enseignants.destroy'
+    ]);
+    
+    // Gestion des Cours - Routes ressource complètes
+    Route::resource('cours', CoursController::class)->parameters([
+        'cours' => 'cour'
+    ])->names([
+        'index' => 'cours.index',
+        'create' => 'cours.create',
+        'store' => 'cours.store',
+        'show' => 'cours.show',
+        'edit' => 'cours.edit',
+        'update' => 'cours.update',
+        'destroy' => 'cours.destroy'
+    ]);
+    
+    // Route spéciale pour l'emploi du temps des cours
+    Route::get('cours/spectacle', [CoursController::class, 'show'])->name('cours.spectacle');
+    
+    // Gestion des Évaluations - Routes ressource complètes
+    Route::resource('evaluations', EvaluationController::class)->parameters([
+        'evaluations' => 'evaluation'
+    ])->names([
+        'index' => 'evaluations.index',
+        'create' => 'evaluations.create',
+        'store' => 'evaluations.store',
+        'show' => 'evaluations.show',
+        'edit' => 'evaluations.edit',
+        'update' => 'evaluations.update',
+        'destroy' => 'evaluations.destroy'
+    ]);
+    
+    // Gestion des Notes - Routes ressource complètes
+    Route::resource('notes', NoteController::class)->parameters([
+        'notes' => 'note'
+    ])->names([
+        'index' => 'notes.index',
+        'create' => 'notes.create',
+        'store' => 'notes.store',
+        'show' => 'notes.show',
+        'edit' => 'notes.edit',
+        'update' => 'notes.update',
+        'destroy' => 'notes.destroy'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gestion des Paiements (Admin seulement)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin'])->prefix('paiements')->name('paiements.')->group(function () {
+        // Tableau de bord des paiements
+        Route::get('/', function () {
+            return view('payments.index');
+        })->name('index');
+        
+        // Paiements des Étudiants
+        Route::resource('etudiants', EtudePaiementController::class)->parameters([
+            'etudiants' => 'etudePaiement'
+        ])->names([
+            'index' => 'etudiants.index',
+            'create' => 'etudiants.create',
+            'store' => 'etudiants.store',
+            'show' => 'etudiants.show',
+            'edit' => 'etudiants.edit',
+            'update' => 'etudiants.update',
+            'destroy' => 'etudiants.destroy'
+        ]);
+        
+        // Paiements des Enseignants
+        Route::resource('enseignants', EnseignPaiementController::class)->parameters([
+            'enseignants' => 'enseignPaiement'
+        ])->names([
+            'index' => 'enseignants.index',
+            'create' => 'enseignants.create',
+            'store' => 'enseignants.store',
+            'show' => 'enseignants.show',
+            'edit' => 'enseignants.edit',
+            'update' => 'enseignants.update',
+            'destroy' => 'enseignants.destroy'
+        ]);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rapports & Analyses
+    |--------------------------------------------------------------------------
+    */  
+    Route::prefix('rapports')->name('rapports.')->group(function () {
+        // Rapports de notes par type
+        Route::get('notes/devoirs/{level}', [NoteController::class, 'homeworkReports'])->name('notes.devoirs');
+        Route::get('notes/examens/{level}', [NoteController::class, 'examReports'])->name('notes.examens');
+        
+        // Relevés de notes des étudiants
+        Route::get('releves/{etudiant}/{trimestre}', [NoteController::class, 'transcript'])->name('releves');
+        
+        // Plannings d'évaluations
+        Route::get('evaluations/{type}/{niveau}', [EvaluationController::class, 'schedule'])->name('evaluations.planning');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utilitaires
+    |--------------------------------------------------------------------------
+    */
+    Route::get('recherche', [SearchController::class, 'index'])->name('recherche');
+    Route::get('publications', function () {
+        return view('publications.index');
+    })->name('publications');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Legacy Routes (for backward compatibility)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('legacy')->name('legacy.')->group(function () {
+        // Old evaluation routes
+        Route::get('evaluation/spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
+        Route::get('evaluation/spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
+        Route::get('evaluation/spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
+        Route::get('evaluation/spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
+        Route::get('evaluation/spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
+        Route::get('evaluation/spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
+        
+        // Old note routes  
+        Route::get('note/noteDevoir{level}', [NoteController::class, 'showNoteDevoir'])->name('noteDevoir');
+        Route::get('note/noteExamen{level}', [NoteController::class, 'showNoteExamen'])->name('noteExamen');
+        Route::get('note/releveNotes{level}', [NoteController::class, 'showreleveNotes'])->name('releveNotes');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Direct legacy route aliases (for immediate backward compatibility)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
+    Route::get('spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
+    Route::get('spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
+    Route::get('spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
+    Route::get('spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
+    Route::get('spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
+    Route::get('noteDevoir1', [NoteController::class, 'showNoteDevoir1'])->name('noteDevoir1');
+    Route::get('noteDevoir2', [NoteController::class, 'showNoteDevoir2'])->name('noteDevoir2');
+    Route::get('noteDevoir3', [NoteController::class, 'showNoteDevoir3'])->name('noteDevoir3');
+    Route::get('noteExamen1', [NoteController::class, 'showNoteExamen1'])->name('noteExamen1');
+    Route::get('noteExamen2', [NoteController::class, 'showNoteExamen2'])->name('noteExamen2');
+    Route::get('noteExamen3', [NoteController::class, 'showNoteExamen3'])->name('noteExamen3');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Role-Based Dashboard Routes
+|--------------------------------------------------------------------------
+| Separate dashboards for different user roles with proper middleware
+*/
+
+// Admin-only routes
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Admin has access to all academic management
+    // All the above routes are already accessible to admins
+});
+
+// Teacher (Enseignant) Dashboard Routes
+Route::middleware(['auth', 'role:enseignant'])->prefix('enseignant')->name('enseignant.')->group(function () {
+    Route::get('/tableau-bord', [EnseignantDashboardController::class, 'index'])->name('tableau-bord');
+    Route::get('/mes-etudiants', [EnseignantDashboardController::class, 'mesEtudiants'])->name('mes-etudiants');
+    Route::get('/mes-cours', [EnseignantDashboardController::class, 'mesCours'])->name('mes-cours');
+    Route::get('/saisir-notes', [EnseignantDashboardController::class, 'saisirNotes'])->name('saisir-notes');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes for Students (No Login Required)
+|--------------------------------------------------------------------------
+| Students don't have user accounts - they use public access with matricule
+*/
+
+// Public grade search - no authentication required
+Route::get('/rechercher-notes', [PublicController::class, 'rechercherNotes'])->name('rechercher-notes');
+Route::post('/rechercher-notes', [PublicController::class, 'rechercherNotes'])->name('rechercher-notes.submit');

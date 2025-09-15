@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('etudiants', function (Blueprint $table) {
             $table->id('id_etudiant');
+            $table->string('matricule')->unique(); // Unique student identifier
             $table->string('nom');
             $table->string('prenom');
             $table->date('date_naissance');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->foreign('id_classe')->references('id_classe')->on('classes');
             $table->index('id_classe');
             $table->index('nom');
+            $table->index('matricule');
         });
     }
 

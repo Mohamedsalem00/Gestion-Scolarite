@@ -16,7 +16,7 @@ class EtudiantController extends Controller
     public function index()
     {
         $etudiants = Etudiant::with('classe')->latest()->get();
-        return view('etudiants.index', compact('etudiants'));
+        return view('academic.etudiants.index', compact('etudiants'));
     }
 
     /**
@@ -25,7 +25,7 @@ class EtudiantController extends Controller
     public function create()
     {
         $classes = Classe::orderBy('nom_classe')->get();
-        return view('etudiants.create', compact('classes'));
+        return view('academic.etudiants.create', compact('classes'));
     }
 
     /**
@@ -35,7 +35,7 @@ class EtudiantController extends Controller
     {
         try {
             $etudiant = Etudiant::create($request->validated());
-            return redirect()->route('etudiant.index')
+            return redirect()->route('etudiants.index')
                 ->with('success', "L'étudiant {$etudiant->full_name} a été ajouté avec succès.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -50,7 +50,7 @@ class EtudiantController extends Controller
     public function show(Etudiant $etudiant)
     {
         $etudiant->load(['classe', 'notes.evaluation', 'paiements']);
-        return view('etudiants.show', compact('etudiant'));
+        return view('academic.etudiants.show', compact('etudiant'));
     }
 
     /**
@@ -59,7 +59,7 @@ class EtudiantController extends Controller
     public function edit(Etudiant $etudiant)
     {
         $classes = Classe::orderBy('nom_classe')->get();
-        return view('etudiants.edit', compact('etudiant', 'classes'));
+        return view('academic.etudiants.edit', compact('etudiant', 'classes'));
     }
 
     /**
@@ -69,7 +69,7 @@ class EtudiantController extends Controller
     {
         try {
             $etudiant->update($request->validated());
-            return redirect()->route('etudiant.index')
+            return redirect()->route('etudiants.index')
                 ->with('success', "Les informations de {$etudiant->full_name} ont été mises à jour.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -86,7 +86,7 @@ class EtudiantController extends Controller
         try {
             $nom = $etudiant->full_name;
             $etudiant->delete();
-            return redirect()->route('etudiant.index')
+            return redirect()->route('etudiants.index')
                 ->with('success', "L'étudiant {$nom} a été supprimé.");
         } catch (\Exception $e) {
             return redirect()->back()

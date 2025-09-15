@@ -18,7 +18,7 @@ class EvaluationController extends Controller
         $evaluations = Evaluation::with('classe')
                                 ->latest()
                                 ->paginate(15);
-        return view('evaluation.index', compact('evaluations'));
+        return view('academic.evaluations.index', compact('evaluations'));
     }
 
     /**
@@ -27,7 +27,7 @@ class EvaluationController extends Controller
     public function create()
     {
         $classes = Classe::orderBy('nom_classe')->get();
-        return view('evaluation.create', compact('classes'));
+        return view('academic.evaluations.create', compact('classes'));
     }
 
     /**
@@ -55,7 +55,7 @@ class EvaluationController extends Controller
     public function show(Evaluation $evaluation)
     {
         $evaluation->load(['classe', 'notes.etudiant']);
-        return view('evaluation.show', compact('evaluation'));
+        return view('academic.evaluations.show', compact('evaluation'));
     }
 
     /**
@@ -64,7 +64,7 @@ class EvaluationController extends Controller
     public function edit(Evaluation $evaluation)
     {
         $classes = Classe::orderBy('nom_classe')->get();
-        return view('evaluation.edit', compact('evaluation', 'classes'));
+        return view('academic.evaluations.edit', compact('evaluation', 'classes'));
     }
 
     /**
@@ -74,7 +74,7 @@ class EvaluationController extends Controller
     {
         try {
             $evaluation->update($request->validated());
-            return redirect()->route('evaluation.index')
+            return redirect()->route('academic.evaluations.index')
                 ->with('success', "L'évaluation a été mise à jour avec succès.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -91,7 +91,7 @@ class EvaluationController extends Controller
         try {
             $matiere = $evaluation->matiere;
             $evaluation->delete();
-            return redirect()->route('evaluation.index')
+            return redirect()->route('academic.evaluations.index')
                 ->with('success', "L'évaluation de {$matiere} a été supprimée.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -126,11 +126,11 @@ class EvaluationController extends Controller
     private function getRedirectRoute($type)
     {
         $routes = [
-            'devoir' => 'evaluation.index',
-            'examen' => 'evaluation.index',
-            'controle' => 'evaluation.index',
+            'devoir' => 'evaluations.index',
+            'examen' => 'evaluations.index',
+            'controle' => 'evaluations.index',
         ];
 
-        return $routes[$type] ?? 'evaluation.index';
+        return $routes[$type] ?? 'evaluations.index';
     }
 }

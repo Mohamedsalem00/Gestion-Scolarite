@@ -83,7 +83,7 @@ class SearchController extends Controller
                 $queryBuilder->where('jour', 'like', "%$query%")
                     ->orWhere('date_debut', 'like', "%$query%")
                     ->orWhere('date_fin', 'like', "%$query%")
-                    ->orWhere('cours.id_classe', 'like', "%$query%")
+                    ->orWhere('academic.cours.id_classe', 'like', "%$query%")
                     ->orWhere('matiere', 'like', "%$query%")
                     ->orWhereHas('classe', function ($subQueryBuilder) use ($query) {
                         $subQueryBuilder->where('niveau', 'like', "%$query%");

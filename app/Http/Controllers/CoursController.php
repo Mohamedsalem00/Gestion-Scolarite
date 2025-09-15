@@ -18,7 +18,7 @@ class CoursController extends Controller
     public function index()
     {
         $cours = Cours::all();
-        return view('cour.index')->with('cours', $cours);;
+        return view('academic.cours.index')->with('cours', $cours);;
     }
 
     /**
@@ -27,7 +27,7 @@ class CoursController extends Controller
     public function create()
     {
         $classes = Classe::all(); // Retrieve all classes from the Classe model
-        return view('cour.create', compact('classes'));
+        return view('academic.cours.create', compact('classes'));
     }
 
     /**
@@ -37,7 +37,7 @@ class CoursController extends Controller
     {
         $input = $request->all();
         Cours::create($input);
-        return redirect('cour')->with('flash_message', "le cour a été ajouté");
+        return redirect()->route('cours.index')->with('flash_message', "le cour a été ajouté");
     }
 
     /**
@@ -100,7 +100,7 @@ class CoursController extends Controller
         $fine12 = Cours::where('date_fin', '12:00:00')->first();
         $fine14 = Cours::where('date_fin', '14:00:00')->first();
         $fine10 = Cours::where('date_fin', '10:00:00')->first();
-        return view('/cour.spectacle')->with('cours', $cours)->with('classe', $classe)->with('joursSemaine', $joursSemaine)->
+        return view('academic.cours.spectacle')->with('cours', $cours)->with('classe', $classe)->with('joursSemaine', $joursSemaine)->
         with(['af1' => $af1])->with(['debut08' => $debut08])->
         with(['fine11' => $fine11])->with(['debut1115' => $debut1115])->
         with(['fine12' => $fine12])->with(['fine14' => $fine14])->with(['fine10' => $fine10])->
@@ -133,7 +133,7 @@ class CoursController extends Controller
             return redirect()->back()->with('flash_message', 'cour introuvable');
         }
 
-        return view('cour.edit', compact('Cours', 'classes'));
+        return view('academic.cours.edit', compact('Cours', 'classes'));
     }
 
     /**
@@ -144,7 +144,7 @@ class CoursController extends Controller
         $Cours = Cours::find($Cours);
         $input = $request->all();
         $Cours->update($input);
-        return redirect('/cour/spectacle')->with('flash_message', 'Les informations ont été mises à jour!');
+        return redirect()->route('cours.index')->with('flash_message', 'Les informations ont été mises à jour!');
     }
 
     /**
@@ -153,6 +153,6 @@ class CoursController extends Controller
     public function destroy(string $Cours)
     {
         Cours::find($Cours)->delete();
-        return redirect('/cour/spectacle')->with('flash_message', "le cour est supprimée");
+        return redirect()->route('cours.index')->with('flash_message', "le cour est supprimée");
     }
 }

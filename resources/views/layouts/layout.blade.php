@@ -248,7 +248,7 @@
         </div>
         <ul class="nav">
             <li>
-                <a href="{{ url('/home') }}" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Accueil">
+                <a href="{{ url('/tableau-bord') }}" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Accueil">
                     <i class="bi bi-house-door"></i>
                     <span class="link_name">Accueil</span>
                 </a>

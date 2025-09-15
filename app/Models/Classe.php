@@ -23,7 +23,7 @@ class Classe extends Model
     
     public function enseignants()
     {
-        return $this->hasMany(Enseignant::class, 'id_classe');
+        return $this->hasMany(User::class, 'id_classe')->where('role', 'enseignant');
     }
     
     public function cours()

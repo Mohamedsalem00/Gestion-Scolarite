@@ -18,7 +18,7 @@
                         <h4 class="mb-0">Recherche</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('search') }}" method="GET">
+                        <form action="{{ route('recherche') }}" method="GET">
                             <div class="input-group mb-3">
                                 <input type="text" name="query" class="form-control" placeholder="Rechercher..."
                                     value="{{ $query }}">

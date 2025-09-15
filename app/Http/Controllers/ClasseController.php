@@ -17,7 +17,7 @@ class ClasseController extends Controller
         $classes = Classe::withCount(['etudiants', 'enseignants', 'cours'])
                           ->orderBy('nom_classe')
                           ->get();
-        return view('classe.index', compact('classes'));
+        return view('academic.classes.index', compact('classes'));
     }
 
     /**
@@ -25,7 +25,7 @@ class ClasseController extends Controller
      */
     public function create()
     {
-        return view('classe.create');
+        return view('academic.classes.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class ClasseController extends Controller
             }
             
             $classe = Classe::create($data);
-            return redirect()->route('classe.index')
+            return redirect()->route('classes.index')
                 ->with('success', "La classe {$classe->nom_classe} a été créée avec succès.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -60,7 +60,7 @@ class ClasseController extends Controller
     public function show(Classe $classe)
     {
         $classe->load(['etudiants', 'enseignants', 'cours.enseignant', 'evaluations']);
-        return view('classe.show', compact('classe'));
+        return view('academic.classes.show', compact('classe'));
     }
 
     /**
@@ -68,7 +68,7 @@ class ClasseController extends Controller
      */
     public function edit(Classe $classe)
     {
-        return view('classe.edit', compact('classe'));
+        return view('academic.classes.edit', compact('classe'));
     }
 
     /**
@@ -88,7 +88,7 @@ class ClasseController extends Controller
             }
             
             $classe->update($data);
-            return redirect()->route('classe.index')
+            return redirect()->route('classes.index')
                 ->with('success', "La classe {$classe->nom_classe} a été mise à jour.");
         } catch (\Exception $e) {
             return redirect()->back()
@@ -105,14 +105,14 @@ class ClasseController extends Controller
         try {
             $nom = $classe->nom_classe;
             
-            // Check if class has students or teachers before deletion
+            // Check if class has students or enseignants before deletion
             if ($classe->etudiants()->exists() || $classe->enseignants()->exists()) {
                 return redirect()->back()
                     ->with('error', 'Impossible de supprimer cette classe car elle contient des étudiants ou des enseignants.');
             }
             
             $classe->delete();
-            return redirect()->route('classe.index')
+            return redirect()->route('classes.index')
                 ->with('success', "La classe {$nom} a été supprimée.");
         } catch (\Exception $e) {
             return redirect()->back()

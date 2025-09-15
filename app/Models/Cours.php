@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cours extends Model
 {
     protected $primaryKey = 'id_cours';
-    protected $fillable = ['jour','date_debut','date_fin','matiere','id_classe','id_enseignant','description'];
+    protected $fillable = ['jour','date_debut','date_fin','id_matiere','id_classe','id_enseignant','description'];
     
     // Cast time fields properly
     protected $casts = [
@@ -24,6 +24,11 @@ class Cours extends Model
     public function enseignant()
     {
         return $this->belongsTo(Enseignant::class,'id_enseignant');
+    }
+    
+    public function matiere()
+    {
+        return $this->belongsTo(Matiere::class,'id_matiere','id_matiere');
     }
     
     use HasFactory;

@@ -9,13 +9,13 @@ class EnseignPaiement extends Model
 {
     protected $table = 'enseignpaiements';
     protected $primaryKey ='id_paiements';
-    protected $fillable =['id_enseignant','typepaiement','montant','statut','date_paiement'];
+    protected $fillable =['user_id','typepaiement','montant','statut','date_paiement'];
     
     protected $dates = ['date_paiement'];
     
     public function enseignant()
     {
-        return $this->belongsTo(Enseignant::class, 'id_enseignant');
+        return $this->belongsTo(User::class, 'user_id');
     }
     
     use HasFactory;

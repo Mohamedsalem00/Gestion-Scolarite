@@ -25,6 +25,21 @@ class Enseignant extends Model
         return $this->hasMany(EnseignPaiement::class, 'id_enseignant');
     }
     
+    // New matiere relationships
+    public function matieres()
+    {
+        return $this->belongsToMany(Matiere::class, 'enseignant_matiere_classe', 'id_enseignant', 'id_matiere')
+                    ->withPivot('id_classe', 'active')
+                    ->withTimestamps();
+    }
+    
+    public function classes()
+    {
+        return $this->belongsToMany(Classe::class, 'enseignant_matiere_classe', 'id_enseignant', 'id_classe')
+                    ->withPivot('id_matiere', 'active')
+                    ->withTimestamps();
+    }
+    
     // Helper method to get full name
     public function getFullNameAttribute()
     {

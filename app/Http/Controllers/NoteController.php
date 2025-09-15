@@ -387,10 +387,35 @@ class NoteController extends Controller
      */
     public function update(Request $request, string $note)
     {
-        $note = Note::find($note);
-        $type=$note->type;
+        $noteRecord = Note::find($note);
+        
+        if (!$noteRecord) {
+            return redirect()->back()->with('error', 'Note non trouvée.');
+        }
+        
+        // Validate the request
+        $request->validate([
+            'note' => 'required|numeric|min:0',
+            'id_evaluation' => 'required|exists:evaluations,id_evaluation',
+            'id_etudiant' => 'required|exists:etudiants,id_etudiant'
+        ]);
+        
+        // Check if coming from grade entry page
+        if ($request->has('from_saisir_notes')) {
+            $noteRecord->update([
+                'note' => $request->note,
+                'id_evaluation' => $request->id_evaluation,
+                'id_etudiant' => $request->id_etudiant
+            ]);
+            
+            return redirect()->route('saisir-notes')->with('success', 'Note mise à jour avec succès!');
+        }
+        
+        // Legacy update logic for other pages
+        $type = $noteRecord->type;
         $input = $request->all();
-        $note->update($input);
+        $noteRecord->update($input);
+        
         if ($type == 'devoir1') {
             return redirect('/note/noteDevoir1')->with('flash_message', 'Les informations ont été mises à jour!');
         }elseif ($type == 'devoir2') {

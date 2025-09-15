@@ -14,7 +14,7 @@ class EnseignantController extends Controller
     public function index()
     {
         $enseignant=Enseignant::all();
-        return view('enseignant.index')->with('enseignant',$enseignant);
+        return view('academic.enseignants.index')->with('enseignant',$enseignant);
     }
 
     /**
@@ -23,7 +23,7 @@ class EnseignantController extends Controller
     public function create()
     {
         $classes = Classe::all(); // Retrieve all classes from the Classe model
-        return view('enseignant.create', compact('classes'));
+        return view('academic.enseignants.create', compact('classes'));
     }
 
     /**
@@ -33,7 +33,7 @@ class EnseignantController extends Controller
     {
         $input = $request->all();
         Enseignant::create($input);
-        return redirect('enseignant')->with('flash_message', "l'enseignant a été ajouté");
+        return redirect()->route('enseignants.index')->with('flash_message', "l'enseignant a été ajouté");
     }
 
     /**
@@ -42,7 +42,10 @@ class EnseignantController extends Controller
     public function show(string $enseignant)
     {
         $enseignant = Enseignant::find($enseignant);
-        return view('/enseignant.spectacle')->with('enseignants', $enseignant);
+        if (!$enseignant) {
+            return redirect()->route('enseignants.index')->with('flash_message', 'Enseignant introuvable');
+        }
+        return view('academic.enseignants.show')->with('enseignants', $enseignant);
     }
 
     /**
@@ -55,8 +58,8 @@ class EnseignantController extends Controller
         if (!$enseignant) {
             return redirect()->back()->with('flash_message', 'enseignant introuvable');
         }
-        
-        return view('enseignant.edit',compact('enseignant','classes'));
+
+        return view('academic.enseignants.edit',compact('enseignant','classes'));
     }
 
     /**
@@ -65,9 +68,12 @@ class EnseignantController extends Controller
     public function update(Request $request, string $enseignant)
     {
         $enseignant = Enseignant::find($enseignant);
+        if (!$enseignant) {
+            return redirect()->route('enseignants.index')->with('flash_message', 'Enseignant introuvable');
+        }
         $input = $request->all();
         $enseignant->update($input);
-        return redirect('enseignant')->with('flash_message', 'Les informations ont été mises à jour!');
+        return redirect()->route('enseignants.index')->with('flash_message', 'Les informations ont été mises à jour!');
     }
 
     /**
@@ -75,7 +81,11 @@ class EnseignantController extends Controller
      */
     public function destroy(string $enseignant)
     {
-        Enseignant::find($enseignant)->delete();
-        return back()->with('flash_message', "l'enseignant est supprimée");
+        $enseignant = Enseignant::find($enseignant);
+        if (!$enseignant) {
+            return back()->with('flash_message', 'Enseignant introuvable');
+        }
+        $enseignant->delete();
+        return back()->with('flash_message', "l'enseignant est supprimé");
     }
 }
