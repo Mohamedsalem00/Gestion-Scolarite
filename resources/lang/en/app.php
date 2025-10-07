@@ -84,6 +84,9 @@ return [
     'date_ajout' => 'Date Added',
     'date_creation' => 'Creation Date',
     'date_modification' => 'Modification Date',
+    'date' => 'Date',
+    'type' => 'Type',
+    'titre' => 'Title',
     
     // ===========================================
     // GESTION DES CLASSES
@@ -127,6 +130,7 @@ return [
     // ===========================================
     'devoir' => 'Homework',
     'examen' => 'Exam',
+    'controle' => 'Test',
     'test' => 'Test',
 
     // ===========================================
@@ -210,7 +214,18 @@ return [
 
 
 
-
+    // Subjects
+    // ===========================================
+    'MATH' => 'Mathematics',
+    'FR' => 'French',
+    'ANG' => 'English',
+    'HG' => 'History and Geography',
+    'SVT' => 'Life and Earth Sciences',
+    'PHY' => 'Physics',
+    'EPS' => 'Physical Education',
+    'EC' => 'Civics',
+    'ART' => 'Arts',
+    'INFO' => 'Information Technology',
 
 
 
@@ -269,6 +284,108 @@ return [
     'voir_mes_cours' => 'See My Courses',
     'voir_mes_etudiants' => 'See My Students',
     'saisir_des_notes' => 'Enter Grades',
+    'commentaire_placeholder' => 'Enter your comment here...',
+    'note_obtenue' => 'Obtained Grade',
+    'pourcentage' => 'Percentage',
+    'enregistrer_note' => 'Save Grade',
+    'reinitialiser' => 'Reset',
+    'notes_saisies' => 'Entered Grades',
+    'moyenne_classe' => 'Class Average',
+    'formulaire_saisie_notes' => 'Grade Entry Form',
+    'rechercher' => 'Search',
+    'notes_existantes' => 'Existing Grades',
+    'noter' => 'Grade',
+    'notes_recentes' => 'Recent Grades',
+    'fonctionnalite_bientot_disponible' => 'Feature coming soon',
+    'notes_precedentes_etudiant' => 'Previous grades for this student',
+    'modifier_note' => 'Edit Grade',
+    'choisir_classe' => 'Choose Class',
+    'note_introuvable' => 'Grade not found',
+    'evaluation_introuvable' => 'Evaluation not found',
+    'note_mise_a_jour_avec_succes' => 'Grade updated successfully',
+    'evaluations_terminees_seulement' => 'Only finished evaluations allow grade entry',
+    'aucune_evaluation_terminee' => 'No finished evaluations available for grade entry',
+    'evaluations_en_attente' => 'Evaluations pending completion',
+    
+    // Profile & Personal Information
+    'mon_profil' => 'My Profile',
+    'informations_personnelles' => 'Personal Information',
+    'changer_mot_de_passe' => 'Change Password',
+    'nouveau_mot_de_passe' => 'New Password',
+    'confirmer_mot_de_passe' => 'Confirm Password',
+    'mot_de_passe_min_8' => 'Password must be at least 8 characters',
+    'enregistrer_modifications' => 'Save Changes',
+    'retour' => 'Back',
+    'mes_statistiques' => 'My Statistics',
+    'mes_affectations' => 'My Assignments',
+    'informations_compte' => 'Account Information',
+    'notes_cette_semaine' => 'Notes This Week',
+    'aucune_affectation' => 'No assignments',
+    'depuis' => 'Since',
+    'membre_depuis' => 'Member Since',
+    'derniere_modification' => 'Last Modified',
+    'derniere_connexion' => 'Last Login',
+    'mots_de_passe_different' => 'Passwords do not match',
+    'matieres' => 'Subjects',
+    'statut' => 'Status',
+    'actif' => 'Active',
+    'evaluations_terminees_seulement' => 'Only completed evaluations allow grade entry',
+    'aucune_evaluation_terminee' => 'No completed evaluations available for grade entry',
+    'evaluations_en_attente' => 'Evaluations waiting to finish',
+    'informations_mises_a_jour' => 'Information updated successfully',
+    'tous_mes_etudiants' => 'All My Students',
+    'dans' => 'in',
+    'etudiant(s)' => 'student(s)',
+    'note_exists' => 'A grade already exists for this student in this evaluation. Please edit it instead of creating a new grade.',
+    'note_ajoutee' => "Student's grade has been added",
+    'evaluations_terminees_seulement' => 'Only completed evaluations allow grade entry',
+    'mon_profil' => 'My Profile',
+    'role' => 'Role',
+    'evaluations_recentes' => 'Recent Evaluations',
+    'tableau_bord_admin' => 'Administrator Dashboard',
+    'emploi_temps' => 'Timetable',
+    'classe_nom' => 'Class Name',
+    'enseignants_actifs' => 'Active Teachers',
+    'consulter_emploi_temps' => 'View Timetable',
+    'nouveau_cours' => 'New Course',
+    'programmer_nouveau_cours' => 'Schedule New Course',
+    'liste_cours' => 'Course List',
+    'voir_emploi_temps' => 'View Timetable',
+    'jour' => 'Day',
+    'ide' => 'ID',
+    'creer_nouvelle_classe' => 'Create New Class',
+    'classe_sans_etudiants' => 'This class does not have any students enrolled yet.',
+    'liste_classes' => 'Class List',
+    'niveau_maximum' => 'Maximum Level',
+    'niveau_minimum' => 'Minimum Level',
+    'confirmer_suppression_cours' => 'Are you sure you want to delete this course?',
+    'tous_les_jours' => 'All Days',
+    'courses' => 'Courses',
+    'horaire' => 'Schedule',
+    'toutes_les_classes' => 'All Classes',
+    'toutes_les_matieres' => 'All Subjects',
+    'tous_les_enseignants' => 'All Teachers',
+    'aucun_resultat' => 'No results found',
+    'essayez_autres_filtres' => 'Try adjusting your search filters',
+    'reinitialiser_filtres' => 'Reset Filters',
+    'aucun_cours_pour_cette_classe' => 'No courses scheduled for this class',
+    'aucune_evaluation_en_attente' => 'No evaluations pending',
+    'total_evaluations' => 'Total Evaluations',
+    'examens' => 'Exams',
+    'controles' => 'Tests',
+    'devoirs' => 'Homeworks',
+    'evaluations_en_attente' => 'Evaluations pending completion',
+    'tous_les_types' => 'All Types',
+    
+
+
+
+
+
+
+
+
+    
 
 ];
 

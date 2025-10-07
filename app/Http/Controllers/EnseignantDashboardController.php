@@ -24,11 +24,18 @@ class EnseignantDashboardController extends Controller
      */
     public function index()
     {
-        $teacher = Auth::user();
+        $user = Auth::user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
         
         // Get all classes this teacher teaches through the new matiere system
         $teacherClassIds = DB::table('enseignant_matiere_classe')
-                             ->where('id_enseignant', $teacher->id)
+                             ->where('id_enseignant', $teacher->id_enseignant)
                              ->where('enseignant_matiere_classe.active', true)
                              ->pluck('id_classe')
                              ->unique();
@@ -43,7 +50,7 @@ class EnseignantDashboardController extends Controller
             
             // Get teacher's subject assignments (courses)
             $courses = DB::table('enseignant_matiere_classe')
-                         ->where('id_enseignant', $teacher->id)
+                         ->where('id_enseignant', $teacher->id_enseignant)
                          ->where('enseignant_matiere_classe.active', true)
                          ->join('matieres', 'enseignant_matiere_classe.id_matiere', '=', 'matieres.id_matiere')
                          ->join('classes', 'enseignant_matiere_classe.id_classe', '=', 'classes.id_classe')
@@ -51,7 +58,9 @@ class EnseignantDashboardController extends Controller
                              'matieres.nom_matiere as matiere',
                              'matieres.code_matiere',
                              'classes.nom_classe',
-                             'classes.id_classe'
+                             'classes.id_classe',
+                             'enseignant_matiere_classe.id_matiere',
+                             'enseignant_matiere_classe.id_classe as class_id'
                          )
                          ->get();
         }
@@ -70,7 +79,7 @@ class EnseignantDashboardController extends Controller
         $recentEvaluations = collect();
         if ($teacherClassIds->isNotEmpty()) {
             $teacherMatiereIds = DB::table('enseignant_matiere_classe')
-                                   ->where('id_enseignant', $teacher->id)
+                                   ->where('id_enseignant', $teacher->id_enseignant)
                                    ->where('enseignant_matiere_classe.active', true)
                                    ->pluck('id_matiere');
             
@@ -78,7 +87,7 @@ class EnseignantDashboardController extends Controller
                                           ->when($teacherMatiereIds->isNotEmpty(), function($query) use ($teacherMatiereIds) {
                                               return $query->whereIn('id_matiere', $teacherMatiereIds);
                                           })
-                                          ->with('matiere_relation')
+                                          ->with(['matiere', 'classe'])
                                           ->orderBy('date', 'desc')
                                           ->limit(5)
                                           ->get();
@@ -90,7 +99,9 @@ class EnseignantDashboardController extends Controller
             'courses_count' => $courses->count(),
             'evaluations_count' => $recentEvaluations->count(),
             'classes_count' => $classes->count(),
-            'classe_names' => $classes->pluck('nom_classe')->implode(', ') ?: 'Aucune classe assignée'
+            'classe_names' => $classes->pluck('nom_classe')->implode(', ') ?: 'Aucune classe assignée',
+            'classe_name' => $classes->pluck('nom_classe')->implode(', ') ?: 'Aucune classe assignée', // For backward compatibility
+            'matieres' => $courses->pluck('matiere')->unique()->implode(', ') ?: $teacher->matiere
         ];
 
         return view('dashboards.enseignant', compact(
@@ -108,11 +119,18 @@ class EnseignantDashboardController extends Controller
      */
     public function mesEtudiants()
     {
-        $teacher = Auth::user();
+        $user = Auth::user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
         
         // Get all classes this teacher teaches through the new matiere system
         $teacherClassIds = DB::table('enseignant_matiere_classe')
-                             ->where('id_enseignant', $teacher->id)
+                             ->where('id_enseignant', $teacher->id_enseignant)
                              ->where('enseignant_matiere_classe.active', true)
                              ->pluck('id_classe')
                              ->unique();
@@ -142,11 +160,18 @@ class EnseignantDashboardController extends Controller
      */
     public function mesCours()
     {
-        $teacher = Auth::user();
+        $user = Auth::user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
         
         // Get teacher's subjects and classes from the new matiere system
         $teacherAssignments = DB::table('enseignant_matiere_classe')
-                               ->where('id_enseignant', $teacher->id)
+                               ->where('id_enseignant', $teacher->id_enseignant)
                                ->where('enseignant_matiere_classe.active', true)
                                ->join('matieres', 'enseignant_matiere_classe.id_matiere', '=', 'matieres.id_matiere')
                                ->join('classes', 'enseignant_matiere_classe.id_classe', '=', 'classes.id_classe')
@@ -228,11 +253,18 @@ class EnseignantDashboardController extends Controller
      */
     public function saisirNotes(Request $request)
     {
-        $teacher = Auth::user();
+        $user = Auth::user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
         
         // Get all classes this teacher teaches through the new matiere system
         $teacherClassIds = DB::table('enseignant_matiere_classe')
-                             ->where('id_enseignant', $teacher->id)
+                             ->where('id_enseignant', $teacher->id_enseignant)
                              ->where('enseignant_matiere_classe.active', true)
                              ->pluck('id_classe')
                              ->unique();
@@ -269,17 +301,39 @@ class EnseignantDashboardController extends Controller
             
             // Get subjects (matieres) this teacher teaches in this class
             $teacherMatiereIds = DB::table('enseignant_matiere_classe')
-                                   ->where('id_enseignant', $teacher->id)
+                                   ->where('id_enseignant', $teacher->id_enseignant)
                                    ->where('id_classe', $selectedClass->id_classe)
                                    ->where('enseignant_matiere_classe.active', true)
                                    ->pluck('id_matiere');
 
             // Get evaluations for this class and teacher's subjects
+            // Only include evaluations that have already ended (past date)
             $evaluations = Evaluation::where('id_classe', $selectedClass->id_classe)
                                    ->when($teacherMatiereIds->isNotEmpty(), function($query) use ($teacherMatiereIds) {
                                        return $query->whereIn('id_matiere', $teacherMatiereIds);
                                    })
-                                   ->with('matiere_relation') // Load the matiere relationship
+                                   ->where(function($query) {
+                                       // Include evaluations where the evaluation has ended
+                                       // Priority: date_fin > date > created_at (fallback)
+                                       $query->where(function($subQuery) {
+                                           // If date_fin exists and is in the past
+                                           $subQuery->whereNotNull('date_fin')
+                                                    ->where('date_fin', '<', now()->startOfDay());
+                                       })
+                                       ->orWhere(function($subQuery) {
+                                           // Or if no date_fin but date exists and is in the past
+                                           $subQuery->whereNull('date_fin')
+                                                    ->whereNotNull('date')
+                                                    ->where('date', '<', now()->startOfDay());
+                                       })
+                                       ->orWhere(function($subQuery) {
+                                           // Or if neither date_fin nor date, but evaluation is old (fallback)
+                                           $subQuery->whereNull('date_fin')
+                                                    ->whereNull('date')
+                                                    ->where('created_at', '<', now()->subDays(1));
+                                       });
+                                   })
+                                   ->with(['matiere', 'classe']) // Load the matiere relationship
                                    ->orderBy('date', 'desc')
                                    ->get();
 
@@ -290,7 +344,7 @@ class EnseignantDashboardController extends Controller
                                         $query->whereIn('id_matiere', $teacherMatiereIds);
                                     }
                                 })
-                                ->with(['etudiant', 'evaluation.matiere_relation'])
+                                ->with(['etudiant', 'evaluation.matiere'])
                                 ->get()
                                 ->groupBy('id_etudiant');
         } else {
@@ -299,5 +353,112 @@ class EnseignantDashboardController extends Controller
         }
 
         return view('enseignants.saisir-notes', compact('students', 'evaluations', 'teacher', 'teacherClasses', 'selectedClass', 'existingNotes'));
+    }
+
+    /**
+     * Show teacher profile
+     */
+    public function profil()
+    {
+        $user = auth()->user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
+
+        // Get teacher's classes and subjects information
+        $teacherAssignments = \Illuminate\Support\Facades\DB::table('enseignant_matiere_classe')
+                               ->where('id_enseignant', $teacher->id_enseignant)
+                               ->where('enseignant_matiere_classe.active', true)
+                               ->join('matieres', 'enseignant_matiere_classe.id_matiere', '=', 'matieres.id_matiere')
+                               ->join('classes', 'enseignant_matiere_classe.id_classe', '=', 'classes.id_classe')
+                               ->select(
+                                   'matieres.nom_matiere',
+                                   'matieres.code_matiere',
+                                   'classes.nom_classe',
+                                   'classes.id_classe',
+                                   'enseignant_matiere_classe.created_at as date_assignation'
+                               )
+                               ->get();
+
+        // Get statistics
+        $teacherClassIds = \Illuminate\Support\Facades\DB::table('enseignant_matiere_classe')
+                             ->where('id_enseignant', $teacher->id_enseignant)
+                             ->where('enseignant_matiere_classe.active', true)
+                             ->pluck('id_classe')
+                             ->unique();
+
+        $stats = [
+            'total_students' => \App\Models\Etudiant::whereIn('id_classe', $teacherClassIds)->count(),
+            'total_classes' => $teacherClassIds->count(),
+            'total_matieres' => $teacherAssignments->pluck('code_matiere')->unique()->count(),
+            'total_evaluations' => \App\Models\Evaluation::whereIn('id_classe', $teacherClassIds)->count(),
+            'recent_notes' => \App\Models\Note::whereHas('etudiant', function($q) use ($teacherClassIds) {
+                $q->whereIn('id_classe', $teacherClassIds);
+            })->where('created_at', '>', now()->subDays(7))->count()
+        ];
+
+        return view('enseignants.profil', compact('teacher', 'user', 'teacherAssignments', 'stats'));
+    }
+
+    /**
+     * Update teacher profile
+     */
+    public function updateProfil(\Illuminate\Http\Request $request)
+    {
+        $user = auth()->user();
+        
+        // Get the teacher's enseignant record
+        $teacher = \App\Models\Enseignant::where('email', $user->email)->first();
+        
+        if (!$teacher) {
+            return redirect()->back()->with('error', 'Profil enseignant non trouvé');
+        }
+
+        // Validate the request
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'email' => 'required|email|unique:enseignants,email,' . $teacher->id_enseignant . ',id_enseignant',
+            'password' => 'nullable|min:8|confirmed',
+        ], [
+            'nom.required' => 'Le nom est obligatoire',
+            'prenom.required' => 'Le prénom est obligatoire',
+            'telephone.required' => 'Le téléphone est obligatoire',
+            'email.required' => 'L\'email est obligatoire',
+            'email.email' => 'Format d\'email invalide',
+            'email.unique' => 'Cet email est déjà utilisé',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
+            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas',
+        ]);
+
+        // Update teacher record
+        $teacher->update([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'telephone' => $request->telephone,
+            'email' => $request->email,
+        ]);
+
+        // Update user record if email changed
+        if ($user->email !== $request->email) {
+            $user->update([
+                'email' => $request->email,
+                'name' => $request->prenom . ' ' . $request->nom,
+            ]);
+        }
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->update([
+                'password' => bcrypt($request->password),
+            ]);
+        }
+
+        return redirect()->route('enseignant.profil')->with('success', 'Profil mis à jour avec succès');
     }
 }

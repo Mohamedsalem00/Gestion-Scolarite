@@ -15,9 +15,9 @@ class EvaluationController extends Controller
      */
     public function index()
     {
-        $evaluations = Evaluation::with('classe')
-                                ->latest()
-                                ->paginate(15);
+        $evaluations = Evaluation::with(['classe', 'matiere'])
+                                ->orderBy('date', 'desc')
+                                ->get();
         return view('academic.evaluations.index', compact('evaluations'));
     }
 
@@ -41,7 +41,7 @@ class EvaluationController extends Controller
             $redirectRoute = $this->getRedirectRoute($evaluation->type);
             
             return redirect()->route($redirectRoute)
-                ->with('success', "L'évaluation de {$evaluation->matiere} a été créée avec succès.");
+                ->with('success', "L'évaluation de {$evaluation->matiere_name} a été créée avec succès.");
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -64,7 +64,8 @@ class EvaluationController extends Controller
     public function edit(Evaluation $evaluation)
     {
         $classes = Classe::orderBy('nom_classe')->get();
-        return view('academic.evaluations.edit', compact('evaluation', 'classes'));
+        $matieres = \App\Models\Matiere::where('active', true)->orderBy('nom_matiere')->get();
+        return view('academic.evaluations.edit', compact('evaluation', 'classes', 'matieres'));
     }
 
     /**
@@ -89,7 +90,7 @@ class EvaluationController extends Controller
     public function destroy(Evaluation $evaluation)
     {
         try {
-            $matiere = $evaluation->matiere;
+            $matiere = $evaluation->matiere_name;
             $evaluation->delete();
             return redirect()->route('academic.evaluations.index')
                 ->with('success', "L'évaluation de {$matiere} a été supprimée.");

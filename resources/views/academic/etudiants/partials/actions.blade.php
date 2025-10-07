@@ -7,16 +7,16 @@
     </a>
     
     <!-- Edit Button -->
-    @can('update', $item)
+    @admin
         <a href="{{ route('etudiants.edit', $item->id_etudiant) }}" 
            class="btn btn-sm btn-outline-primary" 
            title="{{ __('app.edit') }}">
-            <i class="fas fa-edit"></i>
+            {{ __('app.modifier') }}
         </a>
-    @endcan
+    @endadmin
     
     <!-- Delete Button -->
-    @can('delete', $item)
+    @admin
         <form action="{{ route('etudiants.destroy', $item->id_etudiant) }}" 
               method="POST" 
               class="d-inline">
@@ -25,9 +25,9 @@
             <button type="button" 
                     class="btn btn-sm btn-outline-danger delete-student" 
                     title="{{ __('app.delete') }}"
-                    data-student-name="{{ $item->nom_etudiant }} {{ $item->prenom_etudiant }}">
-                <i class="fas fa-trash"></i>
+                    data-student-name="{{ $item->prenom }} {{ $item->nom }}">
+                {{ __('app.supprimer') }}
             </button>
         </form>
-    @endcan
+    @endadmin
 </div>

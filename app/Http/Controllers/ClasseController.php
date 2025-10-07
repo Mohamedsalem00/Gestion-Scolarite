@@ -6,6 +6,7 @@ use App\Models\Classe;
 use App\Http\Requests\StoreClasseRequest;
 use App\Http\Requests\UpdateClasseRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClasseController extends Controller
 {
@@ -14,7 +15,12 @@ class ClasseController extends Controller
      */
     public function index()
     {
-        $classes = Classe::withCount(['etudiants', 'enseignants', 'cours'])
+        $classes = Classe::withCount(['etudiants', 'cours'])
+                          ->addSelect([
+                              'enseignants_count' => \DB::table('enseignant_matiere_classe')
+                                  ->selectRaw('COUNT(DISTINCT id_enseignant)')
+                                  ->whereColumn('id_classe', 'classes.id_classe')
+                          ])
                           ->orderBy('nom_classe')
                           ->get();
         return view('academic.classes.index', compact('classes'));

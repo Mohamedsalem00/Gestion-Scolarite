@@ -2,200 +2,158 @@
 
 @section('title', __('app.modifier_note'))
 
-@section('breadcrumbs')
-<x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item href="{{ route('notes.index') }}">{{ __('Notes') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Modifier') }}</x-breadcrumb-item>
-</x-breadcrumb>
+@section('breadcrumb')
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('notes.index') }}">{{ __('app.notes') }}</a></li>
+    <li class="breadcrumb-item active">{{ __('app.modifier') }}</li>
 @endsection
 
 @section('content')
-<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Informations sur la note -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">
-                        <i class="bi bi-info-circle me-2"></i>
-                        {{ __('Informations sur la note') }}
-                    </h6>
-                </div>
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Étudiant :</strong> 
-                                @if($note->etudiant)
-                                    {{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}
-                                @else
-                                    <span class="text-muted">Étudiant supprimé</span>
-                                @endif
-                            </p>
-                            <p><strong>Classe :</strong> 
-                                @if($note->classe)
-                                    {{ $note->classe->nom_classe }}
-                                @elseif($note->etudiant && $note->etudiant->classe)
-                                    {{ $note->etudiant->classe->nom_classe }}
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </p>
+                    <h5 class="mb-4">{{ __('app.modifier_note') }}</h5>
+                    
+                    <!-- Student Info -->
+                    <div class="alert alert-info mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>{{ __('app.etudiant') }}:</strong> {{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('app.classe') }}:</strong> {{ $note->classe->nom_classe }}
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>Évaluation :</strong> 
-                                @if($note->evaluation)
-                                    {{ $note->evaluation->matiere }} - {{ ucfirst($note->evaluation->type) }}
-                                @else
-                                    <span class="text-muted">Évaluation supprimée</span>
-                                @endif
-                            </p>
-                            <p><strong>Date :</strong> 
-                                @if($note->evaluation)
-                                    {{ \Carbon\Carbon::parse($note->evaluation->date)->format('d/m/Y') }}
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </p>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <strong>{{ __('app.evaluation') }}:</strong> {{ $note->evaluation->titre ?? ucfirst($note->evaluation->type) }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('app.note_max') }}:</strong> {{ $note->evaluation->note_max }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Formulaire de modification -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-pencil-square me-2"></i>
-                        {{ __('Modifier la note') }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('notes.update', $note->id_note) }}" class="row g-3">
+                    
+                    <form action="{{ route('notes.update', $note) }}" method="POST" id="noteForm">
                         @csrf
-                        @method('PATCH')
-
-                        <div class="col-md-6">
-                            <x-form.select 
-                                name="id_etudiant" 
-                                label="Étudiant" 
-                                :value="old('id_etudiant', $note->id_etudiant)" 
-                                required>
-                                @foreach ($etudiants as $etudiant)
-                                    <option value="{{ $etudiant->id_etudiant }}" {{ $note->id_etudiant == $etudiant->id_etudiant ? 'selected' : '' }}>
-                                        {{ $etudiant->prenom }} {{ $etudiant->nom }} 
-                                        @if($etudiant->classe)
-                                            ({{ $etudiant->classe->nom_classe }})
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </x-form.select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.select 
-                                name="id_evaluation" 
-                                label="Évaluation" 
-                                :value="old('id_evaluation', $note->id_evaluation)" 
-                                required>
-                                @foreach ($evaluations as $evaluation)
-                                    <option value="{{ $evaluation->id_evaluation }}" {{ $note->id_evaluation == $evaluation->id_evaluation ? 'selected' : '' }}>
-                                        {{ $evaluation->matiere }} - {{ ucfirst($evaluation->type) }} 
-                                        ({{ \Carbon\Carbon::parse($evaluation->date)->format('d/m/Y') }})
-                                        @if($evaluation->classe)
-                                            - {{ $evaluation->classe->nom_classe }}
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </x-form.select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="note" 
-                                label="Note (sur 20)" 
-                                type="number" 
-                                step="0.25"
-                                min="0"
-                                max="20"
-                                :value="old('note', $note->note)" 
-                                required 
-                                placeholder="Ex: 15.5" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="coefficient" 
-                                label="Coefficient" 
-                                type="number" 
-                                step="0.5"
-                                min="0.5"
-                                max="5"
-                                :value="old('coefficient', $note->coefficient ?? 1)" 
-                                placeholder="Ex: 1" />
-                        </div>
-
-                        <div class="col-12">
-                            <x-form.textarea 
-                                name="observation" 
-                                label="Observation (optionnel)" 
-                                :value="old('observation', $note->observation ?? '')" 
-                                rows="3"
-                                placeholder="Commentaire sur la performance de l'étudiant..." />
-                        </div>
-
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    <i class="bi bi-trash me-1"></i>
-                                    {{ __('Supprimer') }}
-                                </button>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('notes.index') }}" class="btn btn-secondary">
-                                        <i class="bi bi-arrow-left me-1"></i>
-                                        {{ __('Retour') }}
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-lg me-1"></i>
-                                        {{ __('Mettre à jour') }}
-                                    </button>
-                                </div>
+                        @method('PUT')
+                        
+                        <!-- Note Field -->
+                        <div class="mb-3">
+                            <label for="note" class="form-label">
+                                {{ __('app.note') }} <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       class="form-control @error('note') is-invalid @enderror" 
+                                       id="note" 
+                                       name="note" 
+                                       value="{{ old('note', $note->note) }}" 
+                                       min="0" 
+                                       max="{{ $note->evaluation->note_max }}"
+                                       step="0.25"
+                                       required>
+                                <span class="input-group-text">/ {{ $note->evaluation->note_max }}</span>
+                                @error('note')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+                            
+                            <!-- Live Preview -->
+                            <div class="mt-2 p-2 bg-light rounded small" id="notePreview">
+                                <span id="percentageDisplay">-</span> - 
+                                <span id="appreciationBadge">-</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Note Buttons -->
+                        <div class="mb-4">
+                            <label class="form-label small text-muted">Saisie Rapide</label>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary quick-note" data-value="0">0</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary quick-note" data-value="{{ $note->evaluation->note_max * 0.5 }}">{{ $note->evaluation->note_max * 0.5 }}</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary quick-note" data-value="{{ $note->evaluation->note_max }}">{{ $note->evaluation->note_max }}</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Comment Field -->
+                        <div class="mb-4">
+                            <label for="commentaire" class="form-label">{{ __('app.commentaire') }}</label>
+                            <textarea class="form-control @error('commentaire') is-invalid @enderror" 
+                                      id="commentaire" 
+                                      name="commentaire" 
+                                      rows="3"
+                                      placeholder="Commentaire...">{{ old('commentaire', $note->commentaire) }}</textarea>
+                            @error('commentaire')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                                {{ __('app.annuler') }}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {{ __('app.enregistrer') }}
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Modal de confirmation de suppression -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ __('Confirmer la suppression') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>{{ __('Êtes-vous sûr de vouloir supprimer cette note ?') }}</p>
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    {{ __('Cette action est irréversible et affectera les statistiques de l\'étudiant.') }}
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
-                <form method="POST" action="{{ route('notes.destroy', $note->id_note) }}" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i>
-                        {{ __('Supprimer définitivement') }}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const noteInput = document.getElementById('note');
+    const noteMax = {{ $note->evaluation->note_max }};
+    
+    // Update preview when note changes
+    function updatePreview() {
+        const noteValue = parseFloat(noteInput.value) || 0;
+        const percentage = (noteValue / noteMax) * 100;
+        
+        // Update percentage
+        document.getElementById('percentageDisplay').textContent = Math.round(percentage) + '%';
+        
+        // Update appreciation
+        let appreciation;
+        if (percentage >= 80) appreciation = 'Excellent';
+        else if (percentage >= 60) appreciation = 'Bien';
+        else if (percentage >= 50) appreciation = 'Passable';
+        else appreciation = 'Insuffisant';
+        
+        document.getElementById('appreciationBadge').textContent = appreciation;
+    }
+    
+    // Event listeners
+    noteInput.addEventListener('input', updatePreview);
+    
+    // Quick note buttons
+    document.querySelectorAll('.quick-note').forEach(button => {
+        button.addEventListener('click', function() {
+            noteInput.value = this.dataset.value;
+            updatePreview();
+        });
+    });
+    
+    // Initial preview
+    updatePreview();
+    
+    // Form validation
+    document.getElementById('noteForm').addEventListener('submit', function(e) {
+        const noteValue = parseFloat(noteInput.value);
+        
+        if (noteValue < 0 || noteValue > noteMax) {
+            e.preventDefault();
+            alert(`La note doit être entre 0 et ${noteMax}`);
+            noteInput.focus();
+        }
+    });
+});
+</script>
+@endpush

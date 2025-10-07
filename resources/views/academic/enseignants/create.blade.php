@@ -2,12 +2,16 @@
 
 @section('title', __('app.ajouter_enseignant'))
 
-@section('breadcrumbs')
-<x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item href="{{ route('enseignants.index') }}">{{ __('Enseignants') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Ajouter') }}</x-breadcrumb-item>
-</x-breadcrumb>
+@section('breadcrumb')
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('enseignants.index') }}">{{ __('app.enseignants') }}</a></li>
+    <li class="breadcrumb-item active">{{ __('app.ajouter_enseignant') }}</li>
+@endsection
+
+@section('header-actions')
+    <a href="{{ route('enseignants.index') }}" class="btn btn-secondary">
+        {{ __('app.retour') }}
+    </a>
 @endsection
 
 @section('content')
@@ -17,98 +21,112 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-person-plus me-2"></i>
-                        {{ __('Ajouter un nouvel enseignant') }}
+                        {{ __('app.ajouter_enseignant') }}
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('enseignants.store') }}" class="row g-3">
+                    <form method="POST" action="{{ route('enseignants.store') }}">
                         @csrf
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="nom" 
-                                label="Nom" 
-                                :value="old('nom')" 
-                                required 
-                                placeholder="Nom de famille" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="prenom" 
-                                label="Prénom" 
-                                :value="old('prenom')" 
-                                required 
-                                placeholder="Prénom" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="email" 
-                                label="Email" 
-                                type="email" 
-                                :value="old('email')" 
-                                required 
-                                placeholder="exemple@ecole.com" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.input 
-                                name="telephone" 
-                                label="Téléphone" 
-                                type="tel" 
-                                :value="old('telephone')" 
-                                required 
-                                placeholder="+222 XX XX XX XX" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.select 
-                                name="id_classe" 
-                                label="Classe assignée" 
-                                :value="old('id_classe')" 
-                                required>
-                                <option value="">{{ __('Sélectionner une classe') }}</option>
-                                @foreach ($classes as $classe)
-                                    <option value="{{ $classe->id_classe }}">
-                                        {{ $classe->nom_classe }} (Niveau {{ $classe->niveau }})
-                                    </option>
-                                @endforeach
-                            </x-form.select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <x-form.select 
-                                name="matiere" 
-                                label="Matière enseignée" 
-                                :value="old('matiere')" 
-                                required>
-                                <option value="">{{ __('Sélectionner une matière') }}</option>
-                                <option value="Mathématiques">Mathématiques</option>
-                                <option value="Français">Français</option>
-                                <option value="Anglais">Anglais</option>
-                                <option value="Sciences Physiques">Sciences Physiques</option>
-                                <option value="Biologie">Biologie</option>
-                                <option value="Histoire-Géographie">Histoire-Géographie</option>
-                                <option value="Arabe">اللغة العربية</option>
-                                <option value="Education Islamique">التربية الإسلامية</option>
-                                <option value="Education Civique">التربية المدنية</option>
-                                <option value="Sport">التربية البدنية</option>
-                            </x-form.select>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{{ route('enseignants.index') }}" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left me-1"></i>
-                                    {{ __('Retour') }}
-                                </a>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-lg me-1"></i>
-                                    {{ __('Enregistrer') }}
-                                </button>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nom" class="form-label">{{ __('app.nom') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('nom') is-invalid @enderror" 
+                                           id="nom" name="nom" value="{{ old('nom') }}" required 
+                                           placeholder="{{ __('app.nom_famille') }}">
+                                    @error('nom')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="prenom" class="form-label">{{ __('app.prenom') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('prenom') is-invalid @enderror" 
+                                           id="prenom" name="prenom" value="{{ old('prenom') }}" required 
+                                           placeholder="{{ __('app.prenom') }}">
+                                    @error('prenom')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">{{ __('app.email') }} <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                           id="email" name="email" value="{{ old('email') }}" required 
+                                           placeholder="exemple@ecole.com">
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="telephone" class="form-label">{{ __('app.telephone') }} <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control @error('telephone') is-invalid @enderror" 
+                                           id="telephone" name="telephone" value="{{ old('telephone') }}" required 
+                                           placeholder="+222 XX XX XX XX">
+                                    @error('telephone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_classe" class="form-label">{{ __('app.classe_assignee') }} <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('id_classe') is-invalid @enderror" 
+                                            id="id_classe" name="id_classe" required>
+                                        <option value="">{{ __('app.selectionner_classe') }}</option>
+                                        @foreach ($classes as $classe)
+                                            <option value="{{ $classe->id_classe }}" {{ old('id_classe') == $classe->id_classe ? 'selected' : '' }}>
+                                                {{ $classe->nom_classe }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('id_classe')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="matiere" class="form-label">{{ __('app.matiere_enseignee') }} <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('matiere') is-invalid @enderror" 
+                                            id="matiere" name="matiere" required>
+                                        <option value="">{{ __('app.selectionner_matiere') }}</option>
+                                        <option value="Mathématiques" {{ old('matiere') == 'Mathématiques' ? 'selected' : '' }}>Mathématiques</option>
+                                        <option value="Français" {{ old('matiere') == 'Français' ? 'selected' : '' }}>Français</option>
+                                        <option value="Anglais" {{ old('matiere') == 'Anglais' ? 'selected' : '' }}>Anglais</option>
+                                        <option value="Sciences Physiques" {{ old('matiere') == 'Sciences Physiques' ? 'selected' : '' }}>Sciences Physiques</option>
+                                        <option value="Biologie" {{ old('matiere') == 'Biologie' ? 'selected' : '' }}>Biologie</option>
+                                        <option value="Histoire-Géographie" {{ old('matiere') == 'Histoire-Géographie' ? 'selected' : '' }}>Histoire-Géographie</option>
+                                        <option value="اللغة العربية" {{ old('matiere') == 'اللغة العربية' ? 'selected' : '' }}>اللغة العربية</option>
+                                        <option value="التربية الإسلامية" {{ old('matiere') == 'التربية الإسلامية' ? 'selected' : '' }}>التربية الإسلامية</option>
+                                        <option value="التربية المدنية" {{ old('matiere') == 'التربية المدنية' ? 'selected' : '' }}>التربية المدنية</option>
+                                        <option value="التربية البدنية" {{ old('matiere') == 'التربية البدنية' ? 'selected' : '' }}>التربية البدنية</option>
+                                    </select>
+                                    @error('matiere')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ route('enseignants.index') }}" class="btn btn-secondary">
+                                {{ __('app.annuler') }}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {{ __('app.enregistrer') }}
+                            </button>
                         </div>
                     </form>
                 </div>

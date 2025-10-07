@@ -10,6 +10,14 @@ class Note extends Model
     protected $primaryKey = 'id_note';
     protected $fillable = ['note','type','id_matiere','id_etudiant','id_evaluation','id_classe','commentaire'];
     
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'id_note';
+    }
+    
     public function etudiant()
     {
         return $this->belongsTo(Etudiant::class, 'id_etudiant');

@@ -23,7 +23,9 @@ class Classe extends Model
     
     public function enseignants()
     {
-        return $this->hasMany(User::class, 'id_classe')->where('role', 'enseignant');
+        return $this->belongsToMany(Enseignant::class, 'enseignant_matiere_classe', 'id_classe', 'id_enseignant')
+                    ->withPivot('id_matiere', 'active')
+                    ->withTimestamps();
     }
     
     public function cours()

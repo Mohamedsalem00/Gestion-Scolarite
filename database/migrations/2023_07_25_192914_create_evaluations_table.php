@@ -13,16 +13,23 @@ return new class extends Migration
     {
         Schema::create('evaluations', function (Blueprint $table) {
             $table->id('id_evaluation');
-            $table->string('matiere');
-            $table->date('date')->nullable();
-            $table->date('date_debut');
-            $table->date('date_fin');
-            $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe
+            $table->unsignedBigInteger('id_matiere');
+            $table->string('titre')->nullable();
+            $table->date('date');
+            $table->time('date_debut')->nullable();
+            $table->time('date_fin')->nullable();
+            $table->unsignedBigInteger('id_classe');
             $table->enum('type', ['devoir', 'examen', 'controle']);
+            $table->decimal('note_max', 5, 2)->default(20.00);
             $table->timestamps();
     
-            $table->foreign('id_classe')->references('id_classe')->on('classes');
+            $table->foreign('id_classe')->references('id_classe')->on('classes')->onDelete('cascade');
+            $table->foreign('id_matiere')->references('id_matiere')->on('matieres')->onDelete('cascade');
+            
             $table->index('id_classe');
+            $table->index('id_matiere');
+            $table->index('date');
+            $table->index('type');
         });
     }
 

@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
 
-@section('title', __('app.create') . ' ' . __('app.class'))
+@section('title', __('app.creer_classe'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item">{{ __('app.academic_management') }}</li>
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
     <li class="breadcrumb-item"><a href="{{ route('classes.index') }}">{{ __('app.classes') }}</a></li>
-    <li class="breadcrumb-item active">{{ __('app.create') }}</li>
+    <li class="breadcrumb-item active">{{ __('app.creer') }}</li>
 @endsection
 
 @section('content')
@@ -14,8 +14,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-plus-circle me-2"></i>
-                        Créer une Nouvelle Classe
+                        {{ __('app.creer_nouvelle_classe') }}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -26,25 +25,25 @@
                             <div class="col-md-6">
                                 <x-form.input
                                     name="nom_classe"
-                                    label="Nom de la Classe"
-                                    placeholder="Ex: 6ème A, CM2 B..."
+                                    label="{{ __('app.nom_classe') }}"
+                                    placeholder="{{ __('app.exemple_classe') }}"
                                     :value="old('nom_classe')"
                                     required="true"
-                                    help="Nom de la classe (ex: 6ème A, CM2 B)"
+                                    help="{{ __('app.aide_nom_classe') }}"
                                 />
                             </div>
                             
                             <div class="col-md-6">
                                 <x-form.input
                                     name="niveau"
-                                    label="Niveau"
+                                    label="{{ __('app.niveau') }}"
                                     type="number"
                                     placeholder="1, 2, 3..."
                                     :value="old('niveau')"
                                     required="true"
                                     min="1"
                                     max="12"
-                                    help="Niveau de la classe (1-12)"
+                                    help="{{ __('app.aide_niveau_classe') }}"
                                 />
                             </div>
                         </div>
@@ -53,13 +52,11 @@
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
                                     <a href="{{ route('classes.index') }}" class="btn btn-secondary">
-                                        <i class="fas fa-arrow-left me-2"></i>
-                                        {{ __('app.cancel') }}
+                                        {{ __('app.annuler') }}
                                     </a>
                                     
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-2"></i>
-                                        {{ __('app.create') }}
+                                        {{ __('app.creer_classe') }}
                                     </button>
                                 </div>
                             </div>

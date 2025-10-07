@@ -56,7 +56,7 @@ class Sidebar extends Component
                             'active' => request()->routeIs('classes.*')
                         ],
                         [
-                            'title' => __('app.students'),
+                            'title' => __('app.etudiants'),
                             'route' => 'etudiants.index',
                             'active' => request()->routeIs('etudiants.*')
                         ],
@@ -103,14 +103,9 @@ class Sidebar extends Component
                     'icon' => 'fas fa-chart-bar',
                     'children' => [
                         [
-                            'title' => __('app.notes_par_matiere'),
-                            'route' => 'rapports.notes.devoirs',
-                            'params' => ['level' => 1]
-                        ],
-                        [
-                            'title' => __('app.releves_de_notes'),
-                            'route' => 'rapports.releves',
-                            'params' => ['etudiant' => 1, 'trimestre' => 1]
+                            'title' => 'Relevé de Notes',
+                            'route' => 'rapports.notes.transcript-index',
+                            'active' => request()->routeIs('rapports.notes.transcript*')
                         ]
                     ]
                 ]
@@ -146,6 +141,12 @@ class Sidebar extends Component
                             'active' => request()->routeIs('enseignant.saisir-notes')
                         ]
                     ]
+                ],
+                [
+                    'title' => __('app.mon_profil'),
+                    'icon' => 'fas fa-user-circle',
+                    'route' => 'enseignant.profil',
+                    'active' => request()->routeIs('enseignant.profil')
                 ]
             ];
         }

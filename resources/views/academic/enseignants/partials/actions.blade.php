@@ -1,22 +1,20 @@
 {{-- enseignants Actions Partial --}}
 <div class="btn-group" role="group">
-    @can('view', $teacher)
     <a href="{{ route('enseignants.show', $teacher->id_enseignant) }}" 
        class="btn btn-outline-secondary btn-sm" 
        title="{{ __('app.voir_details') }}">
-        <i class="bi bi-eye"></i>
+        {{ __('app.voir') }}
     </a>
-    @endcan
     
-    @can('update', $teacher)
+    @admin
     <a href="{{ route('enseignants.edit', $teacher->id_enseignant) }}" 
        class="btn btn-outline-primary btn-sm" 
        title="{{ __('app.modifier') }}">
-        <i class="bi bi-pencil"></i>
+        {{ __('app.modifier') }}
     </a>
-    @endcan
+    @endadmin
     
-    @can('delete', $teacher)
+    @admin
     <form action="{{ route('enseignants.destroy', $teacher->id_enseignant) }}" 
           method="POST" 
           class="d-inline"
@@ -26,8 +24,8 @@
         <button type="submit" 
                 class="btn btn-outline-danger btn-sm" 
                 title="{{ __('app.supprimer') }}">
-            <i class="bi bi-trash"></i>
+            {{ __('app.supprimer') }}
         </button>
     </form>
-    @endcan
+    @endadmin
 </div>

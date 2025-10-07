@@ -1,180 +1,260 @@
 @extends('layouts.dashboard')
 
-@section('title', __('app.notes_resultats'))
+@section('title', __('app.notes'))
 
-@section('breadcrumbs')
-<x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Notes') }}</x-breadcrumb-item>
-</x-breadcrumb>
+@section('breadcrumb')
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
+    <li class="breadcrumb-item active">{{ __('app.notes') }}</li>
+@endsection
+
+@section('header-actions')
+    <div class="d-flex gap-2">
+        <a href="{{ route('notes.transcript-index') }}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-text me-1"></i> {{ __('Relevés de notes') }}
+        </a>
+        <a href="{{ route('evaluations.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-clipboard-list me-1"></i> {{ __('app.voir_evaluations') }}
+        </a>
+    </div>
 @endsection
 
 @section('content')
-<div class="container-fluid">
     <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <x-cards.info-card
-                title="Total Notes"
-                :value="$notes->count()"
-                icon="bi bi-journal-text"
-                color="primary" />
-        </div>
-        <div class="col-md-3">
-            <x-cards.info-card
-                title="Moyenne Générale"
-                :value="number_format($notes->avg('note'), 2)"
-                icon="bi bi-bar-chart"
-                color="success" />
-        </div>
-        <div class="col-md-3">
-            <x-cards.info-card
-                title="Notes > 10"
-                :value="$notes->where('note', '>', 10)->count()"
-                icon="bi bi-check-circle"
-                color="info" />
-        </div>
-        <div class="col-md-3">
-            <x-cards.info-card
-                title="Notes ≤ 10"
-                :value="$notes->where('note', '<=', 10)->count()"
-                icon="bi bi-x-circle"
-                color="warning" />
-        </div>
-    </div>
-
-    <!-- Filters and Actions -->
-    <div class="card mb-4">
+    @php
+        $totalNotes = $notes->total();
+        $excellentCount = 0;
+        $goodCount = 0;
+        $averageCount = 0;
+        $poorCount = 0;
+        $averageGrade = 0;
+        
+        foreach($notes as $note) {
+            $noteMax = $note->evaluation->note_max ?? 20;
+            $percentage = ($note->note / $noteMax) * 100;
+            $averageGrade += $percentage;
+            
+            if ($percentage >= 80) $excellentCount++;
+            elseif ($percentage >= 60) $goodCount++;
+            elseif ($percentage >= 50) $averageCount++;
+            else $poorCount++;
+        }
+        
+        $averageGrade = $totalNotes > 0 ? round($averageGrade / $totalNotes, 1) : 0;
+    @endphp
+    
+    <!-- Quick Stats -->
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-journal-text me-2"></i>
-                        {{ __('Gestion des Notes') }}
-                    </h5>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h3 class="mb-0">{{ $totalNotes }}</h3>
+                    <small class="text-muted">Total Notes</small>
                 </div>
-                <div class="col-md-6 text-end">
-                    <div class="btn-group" role="group">
-                        <input type="text" id="searchInput" class="form-control me-2" placeholder="Rechercher étudiant..." style="max-width: 200px;">
-                        <select id="evaluationFilter" class="form-select me-2" style="max-width: 150px;">
-                            <option value="">Toutes les évaluations</option>
-                            @foreach ($evaluations as $eval)
-                                <option value="{{ $eval->id_evaluation }}">{{ $eval->matiere }} - {{ ucfirst($eval->type) }}</option>
-                            @endforeach
-                        </select>
-                        <a href="{{ route('notes.create') }}" class="btn btn-success">
-                            <i class="bi bi-plus-lg me-1"></i>
-                            {{ __('Nouvelle Note') }}
-                        </a>
-                    </div>
+                <div class="col-md-3 border-start">
+                    <h3 class="mb-0">{{ $averageGrade }}%</h3>
+                    <small class="text-muted">Moyenne Générale</small>
+                </div>
+                <div class="col-md-3 border-start">
+                    <h3 class="mb-0 text-success">{{ $excellentCount }}</h3>
+                    <small class="text-muted">Excellent (≥80%)</small>
+                </div>
+                <div class="col-md-3 border-start">
+                    <h3 class="mb-0 text-danger">{{ $poorCount }}</h3>
+                    <small class="text-muted">À Améliorer (<50%)</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Notes Table -->
-    <div class="card">
+    <!-- Filters -->
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
-            <x-table.data-table 
-                id="notesTable"
-                :columns="[
-                    ['key' => 'id_note', 'label' => 'ID'],
-                    ['key' => 'etudiant', 'label' => 'Étudiant'],
-                    ['key' => 'evaluation', 'label' => 'Évaluation'],
-                    ['key' => 'note', 'label' => 'Note'],
-                    ['key' => 'coefficient', 'label' => 'Coeff.'],
-                    ['key' => 'classe', 'label' => 'Classe'],
-                    ['key' => 'date', 'label' => 'Date'],
-                    ['key' => 'actions', 'label' => 'Actions']
-                ]">
-                @foreach ($notes as $note)
-                <tr data-evaluation-id="{{ $note->id_evaluation }}">
-                    <td>{{ $note->id_note }}</td>
-                    <td>
-                        @if($note->etudiant)
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="fw-semibold">{{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}</div>
-                                    <div class="text-muted small">{{ $note->etudiant->matricule }}</div>
-                                </div>
-                            </div>
-                        @else
-                            <span class="text-muted">Étudiant supprimé</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($note->evaluation)
-                            <div>
-                                <span class="fw-semibold">{{ $note->evaluation->matiere }}</span>
-                                @if($note->evaluation->type == 'examen')
-                                    <span class="badge bg-danger ms-1">{{ ucfirst($note->evaluation->type) }}</span>
-                                @elseif($note->evaluation->type == 'controle')
-                                    <span class="badge bg-warning ms-1">{{ ucfirst($note->evaluation->type) }}</span>
-                                @else
-                                    <span class="badge bg-success ms-1">{{ ucfirst($note->evaluation->type) }}</span>
-                                @endif
-                            </div>
-                        @else
-                            <span class="text-muted">Évaluation supprimée</span>
-                        @endif
-                    </td>
-                    <td>
-                        <span class="fw-bold {{ $note->note >= 10 ? 'text-success' : 'text-danger' }}">
-                            {{ number_format($note->note, 2) }}/20
-                        </span>
-                    </td>
-                    <td>{{ $note->coefficient ?? 1 }}</td>
-                    <td>
-                        @if($note->classe)
-                            <span class="badge bg-info">{{ $note->classe->nom_classe }}</span>
-                        @elseif($note->etudiant && $note->etudiant->classe)
-                            <span class="badge bg-info">{{ $note->etudiant->classe->nom_classe }}</span>
-                        @else
-                            <span class="text-muted">-</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($note->evaluation)
-                            {{ \Carbon\Carbon::parse($note->evaluation->date)->format('d/m/Y') }}
-                        @else
-                            <span class="text-muted">-</span>
-                        @endif
-                    </td>
-                    <td>
-                        @include('notes.actions', ['note' => $note])
-                    </td>
-                </tr>
-                @endforeach
-            </x-table.data-table>
+            <form method="GET" action="{{ route('notes.index') }}" id="filterForm">
+                <div class="row g-3 align-items-end">
+                    <!-- Search -->
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label small text-muted">{{ __('app.rechercher_etudiant') }}</label>
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Nom ou prénom..." 
+                               value="{{ request('search') }}">
+                    </div>
+                    
+                    <!-- Class Filter -->
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label small text-muted">{{ __('app.classe') }}</label>
+                        <select name="classe" class="form-select">
+                            <option value="">{{ __('app.toutes_classes') }}</option>
+                            @foreach($classes as $classe)
+                                <option value="{{ $classe->id_classe }}" {{ request('classe') == $classe->id_classe ? 'selected' : '' }}>
+                                    {{ $classe->nom_classe }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- Evaluation Filter -->
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label small text-muted">{{ __('app.evaluation') }}</label>
+                        <select name="evaluation" class="form-select">
+                            <option value="">{{ __('app.toutes_evaluations') }}</option>
+                            @foreach($evaluations as $evaluation)
+                                <option value="{{ $evaluation->id_evaluation }}" {{ request('evaluation') == $evaluation->id_evaluation ? 'selected' : '' }}>
+                                    {{ $evaluation->matiere_name }} - {{ $evaluation->titre ?? ucfirst($evaluation->type) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1">Filtrer</button>
+                            @if(request()->hasAny(['search', 'classe', 'evaluation']))
+                                <a href="{{ route('notes.index') }}" class="btn btn-outline-secondary" title="Réinitialiser">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
+    <!-- Notes List -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>{{ __('app.liste_notes') }} ({{ $notes->total() }})</h5>
+                @if($notes->count() > 0)
+                    <small class="text-muted">
+                        {{ $notes->firstItem() }}-{{ $notes->lastItem() }} sur {{ $notes->total() }}
+                    </small>
+                @endif
+            </div>
+            @if($notes->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr class="border-bottom">
+                                <th class="text-muted fw-normal">{{ __('app.etudiant') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.classe') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.evaluation') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.matiere') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.note') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.appreciation') }}</th>
+                                <th class="text-muted fw-normal text-center">{{ __('app.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($notes as $note)
+                                @php
+                                    $noteMax = $note->evaluation->note_max ?? 20;
+                                    $percentage = ($note->note / $noteMax) * 100;
+                                    $badgeClass = $percentage >= 80 ? 'success' : 
+                                                 ($percentage >= 60 ? 'primary' : 
+                                                 ($percentage >= 50 ? 'warning' : 'danger'));
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('etudiants.show', $note->etudiant) }}" class="text-decoration-none">
+                                            {{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $note->classe->nom_classe ?? 'N/A' }}</td>
+                                    <td>
+                                        <a href="{{ route('evaluations.show', $note->evaluation) }}" class="text-decoration-none">
+                                            {{ $note->evaluation->titre ?? ucfirst($note->evaluation->type) }}
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">{{ $note->evaluation->date->format('d/m/Y') }}</small>
+                                    </td>
+                                    <td>{{ $note->matiere->nom_matiere ?? 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ $badgeClass }}">
+                                            {{ number_format($note->note, 2) }} / {{ $noteMax }}
+                                        </span>
+                                        <small class="text-muted">({{ round($percentage) }}%)</small>
+                                    </td>
+                                    <td>
+                                        @php
+                                            if ($percentage >= 80) $appreciation = __('app.excellent');
+                                            elseif ($percentage >= 60) $appreciation = __('app.bien');
+                                            elseif ($percentage >= 50) $appreciation = __('app.passable');
+                                            else $appreciation = __('app.insuffisant');
+                                        @endphp
+                                        <small class="text-muted">{{ $appreciation }}</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            @admin
+                                                <a href="{{ route('notes.edit', $note) }}" 
+                                                   class="btn btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form action="{{ route('notes.destroy', $note) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" 
+                                                            class="btn btn-outline-danger delete-note" 
+                                                            data-student-name="{{ $note->etudiant->prenom }} {{ $note->etudiant->nom }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endadmin
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                @if($notes->hasPages())
+                    <div class="mt-4 d-flex justify-content-center">
+                        {{ $notes->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="text-center py-5">
+                    <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">{{ __('app.aucune_note') }}</h4>
+                    <p class="text-muted">{{ __('app.aucune_note_trouvee') }}</p>
+                    @if(request()->hasAny(['search', 'classe', 'evaluation']))
+                        <a href="{{ route('notes.index') }}" class="btn btn-outline-secondary mt-2">
+                            Réinitialiser les filtres
+                        </a>
+                    @endif
+                </div>
+            @endif
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const evaluationFilter = document.getElementById('evaluationFilter');
-    const table = document.getElementById('notesTable');
-    const rows = table.querySelectorAll('tbody tr');
-
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedEvaluation = evaluationFilter.value;
-
-        rows.forEach(row => {
-            const student = row.cells[1].textContent.toLowerCase();
-            const evaluation = row.cells[2].textContent.toLowerCase();
-            const evaluationId = row.getAttribute('data-evaluation-id');
+    // Delete confirmation
+    document.querySelectorAll('.delete-note').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            const matchesSearch = student.includes(searchTerm) || evaluation.includes(searchTerm);
-            const matchesEvaluation = selectedEvaluation === '' || evaluationId === selectedEvaluation;
+            const form = this.closest('form');
+            const studentName = this.dataset.studentName;
             
-            row.style.display = matchesSearch && matchesEvaluation ? '' : 'none';
+            if (confirm(`Êtes-vous sûr de vouloir supprimer cette note pour "${studentName}" ?`)) {
+                form.submit();
+            }
         });
-    }
-
-    searchInput.addEventListener('input', filterTable);
-    evaluationFilter.addEventListener('change', filterTable);
+    });
+    
+    // Auto-submit on select change
+    document.querySelectorAll('select[name="classe"], select[name="evaluation"]').forEach(function(select) {
+        select.addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+    });
 });
 </script>
-@endsection
+@endpush

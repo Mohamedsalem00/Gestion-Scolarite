@@ -39,53 +39,57 @@ class EnseignantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $enseignant)
+    public function show(Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
-        if (!$enseignant) {
-            return redirect()->route('enseignants.index')->with('flash_message', 'Enseignant introuvable');
-        }
         return view('academic.enseignants.show')->with('enseignants', $enseignant);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $enseignant)
+    public function edit(Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
         $classes = Classe::all();
-        if (!$enseignant) {
-            return redirect()->back()->with('flash_message', 'enseignant introuvable');
-        }
-
-        return view('academic.enseignants.edit',compact('enseignant','classes'));
+        return view('academic.enseignants.edit', compact('enseignant', 'classes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $enseignant)
+    public function update(Request $request, Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
-        if (!$enseignant) {
-            return redirect()->route('enseignants.index')->with('flash_message', 'Enseignant introuvable');
+        $enseignant->nom = $request['nom'];
+        $enseignant->prenom = $request['prenom'];
+        $enseignant->address = $request['address'];
+        $enseignant->phone = $request['phone'];
+        $enseignant->date_recrutement = $request['date_recrutement'];
+
+        $enseignant->save();
+
+        // Supprimer les anciennes relations
+        $enseignant->matiereClasses()->detach();
+
+        // Ajouter les nouvelles relations
+        if ($request->has('selected_classes')) {
+            foreach ($request->selected_classes as $classeid) {
+                if ($request->has('matiere_id')) {
+                    $enseignant->matiereClasses()->attach($classeid, ['matiere' => $request->matiere_id]);
+                }
+            }
         }
-        $input = $request->all();
-        $enseignant->update($input);
-        return redirect()->route('enseignants.index')->with('flash_message', 'Les informations ont été mises à jour!');
+
+        return redirect()->route('enseignants.index')
+            ->with('flash_message', 'enseignant modifié avec succès!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $enseignant)
+    public function destroy(Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
-        if (!$enseignant) {
-            return back()->with('flash_message', 'Enseignant introuvable');
-        }
         $enseignant->delete();
-        return back()->with('flash_message', "l'enseignant est supprimé");
+
+        return redirect()->route('enseignants.index')
+            ->with('flash_message', 'enseignant supprimé avec succès!');
     }
 }

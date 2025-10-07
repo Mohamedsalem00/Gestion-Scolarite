@@ -25,8 +25,6 @@ class User extends Authenticatable
         'password',
         'role',
         'telephone',
-        'matiere',
-        'id_classe',
         'is_active',
     ];
 
@@ -94,11 +92,17 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the classe this user belongs to (for students and teachers)
+     * Get the classe this user belongs to (only for students via Etudiant model)
+     * Teachers' classes are managed through enseignant_matiere_classe pivot table
      */
     public function classe()
     {
-        return $this->belongsTo(Classe::class, 'id_classe');
+        if ($this->isEtudiant()) {
+            // For students, get class through etudiant record
+            $etudiant = Etudiant::where('email', $this->email)->first();
+            return $etudiant ? $etudiant->classe() : null;
+        }
+        return null;
     }
 
     /**
@@ -107,8 +111,9 @@ class User extends Authenticatable
     public function etudiants()
     {
         if ($this->isEnseignant()) {
-            return $this->hasMany(self::class, 'id_classe', 'id_classe')
-                        ->where('role', 'etudiant');
+            // Get students through the classes this teacher teaches
+            $teacherClasses = $this->classesEnseignees()->pluck('id_classe');
+            return Etudiant::whereIn('id_classe', $teacherClasses);
         }
         return null;
     }
@@ -150,28 +155,28 @@ class User extends Authenticatable
 
     /**
      * Get subjects (matieres) this teacher teaches
+     * Teachers should use the Enseignant model for subject relationships
      */
     public function matieres()
     {
         if ($this->isEnseignant()) {
-            return $this->belongsToMany(Matiere::class, 'enseignant_matiere_classe', 'user_id', 'id_matiere')
-                        ->withPivot('id_classe', 'active')
-                        ->withTimestamps();
+            $enseignant = Enseignant::where('email', $this->email)->first();
+            return $enseignant ? $enseignant->matieres() : collect();
         }
-        return null;
+        return collect();
     }
 
     /**
      * Get classes this teacher teaches (through subjects)
+     * Teachers should use the Enseignant model for class relationships
      */
     public function classesEnseignees()
     {
         if ($this->isEnseignant()) {
-            return $this->belongsToMany(Classe::class, 'enseignant_matiere_classe', 'user_id', 'id_classe')
-                        ->withPivot('id_matiere', 'active')
-                        ->withTimestamps();
+            $enseignant = Enseignant::where('email', $this->email)->first();
+            return $enseignant ? $enseignant->classes() : collect();
         }
-        return null;
+        return collect();
     }
 
     /**

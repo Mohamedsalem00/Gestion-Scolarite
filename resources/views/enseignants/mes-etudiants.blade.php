@@ -10,11 +10,11 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-users"></i> {{ __('app.mes_etudiants') }}
+            {{ __('app.mes_etudiants') }}
         </h1>
         @if($classes->count() > 1)
             <div class="badge bg-info fs-6">
-                <i class="fas fa-chalkboard me-1"></i> {{ $classes->count() }} {{ __('app.classes') }}
+                {{ $classes->count() }} {{ __('app.classes') }}
             </div>
         @endif
     </div>
@@ -37,7 +37,7 @@
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                                        <div class="h2 text-gray-300 mb-0">{{ $classe->etudiants ? $classe->etudiants->count() : 0 }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
             </div>
             <div class="card-body">
                 @if($students->count() > 0)
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
@@ -107,7 +107,6 @@
                     
                     <div class="mt-3">
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
                             <strong>{{ __('app.total') }} :</strong> {{ $students->count() }} {{ __('app.etudiant(s)') }}
                             @if($classes->count() > 1)
                                 {{ __('app.dans') }} {{ $classes->count() }} {{ __('app.classes') }}
@@ -118,7 +117,6 @@
                     </div>
                 @else
                     <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
                         {{ __('app.aucun_etudiant_trouve') }}
                     </div>
                 @endif
@@ -126,7 +124,6 @@
         </div>
     @else
         <div class="alert alert-danger">
-            <i class="fas fa-exclamation-circle"></i>
             {{ __('app.aucune_classe_assignee') }}
         </div>
     @endif

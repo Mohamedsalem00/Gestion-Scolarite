@@ -9,124 +9,137 @@
 @endsection
 
 @section('header-actions')
-    @can('update', $classe)
+    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('administrateur')))
         <a href="{{ route('classes.edit', $classe->id_classe) }}" class="btn btn-primary">
-            <i class="fas fa-edit me-2"></i>
-            {{ __('app.edit') }}
+            {{ __('app.modifier') }}
         </a>
-    @endcan
+    @endif
 @endsection
 
 @section('content')
     <!-- Class Overview -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <x-cards.info-card
-                title="Étudiants Inscrits"
-                :value="$classe->etudiants->count()"
-                icon="fas fa-user-graduate"
-                color="primary"
-                :href="route('etudiants.index', ['classe' => $classe->id_classe])"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-graduate fa-2x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.etudiants_inscrits') }}</h6>
+                            <h3 class="mb-0">{{ $classe->etudiants->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="Cours Assignés"
-                :value="$classe->cours->count()"
-                icon="fas fa-book"
-                color="success"
-                :href="route('cours.index', ['classe' => $classe->id_classe])"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-book fa-2x text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.cours_assignes') }}</h6>
+                            <h3 class="mb-0">{{ $classe->cours->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="Évaluations"
-                :value="$classe->evaluations->count()"
-                icon="fas fa-clipboard-check"
-                color="info"
-                :href="route('evaluations.index', ['classe' => $classe->id_classe])"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-clipboard-check fa-2x text-info"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.evaluations') }}</h6>
+                            <h3 class="mb-0">{{ $classe->evaluations->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="Niveau"
-                :value="$classe->niveau"
-                icon="fas fa-level-up-alt"
-                color="warning"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-level-up-alt fa-2x text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.niveau') }}</h6>
+                            <h3 class="mb-0">{{ $classe->niveau }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <!-- Class Details -->
         <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        {{ __('app.details_classe') }}
-                    </h5>
-                </div>
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <td><strong>{{ __('app.classe_nom') }}:</strong></td>
-                            <td>{{ $classe->nom_classe }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{{ __('app.niveau') }}:</strong></td>
-                            <td>{{ $classe->niveau }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{{ __('app.date_creation') }}:</strong></td>
-                            <td>{{ $classe->created_at?->format('d/m/Y H:i') ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{{ __('app.date_modification') }}:</strong></td>
-                            <td>{{ $classe->updated_at?->format('d/m/Y H:i') ?? 'N/A' }}</td>
-                        </tr>
-                    </table>
+                    <h5 class="mb-4">{{ __('app.details_classe') }}</h5>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="text-muted small mb-1">{{ __('app.nom_classe') }}</div>
+                        <div class="fw-bold">{{ $classe->nom_classe }}</div>
+                    </div>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="text-muted small mb-1">{{ __('app.niveau') }}</div>
+                        <div class="fw-bold">{{ $classe->niveau }}</div>
+                    </div>
+                    
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="text-muted small mb-1">{{ __('app.date_creation') }}</div>
+                        <div>{{ $classe->created_at?->format('d/m/Y H:i') ?? 'N/A' }}</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-muted small mb-1">{{ __('app.date_modification') }}</div>
+                        <div>{{ $classe->updated_at?->format('d/m/Y H:i') ?? 'N/A' }}</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Students List -->
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-users me-2"></i>
-                        {{ __('app.etudiants_de_la_classe') }} ({{ $classe->etudiants->count() }})
-                    </h5>
-                    @can('create', App\Models\Etudiant::class)
-                        <a href="{{ route('etudiants.create', ['classe' => $classe->id_classe]) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-user-plus me-2"></i>
-                            {{ __('app.ajouter_etudiant') }}
-                        </a>
-                    @endcan
-                </div>
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">{{ __('app.etudiants_de_la_classe') }} ({{ $classe->etudiants->count() }})</h5>
+                        @admin
+                            <a href="{{ route('etudiants.create', ['classe' => $classe->id_classe]) }}" class="btn btn-sm btn-primary">
+                                {{ __('app.ajouter_etudiant') }}
+                            </a>
+                        @endadmin
+                    </div>
+                    
                     @if($classe->etudiants->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-striped table-sm">
+                            <table class="table table-hover align-middle">
                                 <thead>
-                                    <tr>
-                                        <th>{{ __('app.nom_complet') }}</th>
-                                        <th>{{ __('app.email') }}</th>
-                                        <th>{{ __('app.telephone') }}</th>
-                                        <th>{{ __('app.actions') }}</th>
+                                    <tr class="border-bottom">
+                                        <th class="text-muted fw-normal">{{ __('app.nom_complet') }}</th>
+                                        <th class="text-muted fw-normal">{{ __('app.email') }}</th>
+                                        <th class="text-muted fw-normal">{{ __('app.telephone') }}</th>
+                                        <th class="text-muted fw-normal">{{ __('app.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($classe->etudiants as $student)
                                         <tr>
                                             <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                        <i class="fas fa-user text-muted"></i>
-                                                    </div>
-                                                    <strong>{{ $student->prenom }} {{ $student->nom }}</strong>
-                                                </div>
+                                                <strong>{{ $student->prenom }} {{ $student->nom }}</strong>
                                             </td>
                                             <td>
                                                 @if($student->email)
@@ -148,9 +161,8 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('etudiants.show', $student->id_etudiant) }}" 
-                                                   class="btn btn-sm btn-outline-primary" 
-                                                   title="{{ __('app.voir_details') }}">
-                                                    <i class="fas fa-eye"></i>
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    {{ __('app.voir') }}
                                                 </a>
                                             </td>
                                         </tr>
@@ -159,10 +171,10 @@
                             </table>
                         </div>
                     @else
-                        <div class="text-center py-4">
-                            <i class="fas fa-user-graduate text-muted" style="font-size: 3rem;"></i>
-                            <h6 class="text-muted mt-2">{{ __('app.aucun_etudiant_inscrit') }}</h6>
-                            <p class="text-muted small">{{ __('app.classe_pas_etudiants') }}</p>
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-graduate fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">{{ __('app.aucun_etudiant_inscrit') }}</h5>
+                            <p class="text-muted">{{ __('app.classe_sans_etudiants') }}</p>
                         </div>
                     @endif
                 </div>
@@ -174,24 +186,20 @@
     @if($classe->cours->count() > 0)
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-book me-2"></i>
-                        {{ __('app.cours_de_la_classe') }} ({{ $classe->cours->count() }})
-                    </h5>
-                </div>
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <div class="row">
+                    <h5 class="mb-4">{{ __('app.cours_de_la_classe') }} ({{ $classe->cours->count() }})</h5>
+                    
+                    <div class="row g-3">
                         @foreach($classe->cours as $cours)
-                            <div class="col-md-4 mb-3">
-                                <div class="card border">
+                            <div class="col-md-4">
+                                <div class="card border h-100">
                                     <div class="card-body">
-                                        <h6 class="card-title">{{ $cours->nom_cours }}</h6>
-                                        <p class="card-text small text-muted">
+                                        <h6 class="mb-2">{{ $cours->nom_cours }}</h6>
+                                        <p class="text-muted small mb-3">
                                             {{ __('app.enseignant') }}: {{ $cours->enseignant?->nom_enseignant ?? 'Non assigné' }}
                                         </p>
-                                        <a href="{{ route('cours.show', $cours->id_cours) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('cours.show', $cours->id_cours) }}" class="btn btn-sm btn-outline-primary w-100">
                                             {{ __('app.voir_le_cours') }}
                                         </a>
                                     </div>

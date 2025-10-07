@@ -32,7 +32,7 @@ class NotesSeeder extends Seeder
                 
                 Note::create([
                     'note' => $note,
-                    'matiere' => $evaluation->matiere,
+                    'id_matiere' => $evaluation->id_matiere,
                     'type' => $evaluation->type,
                     'commentaire' => $this->generateComment($note, $bareme),
                     'id_etudiant' => $student->id_etudiant,

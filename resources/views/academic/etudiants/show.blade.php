@@ -2,105 +2,77 @@
 
 @section('title', __('app.voir_etudiant'))
 
-@section('breadcrumbs')
-<x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item href="{{ route('enseignants.index') }}">{{ __('Enseignants') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Ajouter') }}</x-breadcrumb-item>
-</x-breadcrumb>
+@section('breadcrumb')
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('etudiants.index') }}">{{ __('app.etudiants') }}</a></li>
+    <li class="breadcrumb-item active">{{ __('app.voir') }} - {{ $etudiant->prenom }} {{ $etudiant->nom }}</li>
+@endsection
+
+@section('header-actions')
+    <a href="{{ route('etudiants.index') }}" class="btn btn-secondary">
+        {{ __('app.retour') }}
+    </a>
+    @admin
+        <a href="{{ route('etudiants.edit', $etudiant->id_etudiant) }}" class="btn btn-primary">
+            {{ __('app.modifier') }}
+        </a>
+    @endadmin
 @endsection
 
 @section('content')
-    <div id="content">
-        <div class="card" style="margin: 20px;">
-            <div class="card-header" id="allAction">
-                <div style="display: flex;">
-                    <div style="width: 43%; font-size: 1.5rem">
-                        <a href="{{ url('/etudiants') }}" title="retourne" id="retourne"><i class="bi bi-arrow-left"></i></a>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2rem;">
+                            {{ substr($etudiant->prenom, 0, 1) }}{{ substr($etudiant->nom, 0, 1) }}
+                        </div>
                     </div>
-                    <div style="width: 53%">
-                        <h4>Page étudiant</h4>
-                    </div>
+                    <h4 class="card-title">{{ $etudiant->prenom }} {{ $etudiant->nom }}</h4>
+                    <p class="text-muted">{{ __('app.matricule') }}: E{{ $etudiant->id_etudiant }}</p>
+                    <p class="text-muted">{{ __('app.classe') }}: {{ $etudiant->classe?->nom_classe ?? 'Non assigné' }}</p>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="col-rt-12">
-                    <div class="Scriptcontent">
-                        <div class="student-profile py-4">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="card shadow-sm">
-                                            <div class="card-header bg-transparent text-center">
-                                                <img class="profile_img" src="{{ asset('img/prifile.png') }}"
-                                                    alt="student dp">
-                                                <h3>{{ $etudiant->nom }} {{ $etudiant->prenom }}</h3>
-                                            </div>
-                                            <div class="card-body">
-                                                <p class="mb-0"><strong class="pr-1">Matricule: </strong>
-                                                    E{{ $etudiant->id_etudiant }}
-                                                </p>
-                                                <p class="mb-0"><strong class="pr-1">Classe:
-                                                    </strong>{{ $etudiant->classe->niveau }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="card shadow-sm">
-                                            <div class="card-header bg-transparent border-0">
-                                                <h3 class="mb-0"><i class="far fa-clone pr-1"></i>Information général</h3>
-                                            </div>
-                                            <div class="card-body pt-0">
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <th width="30%">Telephone</th>
-                                                        <td width="2%">:</td>
-                                                        <td>{{ $etudiant->telephone }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th width="30%">Date de naissance</th>
-                                                        <td width="2%">:</td>
-                                                        <td>{{ $etudiant->date_naissance }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th width="30%">Date d'inscription</th>
-                                                        <td width="2%">:</td>
-                                                        <td>{{ $etudiant->created_at }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th width="30%">Adresse</th>
-                                                        <td width="2%">:</td>
-                                                        <td>{{ $etudiant->adresse }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th width="30%">Genre</th>
-                                                        <td width="2%">:</td>
-                                                        <td>{{ $etudiant->genre }}</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div style="height: 26px"></div>
-                                        <div class="card shadow-sm">
-                                            <div class="card-header bg-transparent border-0">
-                                                <h3 class="mb-0"><i class="far fa-clone pr-1"></i></h3>
-                                            </div>
-                                            <div class="card-body pt-0">
-                                                <p>"Autonomiser les esprits pour la grandeur - Où l'apprentissage ne connaît
-                                                    pas de limites."
-                                                    "Libérer le potentiel, façonner l'avenir - Notre dévouement à la
-                                                    réussite des étudiants."
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ __('app.informations_generales') }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th class="text-muted" style="width: 30%;">{{ __('app.telephone') }}</th>
+                                    <td>{{ $etudiant->telephone ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">{{ __('app.email') }}</th>
+                                    <td>{{ $etudiant->email ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">{{ __('app.date_naissance') }}</th>
+                                    <td>{{ $etudiant->date_naissance ? \Carbon\Carbon::parse($etudiant->date_naissance)->format('d/m/Y') : 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">{{ __('app.date_inscription') }}</th>
+                                    <td>{{ $etudiant->created_at->format('d/m/Y à H:i') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">{{ __('app.adresse') }}</th>
+                                    <td>{{ $etudiant->adresse ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">{{ __('app.genre') }}</th>
+                                    <td>{{ ucfirst($etudiant->genre ?? 'N/A') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script></script>
 @endsection

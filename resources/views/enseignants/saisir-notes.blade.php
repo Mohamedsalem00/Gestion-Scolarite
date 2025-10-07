@@ -11,11 +11,11 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-clipboard-check text-primary"></i> {{ __('app.saisir_notes') }}
+            {{ __('app.saisir_notes') }}
         </h1>
         @if($selectedClass)
-            <div class="badge bg-info fs-6">
-                <i class="fas fa-users me-1"></i> {{ $selectedClass->nom_classe }}
+            <div class="badge bg-primary fs-6">
+                {{ $selectedClass->nom_classe }}
             </div>
         @endif
     </div>
@@ -28,14 +28,12 @@
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center justify-content-between flex-wrap">
                             <div class="d-flex align-items-center mb-2 mb-md-0">
-                                <i class="fas fa-chalkboard text-primary me-2"></i>
-                                <span class="fw-semibold">{{ __('app.choisir_classe') }}:</span>
+                                <span class="fw-semibold text-muted">{{ __('app.choisir_classe') }}:</span>
                             </div>
-                            <div class="d-flex gap-2 flex-wrap">
+                            <div class="d-flex gap-2 flex-wrap" style="max-height: 150px; overflow-y: auto;">
                                 @foreach($teacherClasses as $classe)
                                     <a href="{{ request()->fullUrlWithQuery(['classe_id' => $classe->id_classe]) }}" 
                                        class="btn {{ $selectedClass && $selectedClass->id_classe == $classe->id_classe ? 'btn-primary' : 'btn-outline-primary' }} btn-sm">
-                                        <i class="fas fa-users me-1"></i>
                                         {{ $classe->nom_classe }}
                                         <span class="badge bg-light text-dark ms-1">{{ $classe->etudiants->count() }}</span>
                                     </a>
@@ -127,65 +125,71 @@
                 <!-- Students List -->
                 <div class="col-lg-5">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="fas fa-users me-2"></i>{{ __('app.etudiants') }} - {{ $selectedClass->nom_classe }}
-                            </h6>
-                            <div class="input-group" style="width: 200px;">
-                                <input type="text" class="form-control form-control-sm" id="searchStudent" 
-                                       placeholder="{{ __('app.rechercher') }}...">
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <div class="card-header py-3">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <h6 class="m-0 font-weight-bold text-primary mb-2 mb-md-0">
+                                    {{ __('app.etudiants') }} - {{ $selectedClass->nom_classe }}
+                                </h6>
+                                <div class="input-group" style="width: 250px;">
+                                    <input type="text" class="form-control form-control-sm" id="searchStudent" 
+                                           placeholder="{{ __('app.rechercher') }}...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">🔍</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                        <div class="card-body p-0" style="max-height: 650px; overflow-y: auto; overflow-x: hidden;">
                             @if($students->count() > 0)
                                 <div class="list-group list-group-flush" id="studentsList">
                                     @foreach($students as $student)
-                                        <div class="list-group-item list-group-item-action border-0 student-item" 
+                                        <div class="list-group-item list-group-item-action student-item py-3" 
                                              data-student="{{ strtolower($student->prenom . ' ' . $student->nom) }}">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-circle bg-primary text-white me-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="d-flex align-items-start flex-grow-1">
+                                                    <div class="avatar-circle bg-primary text-white me-3 flex-shrink-0">
                                                         {{ strtoupper(substr($student->prenom, 0, 1) . substr($student->nom, 0, 1)) }}
                                                     </div>
-                                                    <div>
-                                                        <strong class="d-block">{{ $student->prenom }} {{ $student->nom }}</strong>
-                                                        <small class="text-muted">
-                                                            <i class="fas fa-id-card me-1"></i>{{ $student->matricule }}
-                                                        </small>
+                                                    <div class="flex-grow-1 min-width-0">
+                                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                                            <strong class="text-truncate me-2">{{ $student->prenom }} {{ $student->nom }}</strong>
+                                                            <button class="btn btn-sm btn-outline-primary flex-shrink-0" 
+                                                                    onclick="selectStudent({{ $student->id_etudiant }}, '{{ $student->prenom }} {{ $student->nom }}', '{{ $student->matricule }}')">
+                                                                {{ __('app.noter') }}
+                                                            </button>
+                                                        </div>
+                                                        <div class="text-muted small mb-2">
+                                                            {{ $student->matricule }}
+                                                        </div>
                                                         @php
                                                             $studentNotesCount = \App\Models\Note::where('id_etudiant', $student->id_etudiant)->count();
                                                             $studentAvg = \App\Models\Note::where('id_etudiant', $student->id_etudiant)->avg('note');
                                                         @endphp
-                                                        <small class="d-block text-info">
-                                                            <i class="fas fa-chart-bar me-1"></i>{{ $studentNotesCount }} {{ __('app.notes') }}
+                                                        <div class="d-flex align-items-center text-info small">
+                                                            <span class="me-3">{{ $studentNotesCount }} {{ __('app.notes') }}</span>
                                                             @if($studentAvg)
-                                                                | Moy: {{ number_format($studentAvg, 1) }}
+                                                                <span class="badge bg-light text-dark">Moy: {{ number_format($studentAvg, 1) }}</span>
                                                             @endif
-                                                        </small>
+                                                        </div>
                                         @if(isset($existingNotes[$student->id_etudiant]) && $existingNotes[$student->id_etudiant]->count() > 0)
                                             <div class="mt-2">
-                                                <small class="text-success fw-bold">
-                                                    <i class="fas fa-check-circle me-1"></i>{{ __('app.notes_existantes') }}:
-                                                </small>
-                                                @foreach($existingNotes[$student->id_etudiant] as $note)
-                                                    <div class="badge bg-light text-dark border me-1 mt-1">
-                                                        {{ $note->evaluation->matiere_relation ? $note->evaluation->matiere_relation->nom_matiere : $note->evaluation->matiere }}: {{ $note->note }}/{{ $note->evaluation->note_max }}
-                                                        <button type="button" class="btn-close btn-close-sm ms-1" 
-                                                                onclick="editNote({{ $note->id_note }}, {{ $student->id_etudiant }}, '{{ $student->prenom }} {{ $student->nom }}', {{ $note->id_evaluation }}, {{ $note->note }})" 
-                                                                title="{{ __('app.modifier') }}"></button>
-                                                    </div>
-                                                @endforeach
+                                                <div class="text-success small fw-bold mb-1">
+                                                    {{ __('app.notes_existantes') }}:
+                                                </div>
+                                                <div class="d-flex flex-wrap gap-1" style="max-height: 80px; overflow-y: auto;">
+                                                    @foreach($existingNotes[$student->id_etudiant] as $note)
+                                                        <span class="badge bg-success-subtle text-success border border-success-subtle d-flex align-items-center">
+                                                            {{ $note->evaluation->matiere ? __('app.' . $note->evaluation->matiere->code_matiere) : $note->evaluation->matiere_name }}: {{ $note->note }}/{{ $note->evaluation->note_max }}
+                                                            <button type="button" class="btn-close btn-close-sm ms-1" style="font-size: 0.6em;" 
+                                                                    onclick="editNote({{ $note->id_note }}, {{ $student->id_etudiant }}, '{{ $student->prenom }} {{ $student->nom }}', {{ $note->id_evaluation }}, {{ $note->note }})" 
+                                                                    title="{{ __('app.modifier') }}"></button>
+                                                        </span>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         @endif
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-sm btn-outline-primary" 
-                                                        onclick="selectStudent({{ $student->id_etudiant }}, '{{ $student->prenom }} {{ $student->nom }}', '{{ $student->matricule }}')">
-                                                    <i class="fas fa-plus"></i> {{ __('app.noter') }}
-                                                </button>
                                             </div>
                                         </div>
                                     @endforeach
@@ -205,19 +209,19 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-success">
-                                <i class="fas fa-edit me-2"></i>{{ __('app.formulaire_saisie_notes') }}
+                                {{ __('app.formulaire_saisie_notes') }}
                             </h6>
                         </div>
                         <div class="card-body">
-                            <form id="gradeForm" method="POST" action="{{ route('notes.store') }}">
+                            <form id="gradeForm" method="POST" action="{{ route('enseignant.notes.store') }}">
                                 @csrf
                                 <input type="hidden" name="from_saisir_notes" value="1">
                                 <input type="hidden" name="from_saisir_notes" value="1">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="student_name" class="form-label fw-bold">
-                                                <i class="fas fa-user text-primary me-1"></i>{{ __('app.etudiant_selectionne') }}
+                                            <label for="student_name" class="form-label fw-bold text-muted">
+                                                {{ __('app.etudiant_selectionne') }}
                                             </label>
                                             <input type="text" class="form-control form-control-lg" id="student_name" readonly 
                                                    placeholder="{{ __('app.selectionnez_un_etudiant') }}">
@@ -227,23 +231,31 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="evaluation_id" class="form-label fw-bold">
-                                                <i class="fas fa-clipboard-check text-info me-1"></i>{{ __('app.evaluation') }}
+                                            <label for="evaluation_id" class="form-label fw-bold text-muted">
+                                                {{ __('app.evaluation') }}
                                             </label>
-                                            <select class="form-control form-control-lg" id="evaluation_id" name="id_evaluation" required onchange="updateEvaluationFields()">
+                                            <select class="form-control form-control-lg" id="evaluation_id" name="id_evaluation" required onchange="updateEvaluationFields()" style="max-height: 200px; overflow-y: auto;">
                                                 <option value="">{{ __('app.choisir_evaluation') }}</option>
                                                 @foreach($evaluations as $evaluation)
                                                     <option value="{{ $evaluation->id_evaluation }}" 
-                                                            data-matiere="{{ $evaluation->matiere_relation ? $evaluation->matiere_relation->nom_matiere : $evaluation->matiere }}" 
+                                                            data-matiere="{{ $evaluation->matiere ? $evaluation->matiere->nom_matiere : $evaluation->matiere_name }}" 
                                                             data-type="{{ $evaluation->type }}"
                                                             data-note-max="{{ $evaluation->note_max }}">
-                                                        {{ $evaluation->matiere_relation ? $evaluation->matiere_relation->nom_matiere : $evaluation->matiere }} - {{ ucfirst($evaluation->type) }} ({{ $evaluation->note_max }} pts)
+                                                        {{ $evaluation->matiere ? __('app.' . $evaluation->matiere->code_matiere) : $evaluation->matiere_name }} - {{ __('app.' . $evaluation->type) }} ({{ $evaluation->note_max }} pts)
                                                         @if($evaluation->date)
                                                             ({{ \Carbon\Carbon::parse($evaluation->date)->format('d/m/Y') }})
                                                         @endif
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <small class="form-text text-muted">
+                                                {{ __('app.evaluations_terminees_seulement') }}
+                                            </small>
+                                            @if($evaluations->isEmpty())
+                                                <div class="alert alert-warning mt-2 mb-0">
+                                                    {{ __('app.aucune_evaluation_terminee') }}
+                                                </div>
+                                            @endif
                                             <input type="hidden" id="matiere" name="matiere">
                                             <input type="hidden" id="type" name="type">
                                             <input type="hidden" name="id_classe" value="{{ $selectedClass->id_classe }}">
@@ -254,8 +266,8 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="note_obtenue" class="form-label fw-bold">
-                                                <i class="fas fa-trophy text-warning me-1"></i>{{ __('app.note_obtenue') }}
+                                            <label for="note_obtenue" class="form-label fw-bold text-muted">
+                                                {{ __('app.note_obtenue') }}
                                             </label>
                                             <input type="number" class="form-control form-control-lg text-center" id="note_obtenue" 
                                                    name="note" step="0.01" min="0" required>
@@ -264,8 +276,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="note_totale" class="form-label fw-bold">
-                                                <i class="fas fa-bullseye text-danger me-1"></i>{{ __('app.note_totale') }}
+                                            <label for="note_totale" class="form-label fw-bold text-muted">
+                                                {{ __('app.note_totale') }}
                                             </label>
                                             <input type="number" class="form-control form-control-lg text-center" id="note_totale" 
                                                    name="note_totale" step="0.01" min="0" value="20" required>
@@ -273,8 +285,8 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">
-                                                <i class="fas fa-percent text-success me-1"></i>{{ __('app.pourcentage') }}
+                                            <label class="form-label fw-bold text-muted">
+                                                {{ __('app.pourcentage') }}
                                             </label>
                                             <div class="form-control form-control-lg text-center bg-light" id="percentage">--</div>
                                         </div>
@@ -282,8 +294,8 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="commentaire" class="form-label fw-bold">
-                                        <i class="fas fa-comment text-secondary me-1"></i>{{ __('app.commentaire') }} 
+                                    <label for="commentaire" class="form-label fw-bold text-muted">
+                                        {{ __('app.commentaire') }} 
                                         <small class="text-muted">({{ __('app.optionnel') }})</small>
                                     </label>
                                     <textarea class="form-control" id="commentaire" name="commentaire" rows="3" 
@@ -291,11 +303,11 @@
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                                        <i class="fas fa-undo me-1"></i>{{ __('app.reinitialiser') }}
+                                    <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
+                                        {{ __('app.reinitialiser') }}
                                     </button>
                                     <button type="submit" class="btn btn-success btn-lg" disabled id="submitBtn">
-                                        <i class="fas fa-save me-2"></i>{{ __('app.enregistrer_note') }}
+                                        {{ __('app.enregistrer_note') }}
                                     </button>
                                 </div>
                             </form>
@@ -306,7 +318,7 @@
                     <div class="card shadow" id="recentNotesCard" style="display: none;">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-info">
-                                <i class="fas fa-history me-2"></i>{{ __('app.notes_recentes') }}
+                                {{ __('app.notes_recentes') }}
                             </h6>
                         </div>
                         <div class="card-body" id="recentNotesContent">
@@ -520,7 +532,7 @@ function editNote(noteId, studentId, studentName, evaluationId, currentNote) {
     
     // Update form to edit mode
     const form = document.getElementById('gradeForm');
-    form.action = "{{ route('notes.update', '') }}/" + noteId;
+    form.action = "{{ route('enseignant.notes.update', ':noteId') }}".replace(':noteId', noteId);
     
     // Add method field for PUT request
     let methodField = document.getElementById('_method');
@@ -561,7 +573,7 @@ function editNote(noteId, studentId, studentName, evaluationId, currentNote) {
 // Cancel edit function
 function cancelEdit() {
     // Reset form action
-    document.getElementById('gradeForm').action = "{{ route('notes.store') }}";
+    document.getElementById('gradeForm').action = "{{ route('enseignant.notes.store') }}";
     
     // Remove method field
     const methodField = document.getElementById('_method');

@@ -23,7 +23,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('evaluations.update', $evoluation->id_evoluation) }}" class="row g-3">
+                    <form method="POST" action="{{ route('evaluations.update', $evaluation) }}" class="row g-3">
                         @csrf
                         @method('PATCH')
 
@@ -31,24 +31,32 @@
                             <x-form.select 
                                 name="type" 
                                 label="Type d'évaluation" 
-                                :value="old('type', $evoluation->type)" 
+                                :value="old('type', $evaluation->type)" 
                                 required>
                                 <option value="">{{ __('Sélectionner un type') }}</option>
-                                <option value="devoir" {{ $evoluation->type == 'devoir' ? 'selected' : '' }}>{{ __('Devoir') }}</option>
-                                <option value="controle" {{ $evoluation->type == 'controle' ? 'selected' : '' }}>{{ __('Contrôle') }}</option>
-                                <option value="examen" {{ $evoluation->type == 'examen' ? 'selected' : '' }}>{{ __('Examen') }}</option>
+                                <option value="devoir" {{ $evaluation->type == 'devoir' ? 'selected' : '' }}>{{ __('Devoir') }}</option>
+                                <option value="controle" {{ $evaluation->type == 'controle' ? 'selected' : '' }}>{{ __('Contrôle') }}</option>
+                                <option value="examen" {{ $evaluation->type == 'examen' ? 'selected' : '' }}>{{ __('Examen') }}</option>
                             </x-form.select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <x-form.input 
+                                name="titre" 
+                                label="Titre de l'évaluation" 
+                                :value="old('titre', $evaluation->titre)" 
+                                placeholder="Ex: Devoir de mathématiques sur les équations" />
                         </div>
 
                         <div class="col-md-6">
                             <x-form.select 
                                 name="id_classe" 
                                 label="Classe" 
-                                :value="old('id_classe', $evoluation->id_classe)" 
+                                :value="old('id_classe', $evaluation->id_classe)" 
                                 required>
                                 <option value="">{{ __('Sélectionner une classe') }}</option>
                                 @foreach ($classes as $classe)
-                                    <option value="{{ $classe->id_classe }}" {{ $evoluation->id_classe == $classe->id_classe ? 'selected' : '' }}>
+                                    <option value="{{ $classe->id_classe }}" {{ $evaluation->id_classe == $classe->id_classe ? 'selected' : '' }}>
                                         {{ $classe->nom_classe }} (Niveau {{ $classe->niveau }})
                                     </option>
                                 @endforeach
@@ -57,21 +65,16 @@
 
                         <div class="col-md-6">
                             <x-form.select 
-                                name="matiere" 
+                                name="id_matiere" 
                                 label="Matière" 
-                                :value="old('matiere', $evoluation->matiere)" 
+                                :value="old('id_matiere', $evaluation->id_matiere)" 
                                 required>
                                 <option value="">{{ __('Sélectionner une matière') }}</option>
-                                <option value="Mathématiques" {{ $evoluation->matiere == 'Mathématiques' ? 'selected' : '' }}>Mathématiques</option>
-                                <option value="Français" {{ $evoluation->matiere == 'Français' ? 'selected' : '' }}>Français</option>
-                                <option value="Anglais" {{ $evoluation->matiere == 'Anglais' ? 'selected' : '' }}>Anglais</option>
-                                <option value="Sciences Physiques" {{ $evoluation->matiere == 'Sciences Physiques' ? 'selected' : '' }}>Sciences Physiques</option>
-                                <option value="Biologie" {{ $evoluation->matiere == 'Biologie' ? 'selected' : '' }}>Biologie</option>
-                                <option value="Histoire-Géographie" {{ $evoluation->matiere == 'Histoire-Géographie' ? 'selected' : '' }}>Histoire-Géographie</option>
-                                <option value="اللغة العربية" {{ $evoluation->matiere == 'اللغة العربية' ? 'selected' : '' }}>اللغة العربية</option>
-                                <option value="التربية الإسلامية" {{ $evoluation->matiere == 'التربية الإسلامية' ? 'selected' : '' }}>التربية الإسلامية</option>
-                                <option value="التربية المدنية" {{ $evoluation->matiere == 'التربية المدنية' ? 'selected' : '' }}>التربية المدنية</option>
-                                <option value="التربية البدنية" {{ $evoluation->matiere == 'التربية البدنية' ? 'selected' : '' }}>التربية البدنية</option>
+                                @foreach ($matieres as $matiere)
+                                    <option value="{{ $matiere->id_matiere }}" {{ $evaluation->id_matiere == $matiere->id_matiere ? 'selected' : '' }}>
+                                        {{ $matiere->nom_matiere }}
+                                    </option>
+                                @endforeach
                             </x-form.select>
                         </div>
 
@@ -80,7 +83,7 @@
                                 name="date" 
                                 label="Date de l'évaluation" 
                                 type="date" 
-                                :value="old('date', $evoluation->date)" 
+                                :value="old('date', $evaluation->date)" 
                                 required />
                         </div>
 
@@ -89,7 +92,7 @@
                                 name="date_debut" 
                                 label="Heure de début" 
                                 type="time" 
-                                :value="old('date_debut', $evoluation->date_debut)" 
+                                :value="old('date_debut', $evaluation->date_debut)" 
                                 required />
                         </div>
 
@@ -98,18 +101,23 @@
                                 name="date_fin" 
                                 label="Heure de fin" 
                                 type="time" 
-                                :value="old('date_fin', $evoluation->date_fin)" 
+                                :value="old('date_fin', $evaluation->date_fin)" 
                                 required />
                         </div>
 
-                        <div class="col-12">
-                            <x-form.textarea 
-                                name="description" 
-                                label="Description ou instructions (optionnel)" 
-                                :value="old('description', $evoluation->description ?? '')" 
-                                rows="3"
-                                placeholder="Instructions spéciales, matériel autorisé, consignes particulières..." />
+                        <div class="col-md-6">
+                            <x-form.input 
+                                name="note_max" 
+                                label="Note maximale" 
+                                type="number" 
+                                step="0.01"
+                                min="0"
+                                :value="old('note_max', $evaluation->note_max)" 
+                                required 
+                                placeholder="20" />
                         </div>
+
+
 
                         <div class="col-12">
                             <div class="d-flex justify-content-between">
@@ -153,7 +161,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
-                <form method="POST" action="{{ route('evaluations.destroy', $evoluation->id_evoluation) }}" class="d-inline">
+                <form method="POST" action="{{ route('evaluations.destroy', $evaluation) }}" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">

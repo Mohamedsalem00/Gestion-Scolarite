@@ -48,7 +48,7 @@ class UpdateClasseRequest extends FormRequest
     {
         return [
             'nom_classe' => __('app.name'),
-            'niveau' => __('app.level'),
+            'niveau' => __('app.niveau'),
         ];
     }
 

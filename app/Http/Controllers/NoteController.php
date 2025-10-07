@@ -3,455 +3,318 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
-use Illuminate\Http\Request;
 use App\Models\Classe;
 use App\Models\Etudiant;
-use Illuminate\Support\Facades\DB;
-
+use App\Models\Evaluation;
+use App\Models\Matiere;
+use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct()
     {
-
-        return view('note.index');
+        $this->middleware('auth');
     }
-
+    
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of notes with filters
      */
-    public function create(string $id, string $matiere,string $type)
+    public function index(Request $request)
     {
-        $classes = Classe::all();
-        $etudiant = Etudiant::find($id); // Retrieve the student using the provided ID
-        return view('note.create', compact('etudiant', 'classes', 'matiere','type'));
+        $query = Note::with(['etudiant', 'classe', 'evaluation.matiere', 'matiere']);
+        
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('etudiant', function($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                  ->orWhere('prenom', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('classe')) {
+            $query->where('id_classe', $request->classe);
+        }
+        
+        if ($request->filled('evaluation')) {
+            $query->where('id_evaluation', $request->evaluation);
+        }
+        
+        $notes = $query->orderBy('created_at', 'desc')->paginate(20);
+        
+        // Get filter options
+        $classes = Classe::orderBy('nom_classe')->get();
+        $evaluations = Evaluation::with('matiere')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function($eval) {
+                $eval->matiere_name = $eval->matiere->nom_matiere ?? 'N/A';
+                return $eval;
+            });
+        
+        return view('academic.notes.index', compact('notes', 'classes', 'evaluations'));
     }
-
+    
     /**
-     * Store a newly created resource in storage.
+     * Check if the current user can manage notes
+     */
+    private function canManageNote($studentId = null, $evaluationId = null, $noteId = null)
+    {
+        $user = auth()->user();
+        
+        // Admins can manage all notes
+        if ($user->hasRole('admin') || $user->hasRole('administrateur')) {
+            return true;
+        }
+        
+        // Teachers can only manage notes for their students and subjects
+        if ($user->hasRole('enseignant')) {
+            $enseignant = $user->enseignant;
+            
+            if (!$enseignant) {
+                return false;
+            }
+            
+            // If checking specific note
+            if ($noteId) {
+                $note = Note::find($noteId);
+                if (!$note) return false;
+                
+                // Check if teacher teaches this subject to this student's class
+                return $enseignant->matieres()
+                    ->where('id_matiere', $note->id_matiere)
+                    ->whereHas('classes', function($q) use ($note) {
+                        $q->where('classes.id_classe', $note->id_classe);
+                    })
+                    ->exists();
+            }
+            
+            // If checking evaluation
+            if ($evaluationId) {
+                $evaluation = Evaluation::find($evaluationId);
+                if (!$evaluation) return false;
+                
+                return $enseignant->matieres()
+                    ->where('id_matiere', $evaluation->id_matiere)
+                    ->whereHas('classes', function($q) use ($evaluation) {
+                        $q->where('classes.id_classe', $evaluation->id_classe);
+                    })
+                    ->exists();
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Store a newly created note
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        Note::create($input);
-       
-        $type=$input['type'];
-        if ($type == 'devoir1') {
-            return redirect('/note/noteDevoir1')->with('flash_message', "le note de l'etudiant a été ajouté");
-        } elseif($type == 'devoir2') {
-            return redirect('/note/noteDevoir2')->with('flash_message', "le note de l'etudiant a été ajouté");
-        } elseif($type == 'devoir3') {
-            return redirect('/note/noteDevoir3')->with('flash_message', "le note de l'etudiant a été ajouté");
-        }elseif ($type == 'examen1') {
-            return redirect('/note/noteExamen1')->with('flash_message', "le note de l'etudiant a été ajouté");
-        } elseif($type == 'examen2') {
-            return redirect('/note/noteExamen2')->with('flash_message', "le note de l'etudiant a été ajouté");
-        } elseif($type == 'examen3') {
-            return redirect('/note/noteExamen3')->with('flash_message', "le note de l'etudiant a été ajouté");
-        }
-      
-    }
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function showNoteDevoir1(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'devoir1')->where('id_classe', 14)->get();
-        return view('note.noteDevoir1', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-    public function showNoteDevoir2(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'devoir2')->where('id_classe', 14)->get();
-        return view('note.noteDevoir2', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-    public function showNoteDevoir3(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'devoir3')->where('id_classe', 14)->get();
-        return view('note.noteDevoir3', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-    public function showNoteExamen1(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'examen1')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'examen1')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'examen1')->where('id_classe', 14)->get();
-        return view('note.noteExamen1', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-    public function showNoteExamen2(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'examen2')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'examen2')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'examen2')->where('id_classe', 14)->get();
-        return view('note.noteExamen2', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-    public function showNoteExamen3(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        $AF1Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 1)->get();
-        $AF2Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 2)->get();
-        $AF3Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 3)->get();
-        $AF4Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 4)->get();
-        $AF5Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 5)->get();
-        $AF6Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 6)->get();
-        $AS1Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 7)->get();
-        $AS2Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 8)->get();
-        $AS3Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 9)->get();
-        $AS4Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 10)->get();
-        $AS5Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 11)->get();
-        $AS6Note = DB::table('notes')->where('type', 'examen3')->where('id_classe', 12)->get();
-        $AS7DNote = DB::table('notes')->where('type', 'examen3')->where('id_classe', 13)->get();
-        $AS7CNote = DB::table('notes')->where('type', 'examen3')->where('id_classe', 14)->get();
-        return view('note.noteExamen3', compact('etudiant', 'classes'))->with('AF1', $AF1)->with('AF2', $AF2)->with('AF3', $AF3)->with('AF4', $AF4)->with('AF5', $AF5)->with('AF6', $AF6)->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C)->with('AF1Note', $AF1Note)->with('AF2Note', $AF2Note)->with('AF3Note', $AF3Note)->with('AF4Note', $AF4Note)->with('AF5Note', $AF5Note)->with('AF6Note', $AF6Note)->with('AS1Note', $AS1Note)->with('AS2Note', $AS2Note)->with('AS3Note', $AS3Note)->with('AS4Note', $AS4Note)->with('AS5Note', $AS5Note)->with('AS6Note', $AS6Note)->with('AS7DNote', $AS7DNote)->with('AS7CNote', $AS7CNote);
-    }
-
-    public function showreleveNotes1(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        return view('note.releveNotes1', compact('etudiant', 'classes'))->with('AF1',$AF1)->with('AF2',$AF2)->with('AF3',$AF3)->with('AF4',$AF4)->with('AF5',$AF5)->with('AF6',$AF6)
-        ->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C);
-    }
-
-    public function spectacleT1(string $id,string $trimestre)
-    {
-        $etudiant = Etudiant::find($id);
-        $devoire1 = DB::table('notes')->where('type', 'devoir1')->where('id_etudiant',$id)->get();
-        $examen1 = DB::table('notes')->where('type', 'examen1')->where('id_etudiant',$id)->get();
-        return view('note.spectacle',compact('trimestre'))->with('devoire1',$devoire1)->with('examen1',$examen1)->with('etudiant',$etudiant);
-    }
-
-    public function showreleveNotes2(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        return view('note.releveNotes2', compact('etudiant', 'classes'))->with('AF1',$AF1)->with('AF2',$AF2)->with('AF3',$AF3)->with('AF4',$AF4)->with('AF5',$AF5)->with('AF6',$AF6)
-        ->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C);
-    }
-    
-    public function spectacleT2(string $id,string $trimestre)
-    {
-        $etudiant = Etudiant::find($id);
-        $devoire1 = DB::table('notes')->where('type', 'devoir2')->where('id_etudiant',$id)->get();
-        $examen1 = DB::table('notes')->where('type', 'examen2')->where('id_etudiant',$id)->get();
-        return view('note.spectacle',compact('trimestre'))->with('devoire1',$devoire1)->with('examen1',$examen1)->with('etudiant',$etudiant);
-    }
-
-
-    public function showreleveNotes3(string $note=null)
-    {
-        $classes = Classe::all();
-        $etudiant = Etudiant::all(); // Retrieve all classes from the Classe model
-        $AF1 = DB::table('etudiants')->where('id_classe', 1)->get();
-        $AF2 = DB::table('etudiants')->where('id_classe', 2)->get();
-        $AF3 = DB::table('etudiants')->where('id_classe', 3)->get();
-        $AF4 = DB::table('etudiants')->where('id_classe', 4)->get();
-        $AF5 = DB::table('etudiants')->where('id_classe', 5)->get();
-        $AF6 = DB::table('etudiants')->where('id_classe', 6)->get();
-        $AS1 = DB::table('etudiants')->where('id_classe', 7)->get();
-        $AS2 = DB::table('etudiants')->where('id_classe', 8)->get();
-        $AS3 = DB::table('etudiants')->where('id_classe', 9)->get();
-        $AS4 = DB::table('etudiants')->where('id_classe', 10)->get();
-        $AS5 = DB::table('etudiants')->where('id_classe', 11)->get();
-        $AS6 = DB::table('etudiants')->where('id_classe', 12)->get();
-        $AS7D = DB::table('etudiants')->where('id_classe', 13)->get();
-        $AS7C = DB::table('etudiants')->where('id_classe', 14)->get();
-        return view('note.releveNotes3', compact('etudiant', 'classes'))->with('AF1',$AF1)->with('AF2',$AF2)->with('AF3',$AF3)->with('AF4',$AF4)->with('AF5',$AF5)->with('AF6',$AF6)
-        ->with('AS1', $AS1)->with('AS2', $AS2)->with('AS3', $AS3)->with('AS4', $AS4)->with('AS5', $AS5)->with('AS6', $AS6)->with('AS7D', $AS7D)->with('AS7C', $AS7C);
-    }
-
-    public function spectacleT3(string $id,string $trimestre)
-    {
-        $etudiant = Etudiant::find($id);
-        $devoire1 = DB::table('notes')->where('type', 'devoir3')->where('id_etudiant',$id)->get();
-        $examen1 = DB::table('notes')->where('type', 'examen3')->where('id_etudiant',$id)->get();
-        return view('note.spectacle',compact('trimestre'))->with('devoire1',$devoire1)->with('examen1',$examen1)->with('etudiant',$etudiant);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $note)
-    {
-
-        $etudiants = Etudiant::all();
-        $classes = Classe::all();
-
-        $note = Note::find($note);
-        if (!$note) {
-            return redirect()->back()->with('flash_message', 'note introuvable');
-        }
-        foreach ($etudiants as $dd) {
-            if ($dd->id_etudiant === $note->id_etudiant) {
-                foreach ($classes as $ddd) {
-                    if ($ddd->id_classe === $dd->id_classe) {
-                        $classes =  Classe::find($ddd->id_classe);
-                        $etudiants = Etudiant::find($dd->id_etudiant);
-                        return view('note.edit', compact('note', 'etudiants'))->with('etudiants', $etudiants)->with('classes', $classes);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $note)
-    {
-        $noteRecord = Note::find($note);
-        
-        if (!$noteRecord) {
-            return redirect()->back()->with('error', 'Note non trouvée.');
-        }
-        
-        // Validate the request
         $request->validate([
-            'note' => 'required|numeric|min:0',
+            'id_etudiant' => 'required|exists:etudiants,id_etudiant',
             'id_evaluation' => 'required|exists:evaluations,id_evaluation',
-            'id_etudiant' => 'required|exists:etudiants,id_etudiant'
+            'note' => 'required|numeric|min:0',
+            'commentaire' => 'nullable|string'
         ]);
         
-        // Check if coming from grade entry page
-        if ($request->has('from_saisir_notes')) {
-            $noteRecord->update([
-                'note' => $request->note,
-                'id_evaluation' => $request->id_evaluation,
-                'id_etudiant' => $request->id_etudiant
-            ]);
-            
-            return redirect()->route('saisir-notes')->with('success', 'Note mise à jour avec succès!');
+        // Check authorization
+        if (!$this->canManageNote($request->id_etudiant, $request->id_evaluation)) {
+            return redirect()->back()
+                ->with('error', 'Vous n\'êtes pas autorisé à ajouter cette note.');
         }
         
-        // Legacy update logic for other pages
-        $type = $noteRecord->type;
-        $input = $request->all();
-        $noteRecord->update($input);
+        // Check if note already exists
+        $existingNote = Note::where('id_etudiant', $request->id_etudiant)
+            ->where('id_evaluation', $request->id_evaluation)
+            ->first();
         
-        if ($type == 'devoir1') {
-            return redirect('/note/noteDevoir1')->with('flash_message', 'Les informations ont été mises à jour!');
-        }elseif ($type == 'devoir2') {
-            return redirect('/note/noteDevoir2')->with('flash_message', 'Les informations ont été mises à jour!');
-        }elseif ($type == 'devoir3') {
-            return redirect('/note/noteDevoir3')->with('flash_message', 'Les informations ont été mises à jour!');
-        }elseif ($type == 'examen1') {
-            return redirect('/note/noteExamen1')->with('flash_message', 'Les informations ont été mises à jour!');
-        }elseif ($type == 'examen2') {
-            return redirect('/note/noteExamen2')->with('flash_message', 'Les informations ont été mises à jour!');
-        }elseif ($type == 'examen3') {
-            return redirect('/note/noteExamen3')->with('flash_message', 'Les informations ont été mises à jour!');
+        if ($existingNote) {
+            return redirect()->back()
+                ->with('error', 'Une note existe déjà pour cet étudiant et cette évaluation.');
         }
+        
+        // Get evaluation to extract related data
+        $evaluation = Evaluation::findOrFail($request->id_evaluation);
+        
+        // Create note
+        Note::create([
+            'id_etudiant' => $request->id_etudiant,
+            'id_evaluation' => $request->id_evaluation,
+            'id_classe' => $evaluation->id_classe,
+            'id_matiere' => $evaluation->id_matiere,
+            'note' => $request->note,
+            'type' => $evaluation->type,
+            'commentaire' => $request->commentaire
+        ]);
+        
+        // Redirect based on user role
+        if (auth()->user()->hasRole('enseignant')) {
+            return redirect()->route('evaluations.show', $evaluation)
+                ->with('success', 'La note a été ajoutée avec succès.');
+        }
+        
+        return redirect()->route('notes.index')
+            ->with('success', 'La note a été ajoutée avec succès.');
+    }
+    
+    /**
+     * Show the form for editing a note
+     */
+    public function edit(Note $note)
+    {
+        if (!$this->canManageNote(null, null, $note->id_note)) {
+            abort(403, 'Vous n\'êtes pas autorisé à modifier cette note.');
+        }
+        
+        $note->load(['etudiant', 'evaluation', 'classe']);
+        
+        return view('academic.notes.edit', compact('note'));
+    }
+    
+    /**
+     * Update the specified note
+     */
+    public function update(Request $request, Note $note)
+    {
+        if (!$this->canManageNote(null, null, $note->id_note)) {
+            return redirect()->back()
+                ->with('error', 'Vous n\'êtes pas autorisé à modifier cette note.');
+        }
+        
+        $request->validate([
+            'note' => 'required|numeric|min:0',
+            'commentaire' => 'nullable|string'
+        ]);
+        
+        $note->update([
+            'note' => $request->note,
+            'commentaire' => $request->commentaire
+        ]);
+        
+        // Redirect based on user role
+        if (auth()->user()->hasRole('enseignant')) {
+            return redirect()->route('evaluations.show', $note->evaluation)
+                ->with('success', 'La note a été modifiée avec succès.');
+        }
+        
+        return redirect()->route('notes.index')
+            ->with('success', 'La note a été modifiée avec succès.');
+    }
+    
+    /**
+     * Remove the specified note
+     */
+    public function destroy(Note $note)
+    {
+        if (!$this->canManageNote(null, null, $note->id_note)) {
+            return redirect()->back()
+                ->with('error', 'Vous n\'êtes pas autorisé à supprimer cette note.');
+        }
+        
+        $note->delete();
+        
+        return redirect()->back()
+            ->with('success', 'La note a été supprimée avec succès.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Display student grade transcript
      */
-    public function destroy(string $note)
+    public function transcript(Etudiant $etudiant, $trimestre = null)
     {
-        
-        $note=Note::find($note);
-        $type=$note->type;
-        $note->delete();
-        if ($type == 'devoir1') {
-            return redirect('/note/noteDevoir1')->with('flash_message', "Note supprimée");
-        }elseif($type == 'devoir2') {
-            return redirect('/note/noteDevoir2')->with('flash_message', "Note supprimée");
-        } elseif($type == 'devoir3') {
-            return redirect('/note/noteDevoir3')->with('flash_message', "Note supprimée");
-        }elseif ($type == 'examen1') {
-            return redirect('/note/noteExamen1')->with('flash_message', "Note supprimée");
-        } elseif($type == 'examen2') {
-            return redirect('/note/noteExamen2')->with('flash_message', "Note supprimée");
-        } elseif($type == 'examen3') {
-            return redirect('/note/noteExamen3')->with('flash_message', "Note supprimée");
+        // Get all notes for the student
+        $notesQuery = Note::with(['evaluation.matiere', 'matiere', 'classe'])
+            ->where('id_etudiant', $etudiant->id_etudiant);
+
+        // Filter by trimestre if provided
+        if ($trimestre) {
+            $notesQuery->whereHas('evaluation', function($q) use ($trimestre) {
+                $start = $this->getTrimestreStartDate($trimestre);
+                $end = $this->getTrimestreEndDate($trimestre);
+                $q->whereBetween('date', [$start, $end]);
+            });
+        }
+
+        $notes = $notesQuery->orderBy('created_at', 'desc')->get();
+
+        // Group notes by matiere for better organization
+        $notesByMatiere = $notes->groupBy(function($note) {
+            return $note->matiere ? $note->matiere->nom_matiere : ($note->evaluation->matiere ? $note->evaluation->matiere->nom_matiere : 'N/A');
+        });
+
+        // Calculate average for each matiere
+        $averages = [];
+        foreach ($notesByMatiere as $matiere => $matiereNotes) {
+            $totalPoints = $matiereNotes->sum('note');
+            $totalMaxPoints = $matiereNotes->sum(function($note) {
+                return $note->evaluation ? $note->evaluation->note_max : 20;
+            });
+            $averages[$matiere] = $totalMaxPoints > 0 ? ($totalPoints / $totalMaxPoints) * 20 : 0;
+        }
+
+        // Calculate overall average
+        $overallAverage = count($averages) > 0 ? array_sum($averages) / count($averages) : 0;
+
+        return view('academic.notes.transcript', compact(
+            'etudiant', 
+            'notes', 
+            'notesByMatiere', 
+            'averages', 
+            'overallAverage', 
+            'trimestre'
+        ));
+    }
+
+    /**
+     * Show all students for transcript selection
+     */
+    public function transcriptIndex(Request $request)
+    {
+        $query = Etudiant::with('classe');
+
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                  ->orWhere('prenom', 'like', "%{$search}%")
+                  ->orWhere('numero_etudiant', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('classe')) {
+            $query->where('id_classe', $request->classe);
+        }
+
+        $etudiants = $query->orderBy('nom')->orderBy('prenom')->paginate(20);
+        $classes = Classe::orderBy('nom_classe')->get();
+
+        return view('academic.notes.transcript-index', compact('etudiants', 'classes'));
+    }
+
+    /**
+     * Helper methods for trimestre dates
+     */
+    private function getTrimestreStartDate($trimestre)
+    {
+        $year = date('Y');
+        switch ($trimestre) {
+            case '1': return "{$year}-09-01";
+            case '2': return "{$year}-01-01";
+            case '3': return "{$year}-04-01";
+            default: return "{$year}-09-01";
+        }
+    }
+
+    private function getTrimestreEndDate($trimestre)
+    {
+        $year = date('Y');
+        switch ($trimestre) {
+            case '1': return "{$year}-12-31";
+            case '2': return ($year + 1) . "-03-31";
+            case '3': return ($year + 1) . "-06-30";
+            default: return ($year + 1) . "-06-30";
         }
     }
 }

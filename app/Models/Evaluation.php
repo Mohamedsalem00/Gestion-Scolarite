@@ -9,12 +9,11 @@ class Evaluation extends Model
 {
     protected $table = 'evaluations';
     protected $primaryKey = 'id_evaluation';
-    protected $fillable = ['id_matiere','matiere','date','type','date_debut','date_fin','id_classe','note_max'];
+    protected $fillable = ['id_matiere','titre','date','type','date_debut','date_fin','id_classe','note_max'];
     
     protected $casts = [
         'date' => 'date',
-        'date_debut' => 'date',
-        'date_fin' => 'date',
+        'note_max' => 'decimal:2',
     ];
     
     public function classe()
@@ -32,19 +31,16 @@ class Evaluation extends Model
         return $this->belongsTo(Matiere::class, 'id_matiere');
     }
     
-    // Helper method to get matiere name (supports both old and new structure)
+    // Helper method to get matiere name
     public function getMatiereNameAttribute()
     {
-        if ($this->matiere_relation) {
-            return $this->matiere_relation->nom_matiere;
-        }
-        return $this->matiere; // fallback to old string field
+        return $this->matiere ? $this->matiere->nom_matiere : 'N/A';
     }
     
-    // Alias for the relationship to avoid conflict with the string attribute
-    public function matiere_relation()
+    // Helper method to get full evaluation title
+    public function getFullTitleAttribute()
     {
-        return $this->belongsTo(Matiere::class, 'id_matiere');
+        return $this->titre ?: (ucfirst($this->type) . ' de ' . $this->matiere_name);
     }
     
     use HasFactory;

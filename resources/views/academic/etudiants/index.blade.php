@@ -8,71 +8,93 @@
 @endsection
 
 @section('header-actions')
-    @can('see', App\Models\Etudiant::class)
+    @admin
         <a href="{{ route('etudiants.create') }}" class="btn btn-primary">
-            <i class="fas fa-user-plus me-2"></i>
             {{ __('app.add_student') }}
         </a>
-    @endcan
+    @endadmin
 @endsection
 
 @section('content')
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <x-cards.info-card
-                title="{{__('app.total_etudiants') }}"
-                :value="$etudiants->count()"
-                icon="fas fa-user-graduate"
-                color="primary"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-graduate fa-2x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.total_etudiants') }}</h6>
+                            <h3 class="mb-0">{{ $etudiants->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="{{__('app.etudiants_hommes') }}"
-                :value="$etudiants->where('genre', 'masculin')->count()"
-                icon="fas fa-mars"
-                color="info"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-mars fa-2x text-info"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.etudiants_hommes') }}</h6>
+                            <h3 class="mb-0">{{ $etudiants->where('genre', 'masculin')->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="{{__('app.etudiantes_femmes') }}"
-                :value="$etudiants->where('genre', 'feminin')->count()"
-                icon="fas fa-venus"
-                color="warning"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-venus fa-2x text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.etudiantes_femmes') }}</h6>
+                            <h3 class="mb-0">{{ $etudiants->where('genre', 'feminin')->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
-            <x-cards.info-card
-                title="{{__('app.classes_actives') }}"
-                :value="$etudiants->pluck('classe')->unique()->count()"
-                icon="fas fa-school"
-                color="success"
-            />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-school fa-2x text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.classes_actives') }}</h6>
+                            <h3 class="mb-0">{{ $etudiants->pluck('classe')->unique()->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Students Table -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-list me-2"></i>
-                {{ __('app.liste_etudiants') }}
-            </h5>
-        </div>
+    <div class="card shadow-sm border-0">
         <div class="card-body">
+            <h5 class="mb-4">{{ __('app.liste_etudiants') }}</h5>
             @if($etudiants->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-hover align-middle">
                         <thead>
-                            <tr>
-                                <th>{{ __('app.nom_complet') }}</th>
-                                <th>{{ __('app.email') }}</th>
-                                <th>{{ __('app.telephone') }}</th>
-                                <th>{{ __('app.classe') }}</th>
-                                <th>{{ __('app.genre') }}</th>
-                                <th>{{ __('app.actions') }}</th>
+                            <tr class="border-bottom">
+                                <th class="text-muted fw-normal">{{ __('app.nom_complet') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.email') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.telephone') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.classe') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.genre') }}</th>
+                                <th class="text-muted fw-normal text-center">{{ __('app.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,13 +105,33 @@
                                     <td>{{ $etudiant->telephone ?? 'N/A' }}</td>
                                     <td>{{ $etudiant->classe?->nom_classe ?? 'Non assigné' }}</td>
                                     <td>{{ ucfirst($etudiant->genre ?? 'N/A') }}</td>
-                                    <td>
-                                        <a href="{{ route('etudiants.show', $etudiant->id_etudiant) }}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('etudiants.edit', $etudiant->id_etudiant) }}" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('etudiants.show', $etudiant->id_etudiant) }}" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="{{ __('app.voir') }}">
+                                                {{ __('app.voir') }}
+                                            </a>
+                                            @admin
+                                                <a href="{{ route('etudiants.edit', $etudiant->id_etudiant) }}" 
+                                                   class="btn btn-sm btn-outline-primary" 
+                                                   title="{{ __('app.modifier') }}">
+                                                    {{ __('app.modifier') }}
+                                                </a>
+                                                <form action="{{ route('etudiants.destroy', $etudiant->id_etudiant) }}" 
+                                                      method="POST" 
+                                                      class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-danger delete-student" 
+                                                            title="{{ __('app.supprimer') }}"
+                                                            data-student-name="{{ $etudiant->prenom }} {{ $etudiant->nom }}">
+                                                        {{ __('app.supprimer') }}
+                                                    </button>
+                                                </form>
+                                            @endadmin
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -98,15 +140,14 @@
                 </div>
             @else
                 <div class="text-center py-5">
-                    <i class="fas fa-user-graduate text-muted" style="font-size: 4rem;"></i>
-                    <h4 class="text-muted mt-3">{{ __('app.no_data') }}</h4>
+                    <i class="fas fa-user-graduate fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">{{ __('app.no_data') }}</h4>
                     <p class="text-muted">{{ __('app.aucun_etudiant_trouve') }}</p>
-                    @can('create', App\Models\Etudiant::class)
+                    @admin
                         <a href="{{ route('etudiants.create') }}" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-2"></i>
                             {{ __('app.ajouter_etudiant') }}
                         </a>
-                    @endcan
+                    @endadmin
                 </div>
             @endif
         </div>

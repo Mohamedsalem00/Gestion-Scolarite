@@ -1,25 +1,23 @@
 {{-- Courses Actions Partial --}}
 <div class="btn-group" role="group">
-    @can('update', $course)
+    @admin
     <a href="{{ route('cours.edit', $course->id_cours) }}" 
-       class="btn btn-outline-primary btn-sm" 
-       title="{{ __('Modifier') }}">
-        <i class="bi bi-pencil"></i>
+       class="btn btn-outline-primary btn-sm">
+        {{ __('app.modifier') }}
     </a>
-    @endcan
+    @endadmin
     
-    @can('delete', $course)
+    @admin
     <form action="{{ route('cours.destroy', $course->id_cours) }}" 
           method="POST" 
           class="d-inline"
-          onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce cours ?') }}')">
+          onsubmit="return confirm('{{ __('app.confirmer_suppression_cours') }}')">
         @csrf
         @method('DELETE')
         <button type="submit" 
-                class="btn btn-outline-danger btn-sm" 
-                title="{{ __('Supprimer') }}">
-            <i class="bi bi-trash"></i>
+                class="btn btn-outline-danger btn-sm">
+            {{ __('app.supprimer') }}
         </button>
     </form>
-    @endcan
+    @endadmin
 </div>

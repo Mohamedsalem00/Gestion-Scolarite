@@ -32,6 +32,12 @@ class Etudiant extends Model
     {
         return $this->prenom . ' ' . $this->nom;
     }
+
+    // Route model binding key - use matricule in URLs
+    public function getRouteKeyName()
+    {
+        return 'matricule';
+    }
     
     use HasFactory;
 }

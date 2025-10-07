@@ -16,6 +16,14 @@ class Cours extends Model
         'date_fin' => 'datetime:H:i',
     ];
     
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'id_cours';
+    }
+    
     public function classe()
     {
         return $this->belongsTo(Classe::class,'id_classe');

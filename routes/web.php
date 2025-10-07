@@ -141,6 +141,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         'destroy' => 'enseignants.destroy'
     ]);
     
+    // Route spéciale pour l'emploi du temps des cours (must be before resource)
+    Route::get('cours/spectacle', [CoursController::class, 'spectacle'])->name('cours.spectacle');
+    
     // Gestion des Cours - Routes ressource complètes
     Route::resource('cours', CoursController::class)->parameters([
         'cours' => 'cour'
@@ -153,9 +156,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         'update' => 'cours.update',
         'destroy' => 'cours.destroy'
     ]);
-    
-    // Route spéciale pour l'emploi du temps des cours
-    Route::get('cours/spectacle', [CoursController::class, 'show'])->name('cours.spectacle');
     
     // Gestion des Évaluations - Routes ressource complètes
     Route::resource('evaluations', EvaluationController::class)->parameters([
@@ -232,7 +232,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('notes/examens/{level}', [NoteController::class, 'examReports'])->name('notes.examens');
         
         // Relevés de notes des étudiants
-        Route::get('releves/{etudiant}/{trimestre}', [NoteController::class, 'transcript'])->name('releves');
+        Route::get('notes/releves', [NoteController::class, 'transcriptIndex'])->name('notes.transcript-index');
+        Route::get('notes/releves/{etudiant}/{trimestre?}', [NoteController::class, 'transcript'])->name('notes.transcript');
         
         // Plannings d'évaluations
         Route::get('evaluations/{type}/{niveau}', [EvaluationController::class, 'schedule'])->name('evaluations.planning');
@@ -248,43 +249,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         return view('publications.index');
     })->name('publications');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Legacy Routes (for backward compatibility)
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('legacy')->name('legacy.')->group(function () {
-        // Old evaluation routes
-        Route::get('evaluation/spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
-        Route::get('evaluation/spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
-        Route::get('evaluation/spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
-        Route::get('evaluation/spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
-        Route::get('evaluation/spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
-        Route::get('evaluation/spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
-        
-        // Old note routes  
-        Route::get('note/noteDevoir{level}', [NoteController::class, 'showNoteDevoir'])->name('noteDevoir');
-        Route::get('note/noteExamen{level}', [NoteController::class, 'showNoteExamen'])->name('noteExamen');
-        Route::get('note/releveNotes{level}', [NoteController::class, 'showreleveNotes'])->name('releveNotes');
-    });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Direct legacy route aliases (for immediate backward compatibility)
-    |--------------------------------------------------------------------------
-    */
-    Route::get('spectacleDevoir1', [EvaluationController::class, 'show1'])->name('spectacleDevoir1');
-    Route::get('spectacleDevoir2', [EvaluationController::class, 'show2'])->name('spectacleDevoir2');
-    Route::get('spectacleDevoir3', [EvaluationController::class, 'show3'])->name('spectacleDevoir3');
-    Route::get('spectacleExamen1', [EvaluationController::class, 'show4'])->name('spectacleExamen1');
-    Route::get('spectacleExamen2', [EvaluationController::class, 'show5'])->name('spectacleExamen2');
-    Route::get('spectacleExamen3', [EvaluationController::class, 'show6'])->name('spectacleExamen3');
-    Route::get('noteDevoir1', [NoteController::class, 'showNoteDevoir1'])->name('noteDevoir1');
-    Route::get('noteDevoir2', [NoteController::class, 'showNoteDevoir2'])->name('noteDevoir2');
-    Route::get('noteDevoir3', [NoteController::class, 'showNoteDevoir3'])->name('noteDevoir3');
-    Route::get('noteExamen1', [NoteController::class, 'showNoteExamen1'])->name('noteExamen1');
-    Route::get('noteExamen2', [NoteController::class, 'showNoteExamen2'])->name('noteExamen2');
-    Route::get('noteExamen3', [NoteController::class, 'showNoteExamen3'])->name('noteExamen3');
+
+
 });
 
 /*
@@ -306,6 +273,17 @@ Route::middleware(['auth', 'role:enseignant'])->prefix('enseignant')->name('ense
     Route::get('/mes-etudiants', [EnseignantDashboardController::class, 'mesEtudiants'])->name('mes-etudiants');
     Route::get('/mes-cours', [EnseignantDashboardController::class, 'mesCours'])->name('mes-cours');
     Route::get('/saisir-notes', [EnseignantDashboardController::class, 'saisirNotes'])->name('saisir-notes');
+    
+    // Teacher profile routes
+    Route::get('/profil', [EnseignantDashboardController::class, 'profil'])->name('profil');
+    Route::put('/profil', [EnseignantDashboardController::class, 'updateProfil'])->name('profil.update');
+    
+    // Teacher note management routes
+    Route::get('/notes/create/{etudiant}/{evaluation}', [NoteController::class, 'create'])->name('notes.create');
+    Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
+    Route::get('/notes/{note}/edit', [NoteController::class, 'edit'])->name('notes.edit');
+    Route::put('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 });
 
 /*

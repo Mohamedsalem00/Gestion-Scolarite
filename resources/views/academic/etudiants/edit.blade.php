@@ -2,83 +2,147 @@
 
 @section('title', __('app.modifier_etudiant'))
 
-@section('breadcrumbs')
-<x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item href="{{ route('etudiants.index') }}">{{ __('Etudiants') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Modifier') }}</x-breadcrumb-item>
-</x-breadcrumb>
+@section('breadcrumb')
+    <li class="breadcrumb-item">{{ __('app.gestion_academique') }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('etudiants.index') }}">{{ __('app.etudiants') }}</a></li>
+    <li class="breadcrumb-item active">{{ __('app.modifier') }} - {{ $etudiant->prenom }} {{ $etudiant->nom }}</li>
+@endsection
+
+@section('header-actions')
+    <a href="{{ route('etudiants.index') }}" class="btn btn-secondary">
+        {{ __('app.retour') }}
+    </a>
+    <a href="{{ route('etudiants.show', $etudiant->id_etudiant) }}" class="btn btn-outline-primary">
+        {{ __('app.voir') }}
+    </a>
 @endsection
 
 @section('content')
-    <link rel="stylesheet" href="css/style.css">
-    <div class="divform" style="padding: 0 6.6rem;">
-        <div class="card" style="margin: 20px;">
-            <div class="card-header">
-                <div style="display: flex;">
-                    <div style="width: 35%; font-size: 1.5rem">
-                        <a href="{{ url('/etudiant') }}" title="retourne"><i class="bi bi-arrow-left"></i></a>
-                    </div>
-                    <div>
-                        <h4>Modifier l'étudiant</h4>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ __('app.modifier_etudiant') }}: {{ $etudiant->prenom }} {{ $etudiant->nom }}</h5>
                 </div>
-            </div>
-            <div class="card-body">
-                <form class="row g-3 form-dark" id="myForm" action="{{ route('etudiants.update', ['etudiant' => $etudiant->id_etudiant ]) }}" method="POST">  
-                    @csrf
-                    @method('PATCH')
-                    <div class="col-md-4">
-                        <label for="inputName4" class="form-label">Nom</label>
-                        <input type="text" class="form-control" id="nom" name="nom" value="{{ $etudiant->nom }}" required>
-                        <div id="nom_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="inputPrenom4" class="form-label">Prenom</label>
-                        <input type="text" class="form-control" id="prenom" name="prenom" value="{{ $etudiant->prenom }}" required>
-                        <div id="prenom_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-4">
-                        <label for="inputTelephone" class="form-label">Telephone</label>
-                        <input type="number" class="form-control" id="telephone" name="telephone" value="{{ $etudiant->telephone }}" required>
-                        <div id="telephone_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-6">
-                        <label for="inputAdresse" class="form-label">Adresse</label>
-                        <input type="text" class="form-control" id="adresse" name="adresse" value="{{ $etudiant->adresse }}" required>
-                        <div id="adresse_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-6">
-                        <label for="inputDateNaissance" class="form-label">Date-Naissance</label>
-                        <input type="date" class="form-control" id="DateNaissance" name="date_naissance" value="{{ $etudiant->date_naissance }}" required>
-                        <div id="DateNaissance_error" class="invalid-feedback"></div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <label for="inputClasse" class="form-label">Classe</label>
-                        <select id="id_classe" class="form-select" name="id_classe" required>
-                            @foreach ($classes as $item)
-                                <option value="{{ $item->id_classe }}" {{ $etudiant->id_classe == $item->id_classe ? 'selected' : '' }}>
-                                    {{ $item->niveau }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div id="id_classe_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="inputGenre" class="form-label">Genre</label>
-                        <select id="genre" name="genre" class="form-select" required>
-                                <option value="Homme"  {{ $etudiant->genre == 'Homme' ? 'selected' : '' }}>Homme</option>
-                                <option value="Femme" {{ $etudiant->genre == 'Femme' ? 'selected' : '' }}>Femme</option>
-                        </select>
-                        <div id="genre_error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-success">Enregistrer</button>
-                    </div>
-                </form>
+                <div class="card-body">
+                    <form action="{{ route('etudiants.update', $etudiant->id_etudiant) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nom" class="form-label">{{ __('app.nom') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('nom') is-invalid @enderror" 
+                                           id="nom" name="nom" value="{{ old('nom', $etudiant->nom) }}" required>
+                                    @error('nom')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="prenom" class="form-label">{{ __('app.prenom') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('prenom') is-invalid @enderror" 
+                                           id="prenom" name="prenom" value="{{ old('prenom', $etudiant->prenom) }}" required>
+                                    @error('prenom')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">{{ __('app.email') }}</label>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                           id="email" name="email" value="{{ old('email', $etudiant->email) }}">
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="telephone" class="form-label">{{ __('app.telephone') }} <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control @error('telephone') is-invalid @enderror" 
+                                           id="telephone" name="telephone" value="{{ old('telephone', $etudiant->telephone) }}" required>
+                                    @error('telephone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="date_naissance" class="form-label">{{ __('app.date_naissance') }} <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control @error('date_naissance') is-invalid @enderror" 
+                                           id="date_naissance" name="date_naissance" value="{{ old('date_naissance', $etudiant->date_naissance) }}" required>
+                                    @error('date_naissance')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="genre" class="form-label">{{ __('app.genre') }} <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('genre') is-invalid @enderror" 
+                                            id="genre" name="genre" required>
+                                        <option value="">{{ __('app.choisir_genre') }}</option>
+                                        <option value="masculin" {{ old('genre', $etudiant->genre) == 'masculin' ? 'selected' : '' }}>{{ __('app.masculin') }}</option>
+                                        <option value="feminin" {{ old('genre', $etudiant->genre) == 'feminin' ? 'selected' : '' }}>{{ __('app.feminin') }}</option>
+                                    </select>
+                                    @error('genre')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_classe" class="form-label">{{ __('app.classe') }} <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('id_classe') is-invalid @enderror" 
+                                            id="id_classe" name="id_classe" required>
+                                        <option value="">{{ __('app.choisir_classe') }}</option>
+                                        @foreach ($classes as $classe)
+                                            <option value="{{ $classe->id_classe }}" {{ old('id_classe', $etudiant->id_classe) == $classe->id_classe ? 'selected' : '' }}>
+                                                {{ $classe->nom_classe }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('id_classe')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="adresse" class="form-label">{{ __('app.adresse') }}</label>
+                                    <input type="text" class="form-control @error('adresse') is-invalid @enderror" 
+                                           id="adresse" name="adresse" value="{{ old('adresse', $etudiant->adresse) }}">
+                                    @error('adresse')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ route('etudiants.index') }}" class="btn btn-secondary">
+                                {{ __('app.annuler') }}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {{ __('app.sauvegarder') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/regexEtud.js')}}"></script>
 @endsection

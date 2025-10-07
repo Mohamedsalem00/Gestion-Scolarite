@@ -44,6 +44,9 @@ return [
     'etudiants_hommes' => 'Étudiants Hommes',
     'etudiantes_femmes' => 'Étudiantes Femmes',
     'classes_actives' => 'Classes Actives',
+    'niveau_minimum' => 'Niveau Minimum',
+    'niveau_maximum' => 'Niveau Maximum',
+    'liste_classes' => 'Liste des Classes',
 
     // ===========================================
     // ACTIONS RAPIDES
@@ -58,6 +61,7 @@ return [
     'rapports_resultats' => 'Rapports et Résultats',
     'evaluations_recentes' => 'Évaluations Récentes',
     'voir_tout' => 'Voir Tout',
+    'ajouter_classe' => 'Ajouter une Classe',
 
     // ===========================================
     // ACTIONS GÉNÉRALES
@@ -90,6 +94,9 @@ return [
     'date_ajout' => 'Date d\'Ajout',
     'date_creation' => 'Date de Création',
     'date_modification' => 'Date de Modification',
+    'date' => 'Date',
+    'type' => 'Type',
+    'titre' => 'Titre',
 
     // ===========================================
     // GESTION DES CLASSES
@@ -101,6 +108,28 @@ return [
     'aucun_etudiant_inscrit' => 'Aucun étudiant inscrit',
     'classe_sans_etudiants' => 'Cette classe n\'a pas encore d\'étudiants inscrits.',
     'voir_le_cours' => 'Voir le Cours',
+    'aucune_classe_creee' => 'Aucune classe n\'a été créée pour le moment.',
+    'creer_premiere_classe' => 'Créer la première classe',
+    'no_data' => 'Aucune donnée',
+    'creer_classe' => 'Créer une Classe',
+    'creer_nouvelle_classe' => 'Créer une Nouvelle Classe',
+    'modifier_classe' => 'Modifier la Classe',
+    'exemple_classe' => 'Ex: 6ème A, CM2 B...',
+    'aide_nom_classe' => 'Nom de la classe (ex: 6ème A, CM2 B)',
+    'aide_niveau_classe' => 'Niveau de la classe (1-12)',
+    'informations_classe' => 'Informations de la Classe',
+    'etudiants_inscrits' => 'Étudiants inscrits',
+    'cours_assignes' => 'Cours assignés',
+    'creee_le' => 'Créée le',
+    'annuler' => 'Annuler',
+    'enregistrer' => 'Enregistrer',
+    'creer' => 'Créer',
+    'retour' => 'Retour',
+    'details' => 'Détails',
+    'informations_generales' => 'Informations Générales',
+    'nombre_etudiants' => 'Nombre d\'Étudiants',
+    'liste_etudiants' => 'Liste des Étudiants',
+    'nom_complet' => 'Nom Complet',
 
     // ===========================================
     // GENRE
@@ -143,6 +172,7 @@ return [
     'attention' => 'Attention',
     'information' => 'Information',
     'confirmer_suppression' => 'Êtes-vous sûr de vouloir supprimer cet élément ?',
+    'confirmer_suppression_cours' => 'Êtes-vous sûr de vouloir supprimer ce cours ?',
     'aucune_donnee' => 'Aucune donnée disponible',
 
     // ===========================================
@@ -165,6 +195,36 @@ return [
     'element_cree' => 'Élément créé avec succès',
     'element_modifie' => 'Élément modifié avec succès',
     'element_supprime' => 'Élément supprimé avec succès',
+    'note_existe_deja' => 'Une note existe déjà pour cet étudiant dans cette évaluation. Veuillez la modifier au lieu d\'en créer une nouvelle.',
+    'evaluation_introuvable' => 'Évaluation introuvable.',
+    'note_mise_a_jour_avec_succes' => 'Note mise à jour avec succès.',
+    'evaluations_terminees_seulement' => 'Seules les évaluations terminées permettent la saisie de notes',
+    'aucune_evaluation_terminee' => 'Aucune évaluation terminée disponible pour la saisie de notes',
+    'evaluations_en_attente' => 'Évaluations en attente de fin',
+    
+    // Profile & Personal Information
+    'mon_profil' => 'Mon Profil',
+    'informations_personnelles' => 'Informations Personnelles',
+    'changer_mot_de_passe' => 'Changer le Mot de Passe',
+    'nouveau_mot_de_passe' => 'Nouveau Mot de Passe',
+    'confirmer_mot_de_passe' => 'Confirmer le Mot de Passe',
+    'mot_de_passe_min_8' => 'Le mot de passe doit contenir au moins 8 caractères',
+    'enregistrer_modifications' => 'Enregistrer les Modifications',
+    'retour' => 'Retour',
+    'mes_statistiques' => 'Mes Statistiques',
+    'mes_affectations' => 'Mes Affectations',
+    'informations_compte' => 'Informations du Compte',
+    'notes_cette_semaine' => 'Notes Cette Semaine',
+    'aucune_affectation' => 'Aucune affectation',
+    'depuis' => 'Depuis',
+    'membre_depuis' => 'Membre Depuis',
+    'derniere_modification' => 'Dernière Modification',
+    'derniere_connexion' => 'Dernière Connexion',
+    'mots_de_passe_different' => 'Les mots de passe ne correspondent pas',
+    'matieres' => 'Matières',
+    'statut' => 'Statut',
+    'actif' => 'Actif',
+    'mon_profil' => 'Mon Profil',
 
 
 
@@ -190,6 +250,18 @@ return [
     'ajouter_cours' => 'Ajouter un Cours',
     'cours_ajoute' => 'Cours ajouté avec succès',
     'cours_modifie' => 'Cours modifié avec succès',
+    'nouveau_cours' => 'Nouveau Cours',
+    'programmer_nouveau_cours' => 'Programmer un nouveau cours dans l\'emploi du temps',
+    'consulter_emploi_temps' => 'Consulter l\'emploi du temps complet par classe',
+    'voir_emploi_temps' => 'Voir l\'emploi du temps',
+    'liste_cours' => 'Liste des Cours',
+    'tous_les_jours' => 'Tous les jours',
+    'non_assigne' => 'Non assigné',
+    'aucun_cours_trouve' => 'Aucun cours trouvé',
+    'aujourdhui' => 'Aujourd\'hui',
+    'enseignants_actifs' => 'Enseignants actifs',
+    'matieres' => 'Matières',
+    'horaire' => 'Horaire',
     'date_de_naissance' => 'Date de Naissance',
     'note_totale' => 'Note Totale',
     'commentaire' => 'Commentaire',
@@ -231,6 +303,23 @@ return [
     'voir_mes_etudiants' => 'Voir Mes Étudiants',
     'saisir_des_notes' => 'Saisir des Notes',
 
+
+
+
+        // MATIÈRES
+    // ===========================================
+    'MATH' => 'Mathématiques',
+    'FR' => 'Français',
+    'ANG' => 'Anglais',
+    'HG' => 'Histoire-Géographie',
+    'SVT' => 'Sciences de la Vie et de la Terre',
+    'PHY' => 'Sciences Physiques',
+    'EPS' => 'Éducation Physique et Sportive',
+    'EC' => 'Éducation Civique',
+    'ART' => 'Arts Plastiques',
+    'INFO' => 'Informatique',
+
+
     // ===========================================
     // GRADE ENTRY PAGE
     // ===========================================
@@ -268,5 +357,90 @@ return [
     'etudiant(s)' => 'étudiant(s)',
     'mon_enseignement' => 'Mon Enseignement',
     'optionnel' => 'Optionnel',
+    'commentaire_placeholder' => 'Entrez votre commentaire ici...',
+    'note_obtenue' => 'Note Obtenue',
+    'pourcentage' => 'Pourcentage',
+    'enregister_note' => 'Enregistrer la Note',
+    'reinitialiser' => 'Réinitialiser',
+    'notes_saisies' => 'Notes Saisies',
+    'moyenne_classe' => 'Moyenne Classe',
+    'rechercher' => 'Rechercher',
+    'notes_existantes' => 'Notes Existantes',
+    'noter' => 'Noter',
+    'notes_recentes' => 'Notes Récentes',
+    'notes_precedentes_etudiant' => 'Notes précédentes de cet étudiant',
+    'fonctionnalite_bientot_disponible' => 'Fonctionnalité bientôt disponible',
+    'modifier_note' => 'Modifier la Note',
+    'choisir_classe' => 'Choisir une Classe',
+    'note_introuvable' => 'Note introuvable',
+    'evaluation_introuvable' => 'Évaluation introuvable',
+    'note_mise_a_jour_avec_succes' => 'Note mise à jour avec succès',
+    'informations_mises_a_jour' => 'Les informations ont été mises à jour!',
+    'tous_mes_etudiants' => 'Tous mes étudiants',
+    'etudiant(s)' => 'étudiant(s)',
+    'note_exists' => 'Une note existe déjà pour cet étudiant dans cette évaluation. Veuillez la modifier au lieu d\'en créer une nouvelle.',
+    'note_ajoutee' => "La note de l'étudiant a été ajoutée",
+    'role' => 'Rôle',
+    'evaluations_recentes' => 'Évaluations Récentes',
+    'tableau_bord_admin' => 'Tableau de Bord Administrateur',
+    'classe_nom' => 'Nom de la Classe',
+    'enseignants_actifs' => 'Enseignants Actifs',
+    'consulter_emploi_temps' => 'Consulter l\'emploi du temps',
+    'nouveau_cours' => 'Nouveau Cours',
+    'programmer_nouveau_cours' => 'Programmer un nouveau cours',
+    'liste_cours' => 'Liste des Cours',
+    'voir_emploi_temps' => 'Voir l\'emploi du temps',
+    'jour' => 'Jour',
+    'id' => 'ID',
+    'creer_nouvelle_classe' => 'Créer une nouvelle classe',
+    'classe_sans_etudiants' => 'Cette classe n\'a pas encore d\'étudiants inscrits.',
+
+    // ===========================================
+    // MISSING TRANSLATIONS FOR ETUDIANTS PAGES
+    // ===========================================
+    'sauvegarder' => 'Sauvegarder',
+    'choisir_genre' => 'Choisir le genre',
+    'date_inscription' => 'Date d\'inscription',
+
+    // ===========================================
+    // MISSING TRANSLATIONS FOR ENSEIGNANTS PAGES
+    // ===========================================
+    'nom_famille' => 'Nom de famille',
+    'classe_assignee' => 'Classe assignée',
+    'matiere_enseignee' => 'Matière enseignée',
+    'selectionner_classe' => 'Sélectionner une classe',
+    'selectionner_matiere' => 'Sélectionner une matière',
+    'informations_personnelles' => 'Informations personnelles',
+    'aucune_classe_assignee' => 'Aucune classe assignée',
+    'date_ajout' => 'Date d\'ajout',
+    'activite_pedagogique' => 'Activité pédagogique',
+    'cours_dispenses' => 'Cours dispensés',
+    'evaluations_creees' => 'Évaluations créées',
+    'mission_educative_quote' => 'Autonomiser les esprits pour la grandeur - Où l\'apprentissage ne connaît pas de limites.',
+    'mission_educative' => 'Mission éducative',
+    'enseignant' => 'Enseignant',
+    'liste_classes' => 'Liste des Classes',
+    'niveau_maximum' => 'Niveau Maximum',
+    'niveau_minimum' => 'Niveau Minimum',
+    'confirmer_suppression_cours' => 'Êtes-vous sûr de vouloir supprimer ce cours ?',
+    'tous_les_jours' => 'Tous les jours',
+    'courses' => 'Courses',
+    'horaire' => 'Horaire',
+    'toutes_les_classes' => 'Toutes les classes',
+    'toutes_les_matieres' => 'Toutes les matières',
+    'tous_les_enseignants' => 'Tous les enseignants',
+    'aucun_resultat' => 'Aucun résultat trouvé',
+    'essayez_autres_filtres' => 'Essayez d\'ajuster vos filtres de recherche',
+    'reinitialiser_filtres' => 'Réinitialiser les filtres',
+    'aucun_cours_pour_cette_classe' => 'Aucun cours programmé pour cette classe',
+    'aucune_evaluation_en_attente' => 'Aucune évaluation en attente',
+    'total_evaluations' => 'Total Évaluations',
+    'examens' => 'Examens',
+    'controles' => 'Contrôles',
+    'devoirs' => 'Devoirs',
+    'evaluations_en_attente' => 'Évaluations en attente',
+    'tous_les_types' => 'Tous les types',
+
 ];
+
 

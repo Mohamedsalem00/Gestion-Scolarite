@@ -94,7 +94,7 @@
                         <small class="text-muted text-truncate d-block">{{ auth()->user()->email }}</small>
                     </li>
                     <li class="d-lg-none"><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>{{ __('app.profil') }}</a></li>
+                    <li><a class="dropdown-item" href="{{ route('enseignant.profil') }}"><i class="fas fa-user-cog me-2"></i>{{ __('app.profil') }}</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>{{ __('app.parametres') }}</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-bell me-2"></i>{{ __('app.notifications') }}</a></li>
                     <li><hr class="dropdown-divider"></li>

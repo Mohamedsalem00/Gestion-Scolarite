@@ -8,83 +8,101 @@
 @endsection
 
 @section('header-actions')
-    @can('create', App\Models\Enseignant::class)
+    @admin
         <a href="{{ route('enseignants.create') }}" class="btn btn-primary">
-            <i class="fas fa-user-plus me-2"></i>
             {{ __('app.ajouter_enseignant') }}
         </a>
-    @endcan
+    @endadmin
 @endsection
 
 @section('content')
-<div class="container-fluid">
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-lg-3 col-md-6">
-            <x-cards.info-card 
-                title="{{__('app.total_enseignants')}}" 
-                :value="$enseignant->count()" 
-                icon="bi-person-badge"
-                color="primary" />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.total_enseignants') }}</h6>
+                            <h3 class="mb-0">{{ $enseignant->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <x-cards.info-card 
-                title="{{__('app.actifs_ce_mois')}}" 
-                :value="$enseignant->where('created_at', '>=', now()->startOfMonth())->count()" 
-                icon="bi-calendar-check"
-                color="success" />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-calendar-check fa-2x text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.actifs_ce_mois') }}</h6>
+                            <h3 class="mb-0">{{ $enseignant->where('created_at', '>=', now()->startOfMonth())->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <x-cards.info-card 
-                title="{{__('app.matieres_enseignees')}}" 
-                :value="$enseignant->pluck('matiere')->unique()->count()" 
-                icon="bi-book"
-                color="info" />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-book fa-2x text-info"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.matieres_enseignees') }}</h6>
+                            <h3 class="mb-0">{{ $enseignant->pluck('matiere')->unique()->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <x-cards.info-card 
-                title="{{__('app.classes_assignees')}}" 
-                :value="$enseignant->whereNotNull('id_classe')->count()" 
-                icon="bi-diagram-3"
-                color="warning" />
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-users fa-2x text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">{{ __('app.classes_assignees') }}</h6>
+                            <h3 class="mb-0">{{ $enseignant->whereNotNull('id_classe')->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Enseignants Table -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-list me-2"></i>
-                {{ __('app.liste_enseignants') }}
-            </h5>
-        </div>
+    <div class="card shadow-sm border-0">
         <div class="card-body">
+            <h5 class="mb-4">{{ __('app.liste_enseignants') }}</h5>
             @if($enseignant->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-hover align-middle">
                         <thead>
-                            <tr>
-                                <th>{{ __('app.nom_complet') }}</th>
-                                <th>{{ __('app.email') }}</th>
-                                <th>{{ __('app.telephone') }}</th>
-                                <th>{{ __('app.matiere') }}</th>
-                                <th>{{ __('app.classe') }}</th>
-                                <th>{{ __('app.date_ajout') }}</th>
-                                <th>{{ __('app.actions') }}</th>
+                            <tr class="border-bottom">
+                                <th class="text-muted fw-normal">{{ __('app.nom_complet') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.email') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.telephone') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.matiere') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.classe') }}</th>
+                                <th class="text-muted fw-normal">{{ __('app.date_ajout') }}</th>
+                                <th class="text-muted fw-normal text-center">{{ __('app.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($enseignant as $item)
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                <i class="bi bi-person text-muted"></i>
-                                            </div>
-                                            <div>
-                                                <strong>{{ $item->nom }} {{ $item->prenom }}</strong>
-                                            </div>
-                                        </div>
+                                        <strong>{{ $item->prenom }} {{ $item->nom }}</strong>
                                     </td>
                                     <td>
                                         <a href="mailto:{{ $item->email }}" class="text-decoration-none">
@@ -109,7 +127,7 @@
                                     <td>
                                         <small class="text-muted">{{ $item->created_at->format('d/m/Y H:i') }}</small>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @include('academic.enseignants.partials.actions', ['teacher' => $item])
                                     </td>
                                 </tr>
@@ -119,41 +137,42 @@
                 </div>
             @else
                 <div class="text-center py-5">
-                    <i class="fas fa-user-tie text-muted" style="font-size: 4rem;"></i>
-                    <h4 class="text-muted mt-3">{{ __('app.no_data') }}</h4>
+                    <i class="fas fa-chalkboard-teacher fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">{{ __('app.no_data') }}</h4>
                     <p class="text-muted">{{ __('app.aucun_enseignant_ajoute') }}</p>
-                    @can('create', App\Models\Enseignant::class)
+                    @admin
                         <a href="{{ route('enseignants.create') }}" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-2"></i>
                             {{ __('app.ajouter_premier_enseignant') }}
                         </a>
-                    @endcan
+                    @endadmin
                 </div>
             @endif
         </div>
     </div>
-</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <script type="text/javascript">
-        $('.show-alert-delete-box').click(function(event) {
-            var form = $(this).closest("form");
-            var name = $(this).data("name");
-            event.preventDefault();
-            swal({
-                title: "Voulez-vous vraiment supprimer cet enregistrement ?",
-                text: "Si vous le supprimez, il disparaîtra pour toujours.",
-                icon: "warning",
-                type: "warning",
-                buttons: ["Annuler", "Oui!"],
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((willDelete) => {
-                if (willDelete) {
-                    form.submit();
-                }
-            });
-        });
-    </script>
 @endsection
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript">
+    $('.show-alert-delete-box').click(function(event) {
+        var form = $(this).closest("form");
+        var name = $(this).data("name");
+        event.preventDefault();
+        swal({
+            title: "Voulez-vous vraiment supprimer cet enregistrement ?",
+            text: "Si vous le supprimez, il disparaîtra pour toujours.",
+            icon: "warning",
+            type: "warning",
+            buttons: ["Annuler", "Oui!"],
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((willDelete) => {
+            if (willDelete) {
+                form.submit();
+            }
+        });
+    });
+</script>
+@endpush

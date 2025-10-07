@@ -384,7 +384,7 @@
                         <small class="text-muted">{{ auth()->user()->email ?? 'user@example.com' }}</small>
                     </li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>{{ __('app.profile') }}</a></li>
+                    <li><a class="dropdown-item" href="{{ route('enseignant.profil') }}"><i class="fas fa-user-cog me-2"></i>{{ __('app.profile') }}</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>{{ __('app.settings') }}</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
@@ -475,7 +475,7 @@
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle me-2"></i>
-                        {{ session('success') }}
+                        {{ __(session('success')) }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
@@ -483,7 +483,7 @@
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        {{ session('error') }}
+                        {{ __(session('error')) }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
@@ -491,7 +491,7 @@
                 @if(session('warning'))
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        {{ session('warning') }}
+                        {{ __(session('warning')) }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
@@ -499,7 +499,7 @@
                 @if(session('info'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="fas fa-info-circle me-2"></i>
-                        {{ session('info') }}
+                        {{ __(session('info')) }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif

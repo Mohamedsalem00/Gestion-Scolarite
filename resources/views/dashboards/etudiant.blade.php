@@ -216,7 +216,7 @@
                                                     {{ ucfirst($evaluation->type) }}
                                                 </span>
                                             </td>
-                                            <td>{{ $evaluation->cours->matiere ?? 'N/A' }}</td>
+                                            <td>{{ $evaluation->matiere_name ?? 'N/A' }}</td>
                                             <td>{{ $evaluation->date ? \Carbon\Carbon::parse($evaluation->date)->format('d/m/Y') : 'N/A' }}</td>
                                             <td>
                                                 <span class="badge bg-warning">À venir</span>

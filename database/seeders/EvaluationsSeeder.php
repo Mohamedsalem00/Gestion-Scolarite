@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Evaluation;
 use App\Models\Cours;
 use App\Models\Classe;
+use App\Models\Matiere;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ class EvaluationsSeeder extends Seeder
      */
     public function run(): void
     {
-        $courses = Cours::with(['classe', 'enseignant'])->get();
+        $courses = Cours::with(['classe', 'enseignant', 'matiere'])->get();
 
         if ($courses->isEmpty()) {
             $this->command->warn('No courses found. Run CoursSeeder first.');
@@ -35,17 +36,20 @@ class EvaluationsSeeder extends Seeder
                 $evaluationDates = $this->getEvaluationDates($date);
                 
                 Evaluation::create([
-                    'matiere' => $cours->matiere,
+                    'id_matiere' => $cours->id_matiere,
+                    'titre' => ucfirst($evaluationType) . ' de ' . $cours->matiere->nom_matiere . ' - Séance ' . ($i + 1),
                     'type' => $evaluationType,
                     'date' => $date,
                     'date_debut' => $evaluationDates['date_debut'],
                     'date_fin' => $evaluationDates['date_fin'],
                     'id_classe' => $cours->id_classe,
+                    'note_max' => $this->getBaremeForType($evaluationType), // Dynamic maximum note
                 ]);
             }
         }
 
-        // Additional upcoming evaluations could be added here if needed
+        $evaluationCount = Evaluation::count();
+        $this->command->info("Created {$evaluationCount} evaluations.");
     }
 
     private function getRandomEvaluationType(): string
@@ -91,11 +95,21 @@ class EvaluationsSeeder extends Seeder
 
     private function getEvaluationDates($date): array
     {
-        // For simplicity, use the same date for date_debut and date_fin
-        // In reality, these would be the period during which the evaluation takes place
+        // Generate realistic evaluation times
+        $startHours = [8, 9, 10, 13, 14, 15]; // Common exam start times
+        $startHour = $startHours[array_rand($startHours)];
+        $startMinute = [0, 30][array_rand([0, 30])]; // Either :00 or :30
+        
+        $startTime = sprintf('%02d:%02d:00', $startHour, $startMinute);
+        
+        // Calculate end time based on duration (1-3 hours)
+        $duration = rand(1, 3); // hours
+        $endHour = $startHour + $duration;
+        $endTime = sprintf('%02d:%02d:00', $endHour, $startMinute);
+        
         return [
-            'date_debut' => $date,
-            'date_fin' => $date,
+            'date_debut' => $startTime,
+            'date_fin' => $endTime,
         ];
     }
 }
