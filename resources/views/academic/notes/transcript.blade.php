@@ -12,145 +12,122 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- Actions -->
-    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-        <div>
-            <h4 class="mb-0">{{ __('Relevé de notes') }}</h4>
-            @if($trimestre)
-                <p class="text-muted mb-0">{{ __('Trimestre') }} {{ $trimestre }}</p>
-            @endif
-        </div>
+    <!-- Simple Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <h3>Relevé de notes</h3>
         <div class="d-flex gap-2">
             <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>
-                {{ __('Retour à la liste') }}
+                Retour
             </a>
             <button onclick="window.print()" class="btn btn-primary">
-                <i class="bi bi-printer me-1"></i>
-                {{ __('Imprimer') }}
+                Imprimer
             </button>
         </div>
     </div>
 
-    <!-- Transcript Card -->
-    <div class="card print-card">
-        <div class="card-body">
-            <!-- Header for Print -->
-            <div class="print-header text-center mb-4">
-                <h2 class="mb-1">{{ __('RELEVÉ DE NOTES') }}</h2>
-                @if($trimestre)
-                    <h4 class="text-muted">{{ __('Trimestre') }} {{ $trimestre }} - {{ __('Année scolaire') }} {{ date('Y') }}/{{ date('Y') + 1 }}</h4>
+    <!-- Simple Transcript -->
+    <div class="bg-white rounded border">
+        <div class="p-4">
+            <!-- Simple Header -->
+            <div class="text-center mb-4">
+                <h2 class="mb-1">RELEVÉ DE NOTES</h2>
+                @if($trimestreInfo)
+                    <p class="text-muted">{{ $trimestreInfo['name'] }} - Année scolaire {{ $academicYear }}</p>
                 @else
-                    <h4 class="text-muted">{{ __('Année scolaire') }} {{ date('Y') }}/{{ date('Y') + 1 }}</h4>
+                    <p class="text-muted">Année scolaire {{ $academicYear }}</p>
                 @endif
                 <hr>
+            </div>
+
+            <!-- Year and Trimester Selector -->
+            <div class="row mb-4 no-print">
+                <div class="col-md-6">
+                    <label for="yearSelect" class="form-label">Année scolaire</label>
+                    <select id="yearSelect" class="form-select" onchange="changeYear()">
+                        @foreach($availableYears as $year)
+                            <option value="{{ $year }}" {{ $year == $academicYear ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="trimestreSelect" class="form-label">Trimestre</label>
+                    <select id="trimestreSelect" class="form-select" onchange="changeTrimestre()">
+                        <option value="" {{ !$trimestre ? 'selected' : '' }}>Tous les trimestres</option>
+                        <option value="1" {{ $trimestre == '1' ? 'selected' : '' }}>1er Trimestre</option>
+                        <option value="2" {{ $trimestre == '2' ? 'selected' : '' }}>2ème Trimestre</option>
+                        <option value="3" {{ $trimestre == '3' ? 'selected' : '' }}>3ème Trimestre</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Student Information -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5>{{ __('Informations de l\'étudiant') }}</h5>
-                    <table class="table table-sm table-borderless">
+                    <table class="table table-borderless">
                         <tr>
-                            <td class="fw-bold">{{ __('Nom complet') }}:</td>
+                            <td><strong>Nom:</strong></td>
                             <td>{{ $etudiant->nom }} {{ $etudiant->prenom }}</td>
                         </tr>
                         <tr>
-                            <td class="fw-bold">{{ __('Numéro étudiant') }}:</td>
-                            <td>{{ $etudiant->numero_etudiant }}</td>
+                            <td><strong>Matricule:</strong></td>
+                            <td>{{ $etudiant->matricule }}</td>
                         </tr>
                         @if($etudiant->classe)
                         <tr>
-                            <td class="fw-bold">{{ __('Classe') }}:</td>
-                            <td>{{ $etudiant->classe->nom_classe }} - {{ __('Niveau') }} {{ $etudiant->classe->niveau }}</td>
+                            <td><strong>Classe:</strong></td>
+                            <td>{{ $etudiant->classe->nom_classe }}</td>
                         </tr>
                         @endif
                         <tr>
-                            <td class="fw-bold">{{ __('Date de naissance') }}:</td>
+                            <td><strong>Date de naissance:</strong></td>
                             <td>{{ $etudiant->date_naissance ? $etudiant->date_naissance->format('d/m/Y') : 'N/A' }}</td>
                         </tr>
                     </table>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <h5>{{ __('Résumé académique') }}</h5>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value text-primary">{{ number_format($overallAverage, 2) }}/20</div>
-                            <div class="stat-label">{{ __('Moyenne générale') }}</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value text-info">{{ $notes->count() }}</div>
-                            <div class="stat-label">{{ __('Total évaluations') }}</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value text-success">{{ count($notesByMatiere) }}</div>
-                            <div class="stat-label">{{ __('Matières') }}</div>
-                        </div>
+                <div class="col-md-6 text-end">
+                    <div class="border rounded p-3">
+                        <div class="h3 text-primary">{{ number_format($statistics['overall_average'], 2) }}/20</div>
+                        <p class="mb-0">Moyenne générale</p>
+                        <small class="text-muted">{{ $statistics['mention'] }}</small>
                     </div>
                 </div>
             </div>
 
-            <!-- Grades by Subject -->
+            <!-- Notes par matière -->
             @if($notesByMatiere->count() > 0)
-                <h5 class="mb-3">{{ __('Notes par matière') }}</h5>
-                
                 @foreach($notesByMatiere as $matiere => $matiereNotes)
-                    <div class="matiere-section mb-4">
+                    <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0 text-primary">
-                                <i class="bi bi-book me-1"></i>
-                                {{ $matiere }}
-                            </h6>
-                            <span class="badge bg-primary fs-6">
-                                {{ __('Moyenne') }}: {{ number_format($averages[$matiere], 2) }}/20
+                            <h6 class="mb-0">{{ $matiere }}</h6>
+                            <span class="badge bg-primary">
+                                Moyenne: {{ number_format($statistics['averages'][$matiere]['average'], 2) }}/20
                             </span>
                         </div>
                         
                         <div class="table-responsive">
-                            <table class="table table-sm table-bordered">
-                                <thead class="table-light">
+                            <table class="table table-sm">
+                                <thead>
                                     <tr>
-                                        <th>{{ __('Date') }}</th>
-                                        <th>{{ __('Type d\'évaluation') }}</th>
-                                        <th>{{ __('Note obtenue') }}</th>
-                                        <th>{{ __('Note maximale') }}</th>
-                                        <th>{{ __('Note sur 20') }}</th>
-                                        <th>{{ __('Appréciation') }}</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Note</th>
+                                        <th>Sur 20</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($matiereNotes as $note)
                                         <tr>
                                             <td>{{ $note->evaluation?->date?->format('d/m/Y') ?? 'N/A' }}</td>
+                                            <td>{{ ucfirst($note->evaluation?->type ?? 'N/A') }}</td>
+                                            <td>{{ $note->note }}/{{ $note->evaluation?->note_max ?? 20 }}</td>
                                             <td>
-                                                @if($note->evaluation)
-                                                    <span class="badge bg-secondary">{{ ucfirst($note->evaluation->type) }}</span>
-                                                @else
-                                                    <span class="text-muted">N/A</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-center fw-bold">{{ $note->note }}</td>
-                                            <td class="text-center">{{ $note->evaluation?->note_max ?? 20 }}</td>
-                                            <td class="text-center">
                                                 @php
                                                     $noteMax = $note->evaluation?->note_max ?? 20;
                                                     $noteSur20 = ($note->note / $noteMax) * 20;
                                                 @endphp
-                                                <span class="badge {{ $noteSur20 >= 10 ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ number_format($noteSur20, 2) }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $appreciation = '';
-                                                    if($noteSur20 >= 18) $appreciation = 'Excellent';
-                                                    elseif($noteSur20 >= 16) $appreciation = 'Très bien';
-                                                    elseif($noteSur20 >= 14) $appreciation = 'Bien';
-                                                    elseif($noteSur20 >= 12) $appreciation = 'Assez bien';
-                                                    elseif($noteSur20 >= 10) $appreciation = 'Passable';
-                                                    else $appreciation = 'Insuffisant';
-                                                @endphp
-                                                <small class="text-muted">{{ $appreciation }}</small>
+                                                {{ number_format($noteSur20, 1) }}/20
                                             </td>
                                         </tr>
                                     @endforeach
@@ -160,42 +137,33 @@
                     </div>
                 @endforeach
 
-                <!-- Overall Statistics -->
-                <div class="mt-4 p-3 bg-light rounded">
+                <!-- Résumé -->
+                <div class="mt-4 border-top pt-3">
                     <div class="row text-center">
                         <div class="col-md-4">
-                            <div class="fw-bold text-primary">{{ number_format($overallAverage, 2) }}/20</div>
-                            <small class="text-muted">{{ __('Moyenne générale') }}</small>
+                            <strong>{{ number_format($statistics['overall_average'], 2) }}/20</strong>
+                            <br><small class="text-muted">Moyenne générale</small>
                         </div>
                         <div class="col-md-4">
-                            <div class="fw-bold text-success">{{ $notes->where(function($n) { return (($n->note / ($n->evaluation?->note_max ?? 20)) * 20) >= 10; })->count() }}</div>
-                            <small class="text-muted">{{ __('Notes ≥ 10/20') }}</small>
+                            <strong>{{ $statistics['passed_notes'] }}/{{ $statistics['total_notes'] }}</strong>
+                            <br><small class="text-muted">Notes ≥ 10/20</small>
                         </div>
                         <div class="col-md-4">
-                            <div class="fw-bold text-info">{{ $notes->count() }}</div>
-                            <small class="text-muted">{{ __('Total évaluations') }}</small>
+                            <strong>{{ $statistics['mention'] }}</strong>
+                            <br><small class="text-muted">Mention</small>
                         </div>
                     </div>
                 </div>
             @else
-                <div class="text-center py-5">
-                    <i class="bi bi-clipboard-data display-1 text-muted"></i>
-                    <h5 class="mt-3">{{ __('Aucune note disponible') }}</h5>
-                    <p class="text-muted">
-                        @if($trimestre)
-                            {{ __('Aucune note n\'a été trouvée pour ce trimestre.') }}
-                        @else
-                            {{ __('Cet étudiant n\'a pas encore de notes enregistrées.') }}
-                        @endif
-                    </p>
+                <div class="text-center py-4">
+                    <p class="text-muted">Aucune note disponible</p>
                 </div>
             @endif
 
-            <!-- Footer for Print -->
-            <div class="print-footer mt-5 pt-3 border-top text-center">
+            <!-- Simple Footer -->
+            <div class="text-center mt-5 pt-3 border-top">
                 <small class="text-muted">
-                    {{ __('Document généré le') }} {{ now()->format('d/m/Y à H:i') }} - 
-                    {{ __('Système de Gestion Scolaire') }}
+                    Document généré le {{ now()->format('d/m/Y à H:i') }}
                 </small>
             </div>
         </div>
@@ -203,80 +171,68 @@
 </div>
 
 <style>
-/* Print Styles */
 @media print {
     .no-print {
         display: none !important;
     }
     
-    .print-card {
-        box-shadow: none !important;
-        border: none !important;
-        margin: 0 !important;
-    }
-    
-    .print-header {
-        margin-bottom: 20px !important;
-    }
-    
-    .table {
+    body {
         font-size: 12px;
     }
     
-    .matiere-section {
-        page-break-inside: avoid;
-        margin-bottom: 25px !important;
+    .table {
+        font-size: 11px;
     }
     
-    body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    
-    .badge {
-        border: 1px solid #000 !important;
-        color: #000 !important;
-        background-color: transparent !important;
+    .table th, .table td {
+        padding: 6px !important;
     }
 }
 
-/* Screen Styles */
-.stats-grid {
-    display: flex;
-    gap: 20px;
-    justify-content: flex-end;
+.table th {
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
 }
 
-.stat-item {
-    text-align: center;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    line-height: 1.2;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #6c757d;
-}
-
-.matiere-section {
-    border-left: 3px solid var(--bs-primary);
-    padding-left: 15px;
-}
-
-@media (max-width: 768px) {
-    .stats-grid {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .d-flex.gap-2 {
-        flex-direction: column;
-        gap: 10px;
-    }
+.table td {
+    vertical-align: middle;
 }
 </style>
+
+<script>
+function changeYear() {
+    const year = document.getElementById('yearSelect').value;
+    const trimestre = document.getElementById('trimestreSelect').value;
+    let url = `{{ route('rapports.notes.transcript', $etudiant->matricule) }}`;
+    
+    const params = new URLSearchParams();
+    if (year) params.append('year', year);
+    if (trimestre) url += `/${trimestre}`;
+    
+    if (params.toString()) {
+        url += `?${params.toString()}`;
+    }
+    
+    window.location.href = url;
+}
+
+function changeTrimestre() {
+    const year = document.getElementById('yearSelect').value;
+    const trimestre = document.getElementById('trimestreSelect').value;
+    let url = `{{ route('rapports.notes.transcript', $etudiant->matricule) }}`;
+    
+    if (trimestre) {
+        url += `/${trimestre}`;
+    }
+    
+    const params = new URLSearchParams();
+    if (year) params.append('year', year);
+    
+    if (params.toString()) {
+        url += `?${params.toString()}`;
+    }
+    
+    window.location.href = url;
+}
+</script>
 @endsection

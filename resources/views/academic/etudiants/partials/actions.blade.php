@@ -1,6 +1,6 @@
 <div class="btn-group" role="group">
     <!-- View Button -->
-    <a href="{{ route('etudiants.show', $item->id_etudiant) }}" 
+    <a href="{{ route('etudiants.show', $item) }}" 
        class="btn btn-sm btn-outline-secondary" 
        title="{{ __('app.view') }}">
         <i class="fas fa-eye"></i>
@@ -8,7 +8,7 @@
     
     <!-- Edit Button -->
     @admin
-        <a href="{{ route('etudiants.edit', $item->id_etudiant) }}" 
+        <a href="{{ route('etudiants.edit', $item) }}" 
            class="btn btn-sm btn-outline-primary" 
            title="{{ __('app.edit') }}">
             {{ __('app.modifier') }}
@@ -17,7 +17,7 @@
     
     <!-- Delete Button -->
     @admin
-        <form action="{{ route('etudiants.destroy', $item->id_etudiant) }}" 
+        <form action="{{ route('etudiants.destroy', $item) }}" 
               method="POST" 
               class="d-inline">
             @csrf

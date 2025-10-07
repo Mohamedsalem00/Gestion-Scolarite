@@ -12,7 +12,7 @@
     <a href="{{ route('etudiants.index') }}" class="btn btn-secondary">
         {{ __('app.retour') }}
     </a>
-    <a href="{{ route('etudiants.show', $etudiant->id_etudiant) }}" class="btn btn-outline-primary">
+    <a href="{{ route('etudiants.show', $etudiant) }}" class="btn btn-outline-primary">
         {{ __('app.voir') }}
     </a>
 @endsection
@@ -25,7 +25,7 @@
                     <h5 class="card-title mb-0">{{ __('app.modifier_etudiant') }}: {{ $etudiant->prenom }} {{ $etudiant->nom }}</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('etudiants.update', $etudiant->id_etudiant) }}" method="POST">
+                    <form action="{{ route('etudiants.update', $etudiant) }}" method="POST">
                         @csrf
                         @method('PUT')
                         

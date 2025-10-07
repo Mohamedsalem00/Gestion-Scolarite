@@ -9,7 +9,7 @@
 
 @section('header-actions')
     <div class="d-flex gap-2">
-        <a href="{{ route('notes.transcript-index') }}" class="btn btn-primary">
+        <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-primary">
             <i class="bi bi-file-earmark-text me-1"></i> {{ __('Relevés de notes') }}
         </a>
         <a href="{{ route('evaluations.index') }}" class="btn btn-outline-secondary">

@@ -13,7 +13,7 @@
         {{ __('app.retour') }}
     </a>
     @admin
-        <a href="{{ route('etudiants.edit', $etudiant->id_etudiant) }}" class="btn btn-primary">
+        <a href="{{ route('etudiants.edit', $etudiant) }}" class="btn btn-primary">
             {{ __('app.modifier') }}
         </a>
     @endadmin
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <h4 class="card-title">{{ $etudiant->prenom }} {{ $etudiant->nom }}</h4>
-                    <p class="text-muted">{{ __('app.matricule') }}: E{{ $etudiant->id_etudiant }}</p>
+                    <p class="text-muted">{{ __('app.matricule') }}: {{ $etudiant->matricule }}</p>
                     <p class="text-muted">{{ __('app.classe') }}: {{ $etudiant->classe?->nom_classe ?? 'Non assigné' }}</p>
                 </div>
             </div>

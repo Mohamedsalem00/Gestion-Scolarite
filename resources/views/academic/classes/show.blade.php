@@ -160,7 +160,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('etudiants.show', $student->id_etudiant) }}" 
+                                                <a href="{{ route('etudiants.show', $student) }}" 
                                                    class="btn btn-sm btn-outline-primary">
                                                     {{ __('app.voir') }}
                                                 </a>

@@ -107,18 +107,18 @@
                                     <td>{{ ucfirst($etudiant->genre ?? 'N/A') }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('etudiants.show', $etudiant->id_etudiant) }}" 
+                                            <a href="{{ route('etudiants.show', $etudiant) }}" 
                                                class="btn btn-sm btn-outline-info" 
                                                title="{{ __('app.voir') }}">
                                                 {{ __('app.voir') }}
                                             </a>
                                             @admin
-                                                <a href="{{ route('etudiants.edit', $etudiant->id_etudiant) }}" 
+                                                <a href="{{ route('etudiants.edit', $etudiant) }}" 
                                                    class="btn btn-sm btn-outline-primary" 
                                                    title="{{ __('app.modifier') }}">
                                                     {{ __('app.modifier') }}
                                                 </a>
-                                                <form action="{{ route('etudiants.destroy', $etudiant->id_etudiant) }}" 
+                                                <form action="{{ route('etudiants.destroy', $etudiant) }}" 
                                                       method="POST" 
                                                       class="d-inline">
                                                     @csrf

@@ -61,7 +61,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         Route::bind('etudiant', function ($value) {
-            return \App\Models\Etudiant::where('id_etudiant', $value)->firstOrFail();
+            return \App\Models\Etudiant::where('matricule', $value)->firstOrFail();
         });
 
         Route::bind('enseignant', function ($value) {

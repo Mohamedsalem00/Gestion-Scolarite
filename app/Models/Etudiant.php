@@ -10,7 +10,9 @@ class Etudiant extends Model
     protected $primaryKey = 'id_etudiant';
     protected $fillable = ['matricule', 'nom', 'prenom', 'telephone', 'date_naissance', 'genre', 'adresse', 'email', 'id_classe'];
     
-    protected $dates = ['date_naissance'];
+    protected $casts = [
+        'date_naissance' => 'datetime',
+    ];
     
     public function classe()
     {
