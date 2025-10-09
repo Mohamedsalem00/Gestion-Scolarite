@@ -14,7 +14,8 @@ class NoteController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        // Apply auth middleware to all methods except public transcript access
+        $this->middleware('auth')->except(['publicTranscript', 'publicTranscriptSearch']);
     }
     
     /**
@@ -253,8 +254,8 @@ class NoteController extends Controller
 
         // Group notes by matiere for better organization
         $notesByMatiere = $notes->groupBy(function($note) {
-            return $note->matiere?->nom_matiere ?? 
-                   $note->evaluation?->matiere?->nom_matiere ?? 
+            return $note->matiere?->code_matiere ?? 
+                   $note->evaluation?->matiere?->code_matiere ?? 
                    'Matière non spécifiée';
         });
 
@@ -274,6 +275,106 @@ class NoteController extends Controller
             'academicYear',
             'availableYears'
         ));
+    }
+
+    /**
+     * Public: Search for student transcript by matricule (NO LOGIN REQUIRED)
+     */
+    public function publicTranscriptSearch(Request $request)
+    {
+        $request->validate([
+            'matricule' => 'required|string'
+        ]);
+        
+        $etudiant = Etudiant::where('matricule', $request->matricule)->first();
+        
+        if (!$etudiant) {
+            return redirect()->route('accueil')
+                ->with('error', 'Aucun étudiant trouvé avec ce matricule.');
+        }
+        
+        // Redirect to public transcript view
+        return redirect()->route('public.transcript.show', $etudiant->matricule);
+    }
+
+    /**
+     * Public: Display student transcript (NO LOGIN REQUIRED)
+     */
+    public function publicTranscript($matricule, $trimestre = null)
+    {
+        // Find student by matricule
+        $etudiant = Etudiant::where('matricule', $matricule)->firstOrFail();
+        
+        // Get selected academic year from request, default to current
+        $selectedYear = request()->get('year');
+        $academicYear = $selectedYear ?: $this->getCurrentAcademicYear();
+        
+        // Get available academic years for this student
+        $availableYears = $this->getAvailableAcademicYearsForStudent($etudiant);
+        
+        // Get all notes for the student with improved relationships
+        $notesQuery = Note::with(['evaluation.matiere', 'matiere', 'classe'])
+            ->where('id_etudiant', $etudiant->id_etudiant);
+
+        // Filter by selected academic year
+        $notesQuery->whereHas('evaluation', function($q) use ($academicYear) {
+            $yearRange = $this->getAcademicYearDateRange($academicYear);
+            $q->whereBetween('date', [$yearRange['start'], $yearRange['end']]);
+        });
+
+        // Filter by trimestre if provided with better date handling
+        if ($trimestre) {
+            $notesQuery->whereHas('evaluation', function($q) use ($trimestre, $academicYear) {
+                $dates = $this->getTrimestreDateRangeForYear($trimestre, $academicYear);
+                $q->whereBetween('date', [$dates['start'], $dates['end']]);
+            });
+        }
+
+        $notes = $notesQuery->orderBy('created_at', 'desc')->get();
+
+        // Group notes by matiere for better organization
+        $notesByMatiere = $notes->groupBy(function($note) {
+            return $note->matiere?->code_matiere ?? 
+                   $note->evaluation?->matiere?->code_matiere ?? 
+                   'Matière non spécifiée';
+        });
+
+        // Calculate statistics with improved logic
+        $statistics = $this->calculateTranscriptStatistics($notesByMatiere);
+        
+        // Get trimestre info with proper labels
+        $trimestreInfo = $trimestre ? $this->getTrimestreInfo($trimestre) : null;
+
+        return view('public.transcript', compact(
+            'etudiant', 
+            'notes', 
+            'notesByMatiere', 
+            'statistics',
+            'trimestre',
+            'trimestreInfo',
+            'academicYear',
+            'availableYears'
+        ));
+    }
+
+    /**
+     * Admin: Search for student transcript by matricule (REQUIRES LOGIN)
+     */
+    public function transcriptSearch(Request $request)
+    {
+        $request->validate([
+            'matricule' => 'required|string'
+        ]);
+        
+        $etudiant = Etudiant::where('matricule', $request->matricule)->first();
+        
+        if (!$etudiant) {
+            return redirect()->route('accueil')
+                ->with('error', 'Aucun étudiant trouvé avec ce matricule.');
+        }
+        
+        // Redirect to admin transcript view
+        return redirect()->route('rapports.notes.transcript', $etudiant->matricule);
     }
 
     /**

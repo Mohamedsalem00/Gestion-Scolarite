@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
 
-@section('title', __('Relevé de notes') . ' - ' . $etudiant->nom . ' ' . $etudiant->prenom)
+@section('title', __('app.releve_de_notes') . ' - ' . $etudiant->nom . ' ' . $etudiant->prenom)
 
 @section('breadcrumbs')
 <x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item href="{{ route('rapports.notes.transcript-index') }}">{{ __('Relevés de notes') }}</x-breadcrumb-item>
+    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('app.tableau_de_bord') }}</x-breadcrumb-item>
+    <x-breadcrumb-item href="{{ route('rapports.notes.transcript-index') }}">{{ __('app.relevés_de_notes') }}</x-breadcrumb-item>
     <x-breadcrumb-item active>{{ $etudiant->nom }} {{ $etudiant->prenom }}</x-breadcrumb-item>
 </x-breadcrumb>
 @endsection
@@ -14,13 +14,13 @@
 <div class="container-fluid">
     <!-- Simple Actions -->
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-        <h3>Relevé de notes</h3>
+        <h3>{{ __('app.releve_de_notes') }}</h3>
         <div class="d-flex gap-2">
             <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-outline-secondary">
-                Retour
+                {{ __('app.retour') }}
             </a>
             <button onclick="window.print()" class="btn btn-primary">
-                Imprimer
+                {{ __('app.imprimer') }}
             </button>
         </div>
     </div>
@@ -30,11 +30,11 @@
         <div class="p-4">
             <!-- Simple Header -->
             <div class="text-center mb-4">
-                <h2 class="mb-1">RELEVÉ DE NOTES</h2>
+                <h2 class="mb-1">{{ __('app.releve_de_notes') }}</h2>
                 @if($trimestreInfo)
-                    <p class="text-muted">{{ $trimestreInfo['name'] }} - Année scolaire {{ $academicYear }}</p>
+                    <p class="text-muted">{{ $trimestreInfo['name'] }} - {{ __('app.annee_scolaire') }} {{ $academicYear }}</p>
                 @else
-                    <p class="text-muted">Année scolaire {{ $academicYear }}</p>
+                    <p class="text-muted">{{ __('app.annee_scolaire') }} {{ $academicYear }}</p>
                 @endif
                 <hr>
             </div>
@@ -42,7 +42,7 @@
             <!-- Year and Trimester Selector -->
             <div class="row mb-4 no-print">
                 <div class="col-md-6">
-                    <label for="yearSelect" class="form-label">Année scolaire</label>
+                    <label for="yearSelect" class="form-label">{{ __('app.annee_scolaire') }}</label>
                     <select id="yearSelect" class="form-select" onchange="changeYear()">
                         @foreach($availableYears as $year)
                             <option value="{{ $year }}" {{ $year == $academicYear ? 'selected' : '' }}>
@@ -52,12 +52,12 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="trimestreSelect" class="form-label">Trimestre</label>
+                    <label for="trimestreSelect" class="form-label">{{ __('app.trimestre') }}</label>
                     <select id="trimestreSelect" class="form-select" onchange="changeTrimestre()">
-                        <option value="" {{ !$trimestre ? 'selected' : '' }}>Tous les trimestres</option>
-                        <option value="1" {{ $trimestre == '1' ? 'selected' : '' }}>1er Trimestre</option>
-                        <option value="2" {{ $trimestre == '2' ? 'selected' : '' }}>2ème Trimestre</option>
-                        <option value="3" {{ $trimestre == '3' ? 'selected' : '' }}>3ème Trimestre</option>
+                        <option value="" {{ !$trimestre ? 'selected' : '' }}>{{ __('app.tous_les_trimestres') }}</option>
+                        <option value="1" {{ $trimestre == '1' ? 'selected' : '' }}>{{ __('app.premier_trimestre') }}</option>
+                        <option value="2" {{ $trimestre == '2' ? 'selected' : '' }}>{{ __('app.deuxieme_trimestre') }}</option>
+                        <option value="3" {{ $trimestre == '3' ? 'selected' : '' }}>{{ __('app.troisieme_trimestre') }}</option>
                     </select>
                 </div>
             </div>
@@ -67,21 +67,21 @@
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tr>
-                            <td><strong>Nom:</strong></td>
+                            <td><strong>{{ __('app.nom') }}:</strong></td>
                             <td>{{ $etudiant->nom }} {{ $etudiant->prenom }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Matricule:</strong></td>
+                            <td><strong>{{ __('app.matricule') }}:</strong></td>
                             <td>{{ $etudiant->matricule }}</td>
                         </tr>
                         @if($etudiant->classe)
                         <tr>
-                            <td><strong>Classe:</strong></td>
+                            <td><strong>{{ __('app.classe') }}:</strong></td>
                             <td>{{ $etudiant->classe->nom_classe }}</td>
                         </tr>
                         @endif
                         <tr>
-                            <td><strong>Date de naissance:</strong></td>
+                            <td><strong>{{ __('app.date_de_naissance') }}:</strong></td>
                             <td>{{ $etudiant->date_naissance ? $etudiant->date_naissance->format('d/m/Y') : 'N/A' }}</td>
                         </tr>
                     </table>
@@ -89,7 +89,7 @@
                 <div class="col-md-6 text-end">
                     <div class="border rounded p-3">
                         <div class="h3 text-primary">{{ number_format($statistics['overall_average'], 2) }}/20</div>
-                        <p class="mb-0">Moyenne générale</p>
+                        <p class="mb-0">{{ __('app.moyenne_generale') }}</p>
                         <small class="text-muted">{{ $statistics['mention'] }}</small>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="mb-0">{{ $matiere }}</h6>
                             <span class="badge bg-primary">
-                                Moyenne: {{ number_format($statistics['averages'][$matiere]['average'], 2) }}/20
+                                {{ __('app.moyenne') }}: {{ number_format($statistics['averages'][$matiere]['average'], 2) }}/20
                             </span>
                         </div>
                         
@@ -110,10 +110,10 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Note</th>
-                                        <th>Sur 20</th>
+                                        <th>{{ __('app.date') }}</th>
+                                        <th>{{ __('app.type') }}</th>
+                                        <th>{{ __('app.note') }}</th>
+                                        <th>{{ __('app.sur_20') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -142,28 +142,28 @@
                     <div class="row text-center">
                         <div class="col-md-4">
                             <strong>{{ number_format($statistics['overall_average'], 2) }}/20</strong>
-                            <br><small class="text-muted">Moyenne générale</small>
+                            <br><small class="text-muted">{{ __('app.moyenne_generale') }}</small>
                         </div>
                         <div class="col-md-4">
                             <strong>{{ $statistics['passed_notes'] }}/{{ $statistics['total_notes'] }}</strong>
-                            <br><small class="text-muted">Notes ≥ 10/20</small>
+                            <br><small class="text-muted">{{ __('app.notes_superieures') }}</small>
                         </div>
                         <div class="col-md-4">
                             <strong>{{ $statistics['mention'] }}</strong>
-                            <br><small class="text-muted">Mention</small>
+                            <br><small class="text-muted">{{ __('app.mention') }}</small>
                         </div>
                     </div>
                 </div>
             @else
                 <div class="text-center py-4">
-                    <p class="text-muted">Aucune note disponible</p>
+                    <p class="text-muted">{{ __('app.aucune_note') }}</p>
                 </div>
             @endif
 
             <!-- Simple Footer -->
             <div class="text-center mt-5 pt-3 border-top">
                 <small class="text-muted">
-                    Document généré le {{ now()->format('d/m/Y à H:i') }}
+                    {{ __('app.document_genere_le') }} {{ now()->format('d/m/Y à H:i') }}
                 </small>
             </div>
         </div>

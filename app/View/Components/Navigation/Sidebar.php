@@ -47,7 +47,7 @@ class Sidebar extends Component
                     'active' => request()->routeIs(['accueil', 'tableau-bord', 'home'])
                 ],
                 [
-                    'title' => 'Gestion Académique',
+                    'title' => __('app.gestion_academique'),
                     'icon' => 'fas fa-graduation-cap',
                     'children' => [
                         [
@@ -76,14 +76,14 @@ class Sidebar extends Component
                             'active' => request()->routeIs('evaluations.*')
                         ],
                         [
-                            'title' => __('app.grades'),
+                            'title' => __('app.notes'),
                             'route' => 'notes.index',
                             'active' => request()->routeIs('notes.*')
                         ]
                     ]
                 ],
                 [
-                    'title' => __('app.payments'),
+                    'title' => __('app.gestion_financiere'),
                     'icon' => 'fas fa-money-bill-wave',
                     'children' => [
                         [
@@ -99,11 +99,11 @@ class Sidebar extends Component
                     ]
                 ],
                 [
-                    'title' => 'Rapports',
+                    'title' => __('app.rapports'),
                     'icon' => 'fas fa-chart-bar',
                     'children' => [
                         [
-                            'title' => 'Relevé de Notes',
+                            'title' => __('app.releve_de_notes'),
                             'route' => 'rapports.notes.transcript-index',
                             'active' => request()->routeIs('rapports.notes.transcript*')
                         ]

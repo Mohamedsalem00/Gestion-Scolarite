@@ -10,7 +10,7 @@
 @section('header-actions')
     <div class="d-flex gap-2">
         <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-primary">
-            <i class="bi bi-file-earmark-text me-1"></i> {{ __('Relevés de notes') }}
+            <i class="bi bi-file-earmark-text me-1"></i> {{ __('app.releve_de_notes') }}
         </a>
         <a href="{{ route('evaluations.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-clipboard-list me-1"></i> {{ __('app.voir_evaluations') }}
@@ -212,8 +212,15 @@
                 
                 <!-- Pagination -->
                 @if($notes->hasPages())
-                    <div class="mt-4 d-flex justify-content-center">
-                        {{ $notes->links() }}
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                            <div class="text-muted small">
+                                {{ __('app.affichage_de') }} <strong>{{ $notes->firstItem() }}</strong> {{ __('app.a') }} <strong>{{ $notes->lastItem() }}</strong> {{ __('app.sur') }} <strong>{{ $notes->total() }}</strong> {{ __('app.notes') }}
+                            </div>
+                            <nav aria-label="Pagination">
+                                {{ $notes->onEachSide(1)->links() }}
+                            </nav>
+                        </div>
                     </div>
                 @endif
             @else
@@ -223,7 +230,7 @@
                     <p class="text-muted">{{ __('app.aucune_note_trouvee') }}</p>
                     @if(request()->hasAny(['search', 'classe', 'evaluation']))
                         <a href="{{ route('notes.index') }}" class="btn btn-outline-secondary mt-2">
-                            Réinitialiser les filtres
+                            {{ __('app.effacer_les_filtres') }}
                         </a>
                     @endif
                 </div>
@@ -257,4 +264,73 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+@endpush
+
+@push('styles')
+<style>
+/* Clean pagination styling */
+.pagination {
+    margin: 0;
+    gap: 0.25rem;
+}
+
+.pagination .page-link {
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    margin: 0 2px;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #0d6efd;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    font-weight: 500;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #adb5bd;
+}
+
+/* Better Previous/Next buttons */
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    font-weight: 600;
+}
+
+/* Hide any duplicate pagination info that Laravel might add */
+nav[role="navigation"] .hidden,
+nav[role="navigation"] .sr-only,
+nav[aria-label="Pagination"] p {
+    display: none !important;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .pagination {
+        font-size: 0.875rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination .page-link {
+        padding: 0.375rem 0.625rem;
+    }
+    
+    .pagination .page-item {
+        margin: 2px;
+    }
+}
+</style>
 @endpush

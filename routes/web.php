@@ -43,6 +43,14 @@ Route::get('/lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang.switch');
 
+Route::get('/locale/{locale}', function ($locale) {
+    if (in_array($locale, ['fr', 'ar', 'en'])) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+    }
+    return redirect()->back();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Routes Publiques
@@ -231,9 +239,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('notes/devoirs/{level}', [NoteController::class, 'homeworkReports'])->name('notes.devoirs');
         Route::get('notes/examens/{level}', [NoteController::class, 'examReports'])->name('notes.examens');
         
-        // Relevés de notes des étudiants
+        // Relevés de notes - Admin index only (search is public)
         Route::get('notes/releves', [NoteController::class, 'transcriptIndex'])->name('notes.transcript-index');
-        Route::get('notes/releves/{etudiant}/{trimestre?}', [NoteController::class, 'transcript'])->name('notes.transcript');
         
         // Plannings d'évaluations
         Route::get('evaluations/{type}/{niveau}', [EvaluationController::class, 'schedule'])->name('evaluations.planning');
@@ -293,6 +300,6 @@ Route::middleware(['auth', 'role:enseignant'])->prefix('enseignant')->name('ense
 | Students don't have user accounts - they use public access with matricule
 */
 
-// Public grade search - no authentication required
-Route::get('/rechercher-notes', [PublicController::class, 'rechercherNotes'])->name('rechercher-notes');
-Route::post('/rechercher-notes', [PublicController::class, 'rechercherNotes'])->name('rechercher-notes.submit');
+// Public transcript search - no authentication required
+Route::get('/rechercher-notes', [NoteController::class, 'publicTranscriptSearch'])->name('public.transcript.search');
+Route::get('/mon-releve/{matricule}/{trimestre?}', [NoteController::class, 'publicTranscript'])->name('public.transcript.show');

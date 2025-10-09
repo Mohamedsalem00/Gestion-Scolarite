@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
 
-@section('title', __('Relevés de notes'))
+@section('title', __('app.releve_de_notes'))
 
 @section('breadcrumbs')
 <x-breadcrumb>
-    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('Tableau de bord') }}</x-breadcrumb-item>
-    <x-breadcrumb-item active>{{ __('Relevés de notes') }}</x-breadcrumb-item>
+    <x-breadcrumb-item href="{{ route('tableau-bord') }}">{{ __('app.tableau_de_bord') }}</x-breadcrumb-item>
+    <x-breadcrumb-item active>{{ __('app.releve_de_notes') }}</x-breadcrumb-item>
 </x-breadcrumb>
 @endsection
 
@@ -13,8 +13,8 @@
 <div class="container-fluid">
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="mb-2">Relevés de notes</h2>
-        <p class="text-muted">Recherchez un étudiant pour consulter son relevé</p>
+        <h2 class="mb-2">{{ __('app.releve_de_notes') }}</h2>
+        <p class="text-muted">{{ __('app.rechercher_etudiant') }}</p>
     </div>
 
     <!-- Search First Interface -->
@@ -27,13 +27,13 @@
                                name="search" 
                                class="form-control form-control-lg" 
                                value="{{ request('search') }}" 
-                               placeholder="Nom, prénom ou matricule de l'étudiant..."
+                               placeholder="{{ __('app.rechercher_par_nom_matricule') }}"
                                autocomplete="off"
                                id="studentSearch">
                     </div>
                     <div class="col-md-4">
                         <select name="classe" class="form-select form-select-lg">
-                            <option value="">Toutes les classes</option>
+                            <option value="">{{ __('app.toutes_les_classes') }}</option>
                             @foreach ($classes as $classe)
                                 <option value="{{ $classe->id_classe }}" {{ request('classe') == $classe->id_classe ? 'selected' : '' }}>
                                     {{ $classe->nom_classe }}
@@ -44,7 +44,7 @@
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary btn-lg w-100">
                             <i class="bi bi-search me-1"></i>
-                            Rechercher
+                            {{ __('app.rechercher') }}
                         </button>
                     </div>
                 </form>
@@ -52,7 +52,7 @@
                 @if(request()->hasAny(['search', 'classe']))
                     <div class="text-center mt-3">
                         <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-outline-secondary">
-                            Effacer les filtres
+                            {{ __('app.effacer_les_filtres') }}
                         </a>
                     </div>
                 @endif
@@ -87,17 +87,17 @@
                                         <div class="d-grid gap-2">
                                             <a href="{{ route('rapports.notes.transcript', $etudiant) }}" 
                                                class="btn btn-primary btn-sm">
-                                                Relevé complet
+                                                {{ __('app.releve_complet') }}
                                             </a>
                                             <div class="btn-group w-100">
                                                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle w-100" 
                                                         data-bs-toggle="dropdown">
-                                                    Par trimestre
+                                                    {{ __('app.par_trimestre') }}
                                                 </button>
                                                 <ul class="dropdown-menu w-100">
-                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 1]) }}">1er Trimestre</a></li>
-                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 2]) }}">2ème Trimestre</a></li>
-                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 3]) }}">3ème Trimestre</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 1]) }}">{{ __('app.premier_trimestre') }}</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 2]) }}">{{ __('app.deuxieme_trimestre') }}</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('rapports.notes.transcript', [$etudiant, 'trimestre' => 3]) }}">{{ __('app.troisieme_trimestre') }}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -108,8 +108,15 @@
                     </div>
 
                     @if($etudiants->hasPages())
-                        <div class="text-center mt-4">
-                            {{ $etudiants->withQueryString()->links() }}
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                                <div class="text-muted small">
+                                    Affichage de <strong>{{ $etudiants->firstItem() }}</strong> à <strong>{{ $etudiants->lastItem() }}</strong> sur <strong>{{ $etudiants->total() }}</strong> étudiants
+                                </div>
+                                <nav aria-label="Pagination">
+                                    {{ $etudiants->onEachSide(1)->withQueryString()->links() }}
+                                </nav>
+                            </div>
                         </div>
                     @endif
                 @else
@@ -117,10 +124,10 @@
                         <div class="mb-3">
                             <i class="bi bi-search fs-1 text-muted"></i>
                         </div>
-                        <h5>Aucun résultat</h5>
-                        <p class="text-muted">Aucun étudiant ne correspond à votre recherche</p>
+                        <h5>{{ __('app.aucun_resultat') }}</h5>
+                        <p class="text-muted">{{ __('app.aucun_etudiant_correspond') }}</p>
                         <a href="{{ route('rapports.notes.transcript-index') }}" class="btn btn-outline-primary">
-                            Nouvelle recherche
+                            {{ __('app.nouvelle_recherche') }}
                         </a>
                     </div>
                 @endif
@@ -132,17 +139,16 @@
             <div class="mb-4">
                 <i class="bi bi-file-text fs-1 text-primary"></i>
             </div>
-            <h4 class="mb-3">Recherchez un étudiant</h4>
+            <h4 class="mb-3">{{ __('app.recherchez_un_etudiant') }}</h4>
             <p class="text-muted mb-4">
-                Utilisez la barre de recherche ci-dessus pour trouver un étudiant<br>
-                et consulter son relevé de notes
+                {{ __('app.utilisez_la_barre_de_recherche') }}
             </p>
             
             <!-- Quick Access by Class -->
             @if($classes->count() > 0)
                 <div class="row justify-content-center">
                     <div class="col-md-8">
-                        <h6 class="mb-3">Accès rapide par classe</h6>
+                        <h6 class="mb-3">{{ __('app.acces_rapide_par_classe') }}</h6>
                         <div class="row g-2">
                             @foreach($classes->take(6) as $classe)
                                 <div class="col-md-4 col-6">
@@ -155,7 +161,7 @@
                         </div>
                         @if($classes->count() > 6)
                             <p class="mt-2 mb-0">
-                                <small class="text-muted">+ {{ $classes->count() - 6 }} autres classes</small>
+                                <small class="text-muted">+ {{ $classes->count() - 6 }} {{ __('app.autres_classes') }}</small>
                             </p>
                         @endif
                     </div>
@@ -275,4 +281,73 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+@push('styles')
+<style>
+/* Clean pagination styling */
+.pagination {
+    margin: 0;
+    gap: 0.25rem;
+}
+
+.pagination .page-link {
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    margin: 0 2px;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #0d6efd;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    font-weight: 500;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #adb5bd;
+}
+
+/* Better Previous/Next buttons */
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    font-weight: 600;
+}
+
+/* Hide any duplicate pagination info that Laravel might add */
+nav[role="navigation"] .hidden,
+nav[role="navigation"] .sr-only,
+nav[aria-label="Pagination"] p {
+    display: none !important;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .pagination {
+        font-size: 0.875rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination .page-link {
+        padding: 0.375rem 0.625rem;
+    }
+    
+    .pagination .page-item {
+        margin: 2px;
+    }
+}
+</style>
+@endpush
 @endsection

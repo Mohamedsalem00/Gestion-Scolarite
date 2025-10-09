@@ -99,23 +99,26 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        <a href="{{ route('notes.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('etudiants.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
-                                {{ __('app.voir_notes') }}
+                                <div class="fw-medium">{{ __('app.etudiants') }}</div>
+                                <small class="text-muted">{{ __('app.gerer_etudiants') }}</small>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted"></i>
+                        </a>
+                        
+                        <a href="{{ route('classes.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-medium">{{ __('app.classes') }}</div>
+                                <small class="text-muted">{{ __('app.gerer_classes') }}</small>
                             </div>
                             <i class="fas fa-chevron-right text-muted"></i>
                         </a>
                         
                         <a href="{{ url('/cours/spectacle') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
-                                {{ __('app.emploi_temps') }}
-                            </div>
-                            <i class="fas fa-chevron-right text-muted"></i>
-                        </a>
-                        
-                        <a href="{{ route('evaluations.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <div>
-                                {{ __('app.evaluations') }}
+                                <div class="fw-medium">{{ __('app.emploi_temps') }}</div>
+                                <small class="text-muted">{{ __('app.consulter_emploi_temps') }}</small>
                             </div>
                             <i class="fas fa-chevron-right text-muted"></i>
                         </a>
@@ -134,30 +137,26 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        <a href="{{ url('/note/noteDevoir1') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('rapports.notes.transcript-index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
-                                Résultats Premier Trimestre - Devoirs
+                                <div class="fw-medium">{{ __('app.releves_de_notes') }}</div>
+                                <small class="text-muted">{{ __('app.consulter_releves_par_etudiant') }}</small>
                             </div>
                             <i class="fas fa-chevron-right text-muted"></i>
                         </a>
                         
-                        <a href="{{ url('/note/noteExamen1') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('notes.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
-                                Résultats Premier Trimestre - Examens
+                                <div class="fw-medium">{{ __('app.toutes_les_notes') }}</div>
+                                <small class="text-muted">{{ __('app.voir_et_gerer_les_notes') }}</small>
                             </div>
                             <i class="fas fa-chevron-right text-muted"></i>
                         </a>
                         
-                        <a href="{{ url('/evoluation/spectacleDevoir1') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('evaluations.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
-                                Horaire des Devoirs
-                            </div>
-                            <i class="fas fa-chevron-right text-muted"></i>
-                        </a>
-                        
-                        <a href="{{ url('/evoluation/spectacleExamen1') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <div>
-                                Horaire des Examens
+                                <div class="fw-medium">{{ __('app.calendrier_evaluations') }}</div>
+                                <small class="text-muted">{{ __('app.planning_devoirs_examens') }}</small>
                             </div>
                             <i class="fas fa-chevron-right text-muted"></i>
                         </a>
@@ -243,6 +242,8 @@
 .list-group-item {
     border-left: none;
     border-right: none;
+    padding: 1rem 1.25rem;
+    transition: background-color 0.2s ease;
 }
 
 .list-group-item:first-child {
@@ -251,6 +252,25 @@
 
 .list-group-item:last-child {
     border-bottom: none;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.list-group-item .fw-medium {
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+
+.list-group-item small {
+    display: block;
+    font-size: 0.875rem;
+}
+
+.list-group-item i.fa-chevron-right {
+    font-size: 0.875rem;
+    color: #adb5bd;
 }
 </style>
 @endpush
