@@ -13,13 +13,21 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id('id_note');
-            $table->string('note');
+            $table->decimal('note', 5, 2); // Proper decimal for grades
+            $table->string('matiere'); // Subject name
+            $table->string('type'); // Type of evaluation
             $table->unsignedBigInteger('id_etudiant'); // Clé étrangère pour la table Etudiant
-            $table->unsignedBigInteger('id_evoluation'); // Clé étrangère pour la table Evoluation
+            $table->unsignedBigInteger('id_evaluation'); // Fixed reference to evaluations
+            $table->unsignedBigInteger('id_classe'); // Clé étrangère pour la table Classe
+            $table->text('commentaire')->nullable();
             $table->timestamps();
     
             $table->foreign('id_etudiant')->references('id_etudiant')->on('etudiants');
-            $table->foreign('id_evoluation')->references('id_evoluation')->on('evoluations');
+            $table->foreign('id_evaluation')->references('id_evaluation')->on('evaluations');
+            $table->foreign('id_classe')->references('id_classe')->on('classes');
+            
+            $table->index(['id_etudiant', 'id_evaluation']);
+            $table->index('id_classe');
         });
     }
 

@@ -9,10 +9,14 @@ class EtudePaiement extends Model
 {
     protected $table = 'etudepaiements';
     protected $primaryKey ='id_paiements';
-    protected $fillable =['id_etudiant','typepaye','updated_at'];
+    protected $fillable =['id_etudiant','typepaye','montant','statut','date_paiement'];
+    
+    protected $dates = ['date_paiement'];
+    
     public function etudiant()
     {
-        return $this->hasMany(Etudiant::class, 'id_etudiant');
+        return $this->belongsTo(Etudiant::class, 'id_etudiant');
     }
+    
     use HasFactory;
 }

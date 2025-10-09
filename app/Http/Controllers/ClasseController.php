@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
+use App\Http\Requests\StoreClasseRequest;
+use App\Http\Requests\UpdateClasseRequest;
 use Illuminate\Http\Request;
-use App\Models\Etudiant;
-use App\Models\Enseignant;
+use Illuminate\Support\Facades\DB;
 
 class ClasseController extends Controller
 {
@@ -14,8 +15,15 @@ class ClasseController extends Controller
      */
     public function index()
     {
-        $classe = Classe::all();
-        return view('classe.index')->with('classe', $classe);
+        $classes = Classe::withCount(['etudiants', 'cours'])
+                          ->addSelect([
+                              'enseignants_count' => \DB::table('enseignant_matiere_classe')
+                                  ->selectRaw('COUNT(DISTINCT id_enseignant)')
+                                  ->whereColumn('id_classe', 'classes.id_classe')
+                          ])
+                          ->orderBy('nom_classe')
+                          ->get();
+        return view('academic.classes.index', compact('classes'));
     }
 
     /**
@@ -23,59 +31,98 @@ class ClasseController extends Controller
      */
     public function create()
     {
-        
-        return view('classe.create');
+        return view('academic.classes.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreClasseRequest $request)
     {
-        $input = $request->all();
-        Classe::create($input);
-        return redirect('classe')->with('flash_message', "le classe a été ajouté");
+        try {
+            $data = $request->validated();
+            
+            // Handle translations if provided
+            if ($request->has('nom_classe_translations')) {
+                $data['nom_classe_translations'] = array_filter($request->nom_classe_translations ?: []);
+            }
+            if ($request->has('niveau_translations')) {
+                $data['niveau_translations'] = array_filter($request->niveau_translations ?: []);
+            }
+            
+            $classe = Classe::create($data);
+            return redirect()->route('classes.index')
+                ->with('success', "La classe {$classe->nom_classe} a été créée avec succès.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la création de la classe.');
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $Classe)
+    public function show(Classe $classe)
     {
-        $Classe = Classe::find($Classe);
-        return view('/classe.spectacle')->with('classes', $Classe);
+        $classe->load(['etudiants', 'enseignants', 'cours.enseignant', 'evaluations']);
+        return view('academic.classes.show', compact('classe'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $Classe)
+    public function edit(Classe $classe)
     {
-        $Classe = Classe::find($Classe);
-        if (!$Classe) {
-            return redirect()->back()->with('flash_message', 'classe introuvable');
-        }
-
-        return view('classe.edit', compact('Classe'));
+        return view('academic.classes.edit', compact('classe'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $Classe)
+    public function update(UpdateClasseRequest $request, Classe $classe)
     {
-        $Classe = Classe::find($Classe);
-        $input = $request->all();
-        $Classe->update($input);
-        return redirect('classe')->with('flash_message', 'Les informations ont été mises à jour!');
+        try {
+            $data = $request->validated();
+            
+            // Handle translations if provided
+            if ($request->has('nom_classe_translations')) {
+                $data['nom_classe_translations'] = array_filter($request->nom_classe_translations ?: []);
+            }
+            if ($request->has('niveau_translations')) {
+                $data['niveau_translations'] = array_filter($request->niveau_translations ?: []);
+            }
+            
+            $classe->update($data);
+            return redirect()->route('classes.index')
+                ->with('success', "La classe {$classe->nom_classe} a été mise à jour.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $Classe)
+    public function destroy(Classe $classe)
     {
-        Classe::find($Classe)->delete();
-        return back()->with('flash_message', "le classe est supprimée");
+        try {
+            $nom = $classe->nom_classe;
+            
+            // Check if class has students or enseignants before deletion
+            if ($classe->etudiants()->exists() || $classe->enseignants()->exists()) {
+                return redirect()->back()
+                    ->with('error', 'Impossible de supprimer cette classe car elle contient des étudiants ou des enseignants.');
+            }
+            
+            $classe->delete();
+            return redirect()->route('classes.index')
+                ->with('success', "La classe {$nom} a été supprimée.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Impossible de supprimer cette classe.');
+        }
     }
 }

@@ -14,7 +14,7 @@ class EnseignantController extends Controller
     public function index()
     {
         $enseignant=Enseignant::all();
-        return view('enseignant.index')->with('enseignant',$enseignant);
+        return view('academic.enseignants.index')->with('enseignant',$enseignant);
     }
 
     /**
@@ -23,7 +23,7 @@ class EnseignantController extends Controller
     public function create()
     {
         $classes = Classe::all(); // Retrieve all classes from the Classe model
-        return view('enseignant.create', compact('classes'));
+        return view('academic.enseignants.create', compact('classes'));
     }
 
     /**
@@ -33,49 +33,63 @@ class EnseignantController extends Controller
     {
         $input = $request->all();
         Enseignant::create($input);
-        return redirect('enseignant')->with('flash_message', "l'enseignant a été ajouté");
+        return redirect()->route('enseignants.index')->with('flash_message', "l'enseignant a été ajouté");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $enseignant)
+    public function show(Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
-        return view('/enseignant.spectacle')->with('enseignants', $enseignant);
+        return view('academic.enseignants.show')->with('enseignants', $enseignant);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $enseignant)
+    public function edit(Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
         $classes = Classe::all();
-        if (!$enseignant) {
-            return redirect()->back()->with('flash_message', 'enseignant introuvable');
-        }
-        
-        return view('enseignant.edit',compact('enseignant','classes'));
+        return view('academic.enseignants.edit', compact('enseignant', 'classes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $enseignant)
+    public function update(Request $request, Enseignant $enseignant)
     {
-        $enseignant = Enseignant::find($enseignant);
-        $input = $request->all();
-        $enseignant->update($input);
-        return redirect('enseignant')->with('flash_message', 'Les informations ont été mises à jour!');
+        $enseignant->nom = $request['nom'];
+        $enseignant->prenom = $request['prenom'];
+        $enseignant->address = $request['address'];
+        $enseignant->phone = $request['phone'];
+        $enseignant->date_recrutement = $request['date_recrutement'];
+
+        $enseignant->save();
+
+        // Supprimer les anciennes relations
+        $enseignant->matiereClasses()->detach();
+
+        // Ajouter les nouvelles relations
+        if ($request->has('selected_classes')) {
+            foreach ($request->selected_classes as $classeid) {
+                if ($request->has('matiere_id')) {
+                    $enseignant->matiereClasses()->attach($classeid, ['matiere' => $request->matiere_id]);
+                }
+            }
+        }
+
+        return redirect()->route('enseignants.index')
+            ->with('flash_message', 'enseignant modifié avec succès!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $enseignant)
+    public function destroy(Enseignant $enseignant)
     {
-        Enseignant::find($enseignant)->delete();
-        return back()->with('flash_message', "l'enseignant est supprimée");
+        $enseignant->delete();
+
+        return redirect()->route('enseignants.index')
+            ->with('flash_message', 'enseignant supprimé avec succès!');
     }
 }

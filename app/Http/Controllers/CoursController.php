@@ -6,6 +6,8 @@ use App\Models\Cours;
 use Illuminate\Http\Request;
 use App\Models\Classe;
 use Illuminate\Support\Facades\DB;
+use App\Models\Enseignant;
+use App\Models\Matiere;
 
 class CoursController extends Controller
 {
@@ -18,7 +20,7 @@ class CoursController extends Controller
     public function index()
     {
         $cours = Cours::all();
-        return view('cour.index')->with('cours', $cours);;
+        return view('academic.cours.index')->with('cours', $cours);;
     }
 
     /**
@@ -26,8 +28,11 @@ class CoursController extends Controller
      */
     public function create()
     {
-        $classes = Classe::all(); // Retrieve all classes from the Classe model
-        return view('cour.create', compact('classes'));
+        $classes = Classe::all();
+        $enseignants = Enseignant::all();
+        $matieres = Matiere::all();
+        
+        return view('academic.cours.create', compact('classes', 'enseignants', 'matieres'));
     }
 
     /**
@@ -37,122 +42,123 @@ class CoursController extends Controller
     {
         $input = $request->all();
         Cours::create($input);
-        return redirect('cour')->with('flash_message', "le cour a été ajouté");
+        
+        // Redirect to timetable if coming from there, otherwise to index
+        if ($request->input('from_timetable')) {
+            return redirect()->route('cours.spectacle')->with('success', 'Le cours a été ajouté avec succès!');
+        }
+        
+        return redirect()->route('cours.index')->with('flash_message', 'Le cours a été ajouté');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $cours)
+    public function show(Cours $cour)
     {
-        $joursSemaine = [
-            'Lundi',
-            'Mardi',
-            'Mercredi',
-            'Jeudi',
-            'Vendredi'
-        ];   
+        $cours = $cour; // Keep variable name consistent in view
+        $cours->load(['classe', 'matiere', 'enseignant']);
+        return view('academic.cours.show', compact('cours'));
+    }
 
-        $cours = Cours::find($cours);
-        $classe = Classe::all();
-        $af1 = DB::table('cours')->where('id_classe', 1)->get();
-        $debutinfo1AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 1)->get();
-        $fineinfo1AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 1)->get();
-        $debutinfo2AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 2)->get();
-        $fineinfo2AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 2)->get();
-        $debutinfo3AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 3)->get();
-        $fineinfo3AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 3)->get();
-        $debutinfo4AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 4)->get();
-        $fineinfo4AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 4)->get();
-        $debutinfo5AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 5)->get();
-        $fineinfo5AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 5)->get();
-        $debutinfo6AF = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 6)->get();
-        $fineinfo6AF = DB::table('cours')->where('hDebut', '11:15:00')->where('id_classe', 6)->get();
-        $debutinfo1AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 7)->get();
-        $milieuinfo1AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 7)->get();
-        $fineinfo1AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 7)->get();
-        $debutinfo2AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 8)->get();
-        $milieuinfo2AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 8)->get();
-        $fineinfo2AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 8)->get();
-        $debutinfo3AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 9)->get();
-        $milieuinfo3AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 9)->get();
-        $fineinfo3AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 9)->get();
-        $debutinfo4AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 10)->get();
-        $milieuinfo4AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 10)->get();
-        $fineinfo4AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 10)->get();
-        $debutinfo5AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 11)->get();
-        $milieuinfo5AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 11)->get();
-        $fineinfo5AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 11)->get();
-        $debutinfo6AS = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 12)->get();
-        $milieuinfo6AS = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 12)->get();
-        $fineinfo6AS = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 12)->get();
-        $debutinfo7ASD = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 13)->get();
-        $milieuinfo7ASD = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 13)->get();
-        $fineinfo7ASD = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 13)->get();
-        $debutinfo7ASC = DB::table('cours')->where('hDebut', '08:00:00')->where('id_classe', 14)->get();
-        $milieuinfo7ASC = DB::table('cours')->where('hDebut', '10:00:00')->where('id_classe', 14)->get();
-        $fineinfo7ASC = DB::table('cours')->where('hDebut', '12:00:00')->where('id_classe', 14)->get();
-        $debut08 = Cours::where('hDebut', '08:00:00')->first();
-        $debut10 = Cours::where('hDebut', '10:00:00')->first();
-        $debut12 = Cours::where('hDebut', '12:00:00')->first();
-        $fine11 = Cours::where('hFine', '11:00:00')->first();
-        $debut1115 = Cours::where('hDebut', '11:15:00')->first();
-        $fine12 = Cours::where('hFine', '12:00:00')->first();
-        $fine14 = Cours::where('hFine', '14:00:00')->first();
-        $fine10 = Cours::where('hFine', '10:00:00')->first();
-        return view('/cour.spectacle')->with('cours', $cours)->with('classe', $classe)->with('joursSemaine', $joursSemaine)->
-        with(['af1' => $af1])->with(['debut08' => $debut08])->
-        with(['fine11' => $fine11])->with(['debut1115' => $debut1115])->
-        with(['fine12' => $fine12])->with(['fine14' => $fine14])->with(['fine10' => $fine10])->
-        with(['debut10' => $debut10])->with(['debut12' => $debut12])->
-        with(['debutinfo1AF' => $debutinfo1AF])->with(['fineinfo1AF' => $fineinfo1AF])->
-        with(['debutinfo2AF' => $debutinfo2AF])->with(['fineinfo2AF' => $fineinfo2AF])->
-        with(['debutinfo3AF' => $debutinfo3AF])->with(['fineinfo3AF' => $fineinfo3AF])->
-        with(['debutinfo4AF' => $debutinfo4AF])->with(['fineinfo4AF' => $fineinfo4AF])->
-        with(['debutinfo5AF' => $debutinfo5AF])->with(['fineinfo5AF' => $fineinfo5AF])->
-        with(['debutinfo6AF' => $debutinfo6AF])->with(['fineinfo6AF' => $fineinfo6AF])->
-        with(['debutinfo1AS' => $debutinfo1AS])->with(['milieuinfo1AS' => $milieuinfo1AS])->with(['fineinfo1AS' => $fineinfo1AS])->
-        with(['debutinfo2AS' => $debutinfo2AS])->with(['milieuinfo2AS' => $milieuinfo2AS])->with(['fineinfo2AS' => $fineinfo2AS])->
-        with(['debutinfo3AS' => $debutinfo3AS])->with(['milieuinfo3AS' => $milieuinfo3AS])->with(['fineinfo3AS' => $fineinfo3AS])->
-        with(['debutinfo4AS' => $debutinfo4AS])->with(['milieuinfo4AS' => $milieuinfo4AS])->with(['fineinfo4AS' => $fineinfo4AS])->
-        with(['debutinfo5AS' => $debutinfo5AS])->with(['milieuinfo5AS' => $milieuinfo5AS])->with(['fineinfo5AS' => $fineinfo5AS])->
-        with(['debutinfo6AS' => $debutinfo6AS])->with(['milieuinfo6AS' => $milieuinfo6AS])->with(['fineinfo6AS' => $fineinfo6AS])->
-        with(['debutinfo7ASD' => $debutinfo7ASD])->with(['milieuinfo7ASD' => $milieuinfo7ASD])->with(['fineinfo7ASD' => $fineinfo7ASD])->
-        with(['debutinfo7ASC' => $debutinfo7ASC])->with(['milieuinfo7ASC' => $milieuinfo7ASC])->with(['fineinfo7ASC' => $fineinfo7ASC])
-        ;
+    /**
+     * Display the timetable/schedule view.
+     */
+    public function spectacle()
+    {
+        // Get all classes
+        $classes = Classe::all();
+        
+        // Get all courses with relationships
+        $allCours = Cours::with(['classe', 'matiere', 'enseignant'])->get();
+        
+        // Get unique time slots dynamically from existing courses
+        $timeSlots = Cours::select('date_debut', 'date_fin')
+            ->distinct()
+            ->orderBy('date_debut')
+            ->get()
+            ->map(function ($slot) {
+                return [
+                    'debut' => date('H:i', strtotime($slot->date_debut)),
+                    'fin' => date('H:i', strtotime($slot->date_fin))
+                ];
+            })
+            ->unique()
+            ->values();
+        
+        // Days of the week
+        $jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+        
+        // Organize courses by class and time
+        $schedule = [];
+        foreach ($classes as $classe) {
+            $schedule[$classe->id_classe] = [];
+            foreach ($timeSlots as $slot) {
+                $schedule[$classe->id_classe][$slot['debut'] . '-' . $slot['fin']] = [];
+                foreach ($jours as $jour) {
+                    $course = $allCours->where('id_classe', $classe->id_classe)
+                        ->where('jour', $jour)
+                        ->filter(function ($c) use ($slot) {
+                            $debut = date('H:i', strtotime($c->date_debut));
+                            $fin = date('H:i', strtotime($c->date_fin));
+                            return $debut == $slot['debut'] && $fin == $slot['fin'];
+                        })
+                        ->first();
+                    
+                    $schedule[$classe->id_classe][$slot['debut'] . '-' . $slot['fin']][$jour] = $course;
+                }
+            }
+        }
+        
+        return view('academic.cours.spectacle', compact('classes', 'schedule', 'timeSlots', 'jours'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $Cours)
+    public function edit(string $id)
     {
-        $Cours = Cours::find($Cours);
+        $Cours = Cours::find($id);
         $classes = Classe::all();
+        $enseignants = Enseignant::all();
+        $matieres = Matiere::all();
+        
         if (!$Cours) {
-            return redirect()->back()->with('flash_message', 'cour introuvable');
+            return redirect()->back()->with('flash_message', 'Cours introuvable');
         }
 
-        return view('cour.edit', compact('Cours', 'classes'));
+        return view('academic.cours.edit', compact('Cours', 'classes', 'enseignants', 'matieres'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $Cours)
+    public function update(Request $request, string $id)
     {
-        $Cours = Cours::find($Cours);
+        $cours = Cours::find($id);
         $input = $request->all();
-        $Cours->update($input);
-        return redirect('/cour/spectacle')->with('flash_message', 'Les informations ont été mises à jour!');
+        $cours->update($input);
+        
+        // Redirect to timetable if coming from there, otherwise to index
+        if ($request->input('from_timetable')) {
+            return redirect()->route('cours.spectacle')->with('success', 'Le cours a été modifié avec succès!');
+        }
+        
+        return redirect()->route('cours.index')->with('flash_message', 'Les informations ont été mises à jour!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $Cours)
+    public function destroy(Request $request, string $id)
     {
-        Cours::find($Cours)->delete();
-        return redirect('/cour/spectacle')->with('flash_message', "le cour est supprimée");
+        Cours::find($id)->delete();
+        
+        // Redirect to timetable if coming from there, otherwise to index
+        if ($request->input('from_timetable')) {
+            return redirect()->route('cours.spectacle')->with('success', 'Le cours a été supprimé avec succès!');
+        }
+        
+        return redirect()->route('cours.index')->with('flash_message', 'Le cours est supprimé');
     }
 }

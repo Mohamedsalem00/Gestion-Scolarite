@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Etudiant;
-use Illuminate\Http\Request;
 use App\Models\Classe;
+use App\Http\Requests\StoreEtudiantRequest;
+use App\Http\Requests\UpdateEtudiantRequest;
+use Illuminate\Http\Request;
 
 class EtudiantController extends Controller
 {
@@ -13,8 +15,8 @@ class EtudiantController extends Controller
      */
     public function index()
     {
-        $etudiant = Etudiant::all();
-        return view('etudiants.index')->with('etudiant', $etudiant);
+        $etudiants = Etudiant::with('classe')->latest()->get();
+        return view('academic.etudiants.index', compact('etudiants'));
     }
 
     /**
@@ -22,60 +24,73 @@ class EtudiantController extends Controller
      */
     public function create()
     {
-        $classes = Classe::all(); // Retrieve all classes from the Classe model
-        return view('etudiants.create', compact('classes'));
+        $classes = Classe::orderBy('nom_classe')->get();
+        return view('academic.etudiants.create', compact('classes'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreEtudiantRequest $request)
     {
-        $input = $request->all();
-        Etudiant::create($input);
-        return redirect('etudiant')->with('flash_message', "l'étudiant a été ajouté");
+        try {
+            $etudiant = Etudiant::create($request->validated());
+            return redirect()->route('etudiants.index')
+                ->with('success', "L'étudiant {$etudiant->full_name} a été ajouté avec succès.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'étudiant.');
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $etudiant)
+    public function show(Etudiant $etudiant)
     {
-        $etudiant = Etudiant::find($etudiant);
-        return view('/etudiants.spectacle')->with('etudiants', $etudiant);
+        $etudiant->load(['classe', 'notes.evaluation', 'paiements']);
+        return view('academic.etudiants.show', compact('etudiant'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $etudiant)
+    public function edit(Etudiant $etudiant)
     {
-        $etudiant = Etudiant::find($etudiant);
-        $classes = Classe::all();
-        if (!$etudiant) {
-            return redirect()->back()->with('flash_message', 'etudiant introuvable');
-        }
-
-        return view('etudiants.edit', compact('etudiant', 'classes'));
+        $classes = Classe::orderBy('nom_classe')->get();
+        return view('academic.etudiants.edit', compact('etudiant', 'classes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $etudiant)
+    public function update(UpdateEtudiantRequest $request, Etudiant $etudiant)
     {
-        $etudiant = Etudiant::find($etudiant);
-        $input = $request->all();
-        $etudiant->update($input);
-        return redirect('etudiant')->with('flash_message', 'Les informations ont été mises à jour!');
+        try {
+            $etudiant->update($request->validated());
+            return redirect()->route('etudiants.index')
+                ->with('success', "Les informations de {$etudiant->full_name} ont été mises à jour.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $etudiant)
+    public function destroy(Etudiant $etudiant)
     {
-        Etudiant::find($etudiant)->delete();
-        return back()->with('flash_message', "l'etudiant est supprimée");
+        try {
+            $nom = $etudiant->full_name;
+            $etudiant->delete();
+            return redirect()->route('etudiants.index')
+                ->with('success', "L'étudiant {$nom} a été supprimé.");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Impossible de supprimer cet étudiant.');
+        }
     }
 }

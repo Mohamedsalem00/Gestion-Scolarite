@@ -81,9 +81,9 @@ class SearchController extends Controller
         } elseif ($category === 'course') {
             $results = Cours::where(function ($queryBuilder) use ($query) {
                 $queryBuilder->where('jour', 'like', "%$query%")
-                    ->orWhere('hDebut', 'like', "%$query%")
-                    ->orWhere('hFine', 'like', "%$query%")
-                    ->orWhere('cours.id_classe', 'like', "%$query%")
+                    ->orWhere('date_debut', 'like', "%$query%")
+                    ->orWhere('date_fin', 'like', "%$query%")
+                    ->orWhere('academic.cours.id_classe', 'like', "%$query%")
                     ->orWhere('matiere', 'like', "%$query%")
                     ->orWhereHas('classe', function ($subQueryBuilder) use ($query) {
                         $subQueryBuilder->where('niveau', 'like', "%$query%");
@@ -93,8 +93,8 @@ class SearchController extends Controller
             $results = Evoluation::where(function ($queryBuilder) use ($query) {
                 $queryBuilder->where('date', 'like', "%$query%")
                     ->orWhere('type', 'like', "%$query%")
-                    ->orWhere('hDebut', 'like', "%$query%")
-                    ->orWhere('hFine', 'like', "%$query%")
+                    ->orWhere('date_debut', 'like', "%$query%")
+                    ->orWhere('date_fin', 'like', "%$query%")
                     ->orWhereHas('classe', function ($subQueryBuilder) use ($query) {
                         $subQueryBuilder->where('niveau', 'like', "%$query%");
                     })
