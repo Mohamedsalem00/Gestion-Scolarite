@@ -43,36 +43,73 @@ chmod -R 775 /var/www/html/bootstrap/cache
 # Create .env file from environment variables if it doesn't exist
 if [ ! -f /var/www/html/.env ]; then
     echo "Creating .env file from environment variables..."
-    cp /var/www/html/.env.example /var/www/html/.env 2>/dev/null || touch /var/www/html/.env
     
-    # Set critical environment variables
-    if [ -n "$APP_KEY" ]; then
-        sed -i "s|APP_KEY=.*|APP_KEY=$APP_KEY|g" /var/www/html/.env
-    fi
-    if [ -n "$APP_ENV" ]; then
-        sed -i "s|APP_ENV=.*|APP_ENV=$APP_ENV|g" /var/www/html/.env
-    fi
-    if [ -n "$APP_DEBUG" ]; then
-        sed -i "s|APP_DEBUG=.*|APP_DEBUG=$APP_DEBUG|g" /var/www/html/.env
-    fi
-    if [ -n "$DB_HOST" ]; then
-        sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" /var/www/html/.env
-    fi
-    if [ -n "$DB_DATABASE" ]; then
-        sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" /var/www/html/.env
-    fi
-    if [ -n "$DB_USERNAME" ]; then
-        sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" /var/www/html/.env
-    fi
-    if [ -n "$DB_PASSWORD" ]; then
-        sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" /var/www/html/.env
+    # Copy from example or create empty
+    if [ -f /var/www/html/.env.example ]; then
+        cp /var/www/html/.env.example /var/www/html/.env
+    else
+        # Create minimal .env file
+        cat > /var/www/html/.env <<EOF
+APP_NAME="${APP_NAME:-Laravel}"
+APP_ENV=${APP_ENV:-production}
+APP_KEY=
+APP_DEBUG=${APP_DEBUG:-false}
+APP_URL=${APP_URL:-http://localhost}
+
+LOG_CHANNEL=${LOG_CHANNEL:-stack}
+LOG_LEVEL=${LOG_LEVEL:-error}
+
+DB_CONNECTION=${DB_CONNECTION:-mysql}
+DB_HOST=${DB_HOST:-127.0.0.1}
+DB_PORT=${DB_PORT:-3306}
+DB_DATABASE=${DB_DATABASE:-laravel}
+DB_USERNAME=${DB_USERNAME:-root}
+DB_PASSWORD=${DB_PASSWORD:-}
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+EOF
     fi
 fi
 
+# Update environment variables from Koyeb environment
+echo "Updating .env with environment variables..."
+if [ -n "$APP_KEY" ]; then
+    sed -i "s|APP_KEY=.*|APP_KEY=$APP_KEY|g" /var/www/html/.env
+fi
+if [ -n "$APP_ENV" ]; then
+    sed -i "s|APP_ENV=.*|APP_ENV=$APP_ENV|g" /var/www/html/.env
+fi
+if [ -n "$APP_DEBUG" ]; then
+    sed -i "s|APP_DEBUG=.*|APP_DEBUG=$APP_DEBUG|g" /var/www/html/.env
+fi
+if [ -n "$APP_URL" ]; then
+    sed -i "s|APP_URL=.*|APP_URL=$APP_URL|g" /var/www/html/.env
+fi
+if [ -n "$DB_HOST" ]; then
+    sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" /var/www/html/.env
+fi
+if [ -n "$DB_PORT" ]; then
+    sed -i "s|DB_PORT=.*|DB_PORT=$DB_PORT|g" /var/www/html/.env
+fi
+if [ -n "$DB_DATABASE" ]; then
+    sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" /var/www/html/.env
+fi
+if [ -n "$DB_USERNAME" ]; then
+    sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" /var/www/html/.env
+fi
+if [ -n "$DB_PASSWORD" ]; then
+    sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" /var/www/html/.env
+fi
+
 # Generate application key if not set
-if [ -z "$APP_KEY" ] || grep -q "APP_KEY=$" /var/www/html/.env; then
+if [ -z "$APP_KEY" ] || ! grep -q "^APP_KEY=base64:" /var/www/html/.env; then
     echo "Generating application key..."
-    php artisan key:generate --force
+    php artisan key:generate --force --ansi
 fi
 
 # Clear caches
