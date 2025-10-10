@@ -40,24 +40,53 @@ chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage
 chmod -R 775 /var/www/html/bootstrap/cache
 
+# Create .env file from environment variables if it doesn't exist
+if [ ! -f /var/www/html/.env ]; then
+    echo "Creating .env file from environment variables..."
+    cp /var/www/html/.env.example /var/www/html/.env 2>/dev/null || touch /var/www/html/.env
+    
+    # Set critical environment variables
+    if [ -n "$APP_KEY" ]; then
+        sed -i "s|APP_KEY=.*|APP_KEY=$APP_KEY|g" /var/www/html/.env
+    fi
+    if [ -n "$APP_ENV" ]; then
+        sed -i "s|APP_ENV=.*|APP_ENV=$APP_ENV|g" /var/www/html/.env
+    fi
+    if [ -n "$APP_DEBUG" ]; then
+        sed -i "s|APP_DEBUG=.*|APP_DEBUG=$APP_DEBUG|g" /var/www/html/.env
+    fi
+    if [ -n "$DB_HOST" ]; then
+        sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" /var/www/html/.env
+    fi
+    if [ -n "$DB_DATABASE" ]; then
+        sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" /var/www/html/.env
+    fi
+    if [ -n "$DB_USERNAME" ]; then
+        sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" /var/www/html/.env
+    fi
+    if [ -n "$DB_PASSWORD" ]; then
+        sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" /var/www/html/.env
+    fi
+fi
+
 # Generate application key if not set
-if [ -z "$APP_KEY" ]; then
+if [ -z "$APP_KEY" ] || grep -q "APP_KEY=$" /var/www/html/.env; then
     echo "Generating application key..."
     php artisan key:generate --force
 fi
 
 # Clear caches
 echo "Clearing caches..."
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-php artisan route:clear
+php artisan config:clear || true
+php artisan cache:clear || echo "Warning: Could not clear cache (permissions issue - this is normal on first run)"
+php artisan view:clear || true
+php artisan route:clear || true
 
 # Cache configuration for better performance
 echo "Caching configuration..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
 
 # Run migrations (uncomment if you want auto-migration on startup)
 # echo "Running migrations..."
