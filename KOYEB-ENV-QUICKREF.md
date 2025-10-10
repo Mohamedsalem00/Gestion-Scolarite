@@ -27,7 +27,7 @@ DB_HOST=your-database-host.com
 DB_PORT=3306
 DB_DATABASE=your-database-name
 DB_USERNAME=your-database-username
-DB_PASSWORD=YOUR_DATABASE_PASSWORD
+DB_PASSWORD=your-database-password
 ```
 
 ### Security

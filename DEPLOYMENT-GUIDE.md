@@ -28,16 +28,16 @@
 APP_NAME="Gestion Scolarité"
 APP_ENV=production
 APP_DEBUG=false  # ⚠️ MUST be false in production
-APP_KEY=your-app-key-here
+APP_KEY=your-app-key-here  # Generate with: php artisan key:generate --show
 APP_URL=https://your-app-name.koyeb.app
 
-# Database (Clever Cloud)
+# Database
 DB_CONNECTION=mysql
 DB_HOST=your-database-host.com
 DB_PORT=3306
 DB_DATABASE=your-database-name
 DB_USERNAME=your-database-username
-DB_PASSWORD=YOUR_DATABASE_PASSWORD
+DB_PASSWORD=your-database-password
 
 # Security
 SESSION_SECURE_COOKIE=true
