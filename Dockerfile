@@ -44,8 +44,15 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Copy Apache virtual host configuration
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Expose port 80
-EXPOSE 80
+# Configure Apache to listen on port 8000 (for Koyeb)
+RUN sed -i 's/Listen 80/Listen 8000/g' /etc/apache2/ports.conf
+RUN sed -i 's/:80/:8000/g' /etc/apache2/sites-available/000-default.conf
+
+# Set ServerName globally to suppress Apache warning
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Expose port 8000
+EXPOSE 8000
 
 # Copy entrypoint script
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
