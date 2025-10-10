@@ -152,6 +152,14 @@ echo "DB_HOST: $DB_HOST"
 echo "DB_DATABASE: $DB_DATABASE"
 echo "========================="
 
+# Temporarily enable debug mode for troubleshooting (REMOVE IN PRODUCTION!)
+if [ "$APP_ENV" = "production" ] && [ -f /var/www/html/.env ]; then
+    echo "Temporarily enabling debug mode for troubleshooting..."
+    sed -i 's/APP_DEBUG=false/APP_DEBUG=true/g' /var/www/html/.env
+    php artisan config:clear || true
+    php artisan config:cache || true
+fi
+
 echo "Laravel application is ready!"
 
 # Execute the main command (Apache)
