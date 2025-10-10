@@ -140,6 +140,18 @@ fi
 echo "Testing database connection..."
 php artisan migrate:status 2>&1 || echo "Warning: Could not connect to database or no migrations found"
 
+# Optimize for production
+echo "Optimizing application..."
+php artisan optimize || true
+
+# Display environment info for debugging
+echo "=== Environment Check ==="
+echo "APP_ENV: $APP_ENV"
+echo "APP_DEBUG: $APP_DEBUG"
+echo "DB_HOST: $DB_HOST"
+echo "DB_DATABASE: $DB_DATABASE"
+echo "========================="
+
 echo "Laravel application is ready!"
 
 # Execute the main command (Apache)
