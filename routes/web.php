@@ -60,6 +60,24 @@ Route::get('/', function () {
     return view('welcome');
 })->name('accueil');
 
+// Health check endpoint
+Route::get('/health', function() {
+    try {
+        $dbStatus = DB::connection()->getPdo() ? 'connected' : 'disconnected';
+    } catch (\Exception $e) {
+        $dbStatus = 'error: ' . $e->getMessage();
+    }
+    
+    return response()->json([
+        'status' => 'OK',
+        'timestamp' => now(),
+        'app' => config('app.name'),
+        'env' => config('app.env'),
+        'database' => $dbStatus,
+        'php_version' => PHP_VERSION,
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Routes d'Authentification
